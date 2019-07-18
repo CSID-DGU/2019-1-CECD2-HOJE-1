@@ -1,0 +1,42 @@
+{
+  "name": "electrontest",
+  "version": "1.0.0",
+  "description": "Test",
+  "main": "./src/electron-start.js",
+  "scripts": {
+    "electron": "electron .",
+    "react-start": "react-scripts start",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nf start"
+  },
+  "author": "Man",
+  "license": "ISC",
+  "dependencies": {
+    "@material-ui/core": "^4.2.1",
+    "@material-ui/icons": "^4.2.1"
+  },
+  "devDependencies": {
+    "cross-env": "^5.2.0",
+    "electron": "^5.0.7",
+    "electron-packager": "^14.0.1",
+    "electron-prebuilt": "^1.4.13",
+    "electron-winstaller": "^3.0.4",
+    "foreman": "^3.0.1",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-router-dom": "^5.0.1",
+    "react-scripts": "^3.0.1"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
