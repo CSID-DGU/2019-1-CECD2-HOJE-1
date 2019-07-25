@@ -7,7 +7,7 @@ let win
 function createWindow () {
   // 브라우저 창을 생성합니다.
   win = new BrowserWindow({
-    width: 800,
+    width: 900,
     height: 600,
     webPreferences: {
       nodeIntegration: true
@@ -15,11 +15,15 @@ function createWindow () {
   })
 
   // and load the index.html of the app.
-  //win.loadFile('../index.html')
-
+  //win.loadFile('index.html')
+  
   // electron에서 react 접근??
-  const startUrl = process.env.ELECTRON_START_URL;
-  win.loadURL(startUrl);
+  // const startUrl = process.env.ELECTRON_START_URL || url.format({
+  //   pathname: path.join(__dirname, 'public', 'index.html'),
+  //   protocol: 'file:',
+  //   slashes: true
+  // });
+  win.loadURL('file://'+__dirname+'/public/index.html');
 
   // 개발자 도구를 엽니다.
   win.webContents.openDevTools()

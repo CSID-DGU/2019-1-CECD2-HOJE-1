@@ -2,18 +2,34 @@
   "name": "electrontest",
   "version": "1.0.0",
   "description": "Test",
-  "main": "./src/electron-start.js",
+  "main": "src/electron-start.js",
+  "build": {
+    "extends": null,
+    "directories": {
+      "buildResources": "build",
+      "rewrites": [
+        {
+          "source": "**"
+        }
+      ]
+    },
+    "target": "zip"
+  },
   "scripts": {
     "electron": "electron .",
     "react-start": "react-scripts start",
+    "react-build": "react-scripts build",
+    "react-eject": "react-scripts eject",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nf start"
+    "start": "nf start",
+    "dist": " yarn react-build && build -w"
   },
   "author": "Man",
   "license": "ISC",
   "dependencies": {
     "@material-ui/core": "^4.2.1",
-    "@material-ui/icons": "^4.2.1"
+    "@material-ui/icons": "^4.2.1",
+    "react-dropdown-tree-select": "^2.0.3"
   },
   "devDependencies": {
     "cross-env": "^5.2.0",
@@ -21,9 +37,11 @@
     "electron-packager": "^14.0.1",
     "electron-prebuilt": "^1.4.13",
     "electron-winstaller": "^3.0.4",
+    "eslint-plugin-react-hooks": "^1.6.1",
     "foreman": "^3.0.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
+    "react-router": "^5.0.1",
     "react-router-dom": "^5.0.1",
     "react-scripts": "^3.0.1"
   },

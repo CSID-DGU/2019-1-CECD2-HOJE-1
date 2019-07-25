@@ -1,0 +1,22 @@
+{
+  "searchSetting" : [
+  {
+    "id": 0,
+    "name": "주민등록증",
+    "checked": true,
+    "disable": true
+  },
+  {
+    "id": 1,
+    "name": "여권번호",
+    "checked": false,
+    "disable": false
+  },
+  {
+    "id": 2,
+    "name": "카드번호",
+    "checked": true,
+    "disable": false
+  }
+]
+}

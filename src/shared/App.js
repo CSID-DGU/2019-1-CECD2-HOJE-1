@@ -1,23 +1,26 @@
 import React from 'react';
 import { Route, Link } from 'react-router-dom';
-import clsx from 'clsx';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
+import PropTypes from 'prop-types';
+
+import Grid from '@material-ui/core/Grid';
 import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import Drawer from '@material-ui/core/Drawer';
+import Hidden from '@material-ui/core/Hidden';
+import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
+import IconButton from '@material-ui/core/IconButton';
+
+import MenuIcon from '@material-ui/icons/Menu';
+import UpdataIcon from '@material-ui/icons/Update';
 import HomeIcon from '@material-ui/icons/Home';
 import SearchIcon from '@material-ui/icons/Search';
+import ResultIcon from '@material-ui/icons/Assignment'
 import SettingIcon from '@material-ui/icons/Settings';
 import MailIcon from '@material-ui/icons/Mail';
 
@@ -25,172 +28,185 @@ import Home from '../pages/Home';
 import Search from '../pages/Search';
 import Setting from '../pages/Setting';
 import QnAMail from '../pages/QnAMail';
+import Result from '../pages/Result';
 //import Menu from '../component/Menu';
 
 const drawerWidth = 180;
 
 const useStyles = makeStyles(theme => ({
   root: {
-	display: 'flex',
-  },
-  appBar: {
-	zIndex: theme.zIndex.drawer + 1,
-	transition: theme.transitions.create(['width', 'margin'], {
-	  easing: theme.transitions.easing.sharp,
-	  duration: theme.transitions.duration.leavingScreen,
-	}),
-  },
-  appBarShift: {
-	marginLeft: drawerWidth,
-	width: `calc(100% - ${drawerWidth}px)`,
-	transition: theme.transitions.create(['width', 'margin'], {
-	  easing: theme.transitions.easing.sharp,
-	  duration: theme.transitions.duration.enteringScreen,
-	}),
-  },
-  menuButton: {
-	marginRight: 36,
-  },
-  hide: {
-	display: 'none',
+    display: 'flex',
   },
   drawer: {
-	width: drawerWidth,
-	flexShrink: 0,
-	whiteSpace: 'nowrap',
+    [theme.breakpoints.up('sm')]: {
+      width: drawerWidth,
+      flexShrink: 0,
+    },
   },
-  drawerOpen: {
-	width: drawerWidth,
-	transition: theme.transitions.create('width', {
-	  easing: theme.transitions.easing.sharp,
-	  duration: theme.transitions.duration.enteringScreen,
-	}),
+  appBar: {
+    marginLeft: drawerWidth,
+    [theme.breakpoints.up('sm')]: {
+      width: `calc(100% - ${drawerWidth}px)`,
+    },
   },
-  drawerClose: {
-	transition: theme.transitions.create('width', {
-	  easing: theme.transitions.easing.sharp,
-	  duration: theme.transitions.duration.leavingScreen,
-	}),
-	overflowX: 'hidden',
-	width: theme.spacing(7) + 1,
-	[theme.breakpoints.up('sm')]: {
-	  width: theme.spacing(9) + 1,
-	},
+  menuButton: {
+    marginRight: theme.spacing(2),
+    [theme.breakpoints.up('sm')]: {
+      display: 'none',
+    },
   },
-  toolbar: {
-	display: 'flex',
-	alignItems: 'center',
-	justifyContent: 'flex-end',
-	padding: '0 8px',
-	...theme.mixins.toolbar,
+  toolbar: theme.mixins.toolbar,
+  drawerPaper: {
+    width: drawerWidth,
   },
   content: {
-	flexGrow: 1,
-	padding: theme.spacing(3),
+    flexGrow: 1,
+    padding: theme.spacing(3),
   },
 }));
 
-export default function App() {
+export default function App(props) {
+  const { container } = props;
   const classes = useStyles();
+  const [select, setSelect] = React.useState(0);
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [mobileOpen, setMobileOpen] = React.useState(false);
 
-  function handleDrawerOpen() {
-	setOpen(true);
+  function handleDrawerToggle() {
+    setMobileOpen(!mobileOpen);
   }
 
-  function handleDrawerClose() {
-	setOpen(false);
-  }
-
-  return (
-	<div className={classes.root}>
-	  <CssBaseline />
-	  <AppBar
-		position="fixed"
-		className={clsx(classes.appBar, {
-		  [classes.appBarShift]: open,
-		})}
-	  >
+  // 위에 툴바
+	const drawerToolbar = (
 		<Toolbar>
-		  <IconButton
-			color="inherit"
-			aria-label="Open drawer"
-			onClick={handleDrawerOpen}
-			edge="start"
-			className={clsx(classes.menuButton, {
-			  [classes.hide]: open,
-			})}
-		  >
-			<MenuIcon />
-		  </IconButton>
-		  <Typography variant="h6" noWrap>
-			HOJE-HomeOCR
-		  </Typography>
-		</Toolbar>
-	  </AppBar>
-	  <Drawer
-		variant="permanent"
-		className={clsx(classes.drawer, {
-		  [classes.drawerOpen]: open,
-		  [classes.drawerClose]: !open,
-		})}
-		classes={{
-		  paper: clsx({
-			[classes.drawerOpen]: open,
-			[classes.drawerClose]: !open,
-		  }),
-		}}
-		open={open}
-	  >
-		<div className={classes.toolbar}>
-		  <IconButton onClick={handleDrawerClose}>
-			{theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-		  </IconButton>
-		</div>
-		<Divider />
-		<List>
+      <Grid container direction="row" justify="space-between">
+        <Grid>
+          <IconButton
+            color="inherit"
+            aria-label="Open drawer"
+            edge="start"
+            onClick={handleDrawerToggle}
+            className={classes.menuButton}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography variant="h6">
+            HOJE-OCR
+          </Typography>
+        </Grid>
+        <Grid>
+          <IconButton component={Link} to="/#">
+            <UpdataIcon/>
+          </IconButton>
+        </Grid>
+      </Grid>
+    </Toolbar>
+  )
+
+  // 왼쪽 메뉴 부분
+  const drawer = (
+		<div>
+		<div className={classes.toolbar} />
+    <List>
 			<ListItem
-			button
-			component={Link} to="/"
+      button
+      selected={select%8 === 0 ? true : false}
+      component={Link} to="/"
+      onClick={()=>setSelect(0)}
 			>
 			<ListItemIcon><HomeIcon /></ListItemIcon>
 			<ListItemText primary="홈" />
 			</ListItem>
 			<ListItem
-			button
-			component={Link} to="/Search"
+      button
+      selected={select%8 === 1 ? true : false}
+      component={Link} to="/search"
+      onClick={()=>setSelect(1)}
 			>
 			<ListItemIcon><SearchIcon /></ListItemIcon>
 			<ListItemText primary="검사" />
 			</ListItem>
 			<ListItem
-			button
-			component={Link} to="/setting"
+      button
+      selected={select%8 === 2 ? true : false}
+      component={Link} to="/result"
+      onClick={()=>setSelect(2)}
+			>
+      <ListItemIcon><ResultIcon /></ListItemIcon>
+			<ListItemText primary="검출내역" />
+			</ListItem>
+			<ListItem
+      button
+      selected={select%8 === 3 ? true : false}
+      component={Link} to="/setting"
+      onClick={()=>setSelect(3)}
 			>
 			<ListItemIcon><SettingIcon /></ListItemIcon>
 			<ListItemText primary="설정" />
 			</ListItem>
 			<ListItem
-			button
-			component={Link} to="/qna"
+      button
+      selected={select%8 === 4 ? true : false}
+      component={Link} to="/qna"
+      onClick={()=>setSelect(4)}
 			>
 			<ListItemIcon><MailIcon /></ListItemIcon>
 			<ListItemText primary="문의" />
 			</ListItem>
 		</List>
-	  </Drawer>
-    <main
-        className={clsx(classes.content, {
-          [classes.contentShift]: open,
-        })}
-      >
+		</div>
+  );
+
+  return (
+    <div className={classes.root}>
+      <CssBaseline />
+      <AppBar position="fixed" className={classes.appBar}>
+        {drawerToolbar}
+      </AppBar>
+      <nav className={classes.drawer} aria-label="Mailbox folders">
+        <Hidden smUp implementation="css">
+          <Drawer
+            container={container}
+            variant="temporary"
+            anchor={theme.direction === 'rtl' ? 'right' : 'left'}
+            open={mobileOpen}
+            onClose={handleDrawerToggle}
+            classes={{
+              paper: classes.drawerPaper,
+            }}
+            ModalProps={{
+              keepMounted: true, // Better open performance on mobile.
+            }}
+          >
+            {drawer}
+          </Drawer>
+        </Hidden>
+        <Hidden xsDown implementation="css">
+          <Drawer
+            classes={{
+              paper: classes.drawerPaper,
+            }}
+            variant="permanent"
+            open
+          >
+            {drawer}
+          </Drawer>
+        </Hidden>
+      </nav>
+      <main className={classes.content}>
         <div className={classes.toolbar} />
         <Route exact path="/" component={ Home } />
         <Route exact path="/search" component={ Search } />
         <Route exact path="/setting" component={ Setting } />
         <Route exact path="/qna" component={ QnAMail } />
+        <Route exact path="/result" component={ Result } />
       </main>
-	</div>
+    </div>
   );
 }
+
+App.propTypes = {
+  // Injected by the documentation to work in an iframe.
+  // You won't need it on your project.
+  container: PropTypes.object,
+};
