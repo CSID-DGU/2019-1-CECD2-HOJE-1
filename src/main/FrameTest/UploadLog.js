@@ -1,7 +1,8 @@
 const fs = require('fs');
 const os = require('os');
 const moment = require('moment'); //날짜를 사용하기 위한 모듈
-let data = fs.readFileSync(`C:\\Users\\FASOO_499\\Desktop\\resultfile.json`, 'utf8');  //최근 json 파일
+//ToDo 경로 바꿔야됨
+let data = fs.readFileSync(`resultfile.json`, 'utf8');  //최근 json 파일
 function makeJSonFile(data) {
     let date = moment().format('YYYY-MM-DD HH:mm:ss');
     let ip = detectIpAddress(); //ip 주소
@@ -25,6 +26,7 @@ function makeJSonFile(data) {
     json1.date = date;
     json1.list = jsonArray;
     json1.ip = ip;
+    json1.depart = "HR"; //임시 경로
     json = json1;
     json = JSON.stringify(json);
     //fs.writeFileSync('test.json',json,'utf8'); //테스트 용

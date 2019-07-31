@@ -22,8 +22,6 @@ var _propTypes2 = _interopRequireDefault(_propTypes);
 
 var _styles = require('@material-ui/core/styles');
 
-var _styles2 = require('@material-ui/styles');
-
 var _colors = require('@material-ui/core/colors');
 
 var _Table = require('@material-ui/core/Table');
@@ -94,6 +92,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+var fs = require('fs');
 function createData(fileName, filePath, detectList, detectCount, formLevel, fitness) {
     return { fileName: fileName, filePath: filePath, detectList: detectList, detectCount: detectCount, formLevel: formLevel, fitness: fitness };
 }
@@ -305,8 +304,21 @@ var useStyles = (0, _styles.makeStyles)(function (theme) {
     };
 });
 
+var theme = (0, _styles.createMuiTheme)({
+    palette: {
+        primary: { main: _colors.green[500] }, // Purple and green play nicely together.
+        secondary: { main: _colors.yellow[500] }, // This is just green.A700 as hex.
+        error: { main: _colors.red[500] }
+    }
+});
+
 function Result() {
     var classes = useStyles();
+
+    var _useState = (0, _react.useState)([]),
+        _useState2 = _slicedToArray(_useState, 2),
+        setUpdate = _useState2[1]; //강제 렌더링
+
 
     var _React$useState = _react2.default.useState('desc'),
         _React$useState2 = _slicedToArray(_React$useState, 2),
@@ -338,6 +350,16 @@ function Result() {
         setOrder(isDesc ? 'asc' : 'desc');
         setOrderBy(property);
     }
+
+    (0, _react.useEffect)(function () {
+        if (fs.exists('resultfile.json', function (exists) {
+            if (exists) {
+                rows = fs.readFileSync('resultfile.json', 'utf8');
+                rows = JSON.parse(rows);
+            }
+            setUpdate();
+        })) ;
+    }, []); //렌더링 이후 한번만 수행
 
     function handleSelectAllClick(event) {
         if (event.target.checked) {
@@ -382,13 +404,23 @@ function Result() {
 
     var emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
-    var theme = (0, _styles.createMuiTheme)({
-        palette: {
-            primary: { main: _colors.green[500] }, // Purple and green play nicely together.
-            secondary: { main: _colors.yellow[500] }, // This is just green.A700 as hex.
-            error: { main: _colors.red[500] }
-        }
-    });
+    var iconDisplay = function iconDisplay(input) {
+        if (input === '정상') return _react2.default.createElement(
+            _styles.MuiThemeProvider,
+            { theme: theme },
+            _react2.default.createElement(_FiberManualRecord2.default, { color: 'primary' })
+        );else if (input === '경고') return _react2.default.createElement(
+            _styles.MuiThemeProvider,
+            { theme: theme },
+            _react2.default.createElement(_Error2.default, {
+                color: 'secondary' })
+        );else if (input === '위험') return _react2.default.createElement(
+            _styles.MuiThemeProvider,
+            { theme: theme },
+            _react2.default.createElement(_Warning2.default, { color: 'error' })
+        );
+        return _react2.default.createElement(_FiberManualRecord2.default, { color: 'disabled' });
+    };
 
     return _react2.default.createElement(
         'div',
@@ -457,13 +489,15 @@ function Result() {
                                     { align: 'right' },
                                     _react2.default.createElement(
                                         _Typography2.default,
-                                        { className: classes.filepath, noWrap: true },
+                                        { className: classes.filepath,
+                                            noWrap: true },
                                         row.filePath
                                     )
                                 ),
                                 _react2.default.createElement(
                                     _TableCell2.default,
-                                    { className: classes.detectlist, wrap: 'nowrap', align: 'right' },
+                                    { className: classes.detectlist, wrap: 'nowrap',
+                                        align: 'right' },
                                     row.detectList
                                 ),
                                 _react2.default.createElement(
@@ -479,15 +513,7 @@ function Result() {
                                 _react2.default.createElement(
                                     _TableCell2.default,
                                     { align: 'right' },
-                                    _react2.default.createElement(
-                                        _styles2.ThemeProvider,
-                                        { theme: theme },
-                                        function () {
-                                            var tmp = void 0;
-                                            if (row.fitness === '정상') tmp = _react2.default.createElement(_FiberManualRecord2.default, { color: 'primary' });else if (row.fitness === '경고') tmp = _react2.default.createElement(_Error2.default, { color: 'secondary' });else if (row.fitness === '위험') tmp = _react2.default.createElement(_Warning2.default, { color: 'error' });
-                                            return tmp;
-                                        }
-                                    )
+                                    iconDisplay(row.fitness)
                                 )
                             );
                         }),
