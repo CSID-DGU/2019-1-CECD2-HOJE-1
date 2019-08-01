@@ -1,6 +1,6 @@
-const callExec = require('../callExec');
+const callExec = require('./callExec');
 const fs = require('fs');
-let data = fs.readFileSync(`${__dirname}/reg.json`, 'utf8');
+let data = fs.readFileSync(`./reg/reg.json`, 'utf8');
 
 let k = [], v = [];
 let key = [], pattern = [];
@@ -17,12 +17,10 @@ async function TessNreg(filePath){
 
 //정규식 표현을 읽어드리는 모듈
 function regRead(checkList){
-    console.log(checkList);
     for (const t of data.reg) {
         k.push(t.key);
         v.push(t.value);
     }
-    console.log('regset start');
     for(let i = 0 ; i < k.length; i++){
         for(const t of checkList){
             if(t.match(k[i])){

@@ -16,26 +16,18 @@ import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
 import Fab from '@material-ui/core/Fab';
 import Tooltip from '@material-ui/core/Tooltip';
-
 import NormalIcon from '@material-ui/icons/FiberManualRecord'
 import WarningIcon from '@material-ui/icons/Error';
 import DangerIcon from '@material-ui/icons/Warning';
+import masking from '../../main/FrameTest/masking';
 const fs = require('fs');
+const notifier = require('node-notifier');
 function createData(fileName, filePath, detectList, detectCount, formLevel, fitness) {
     return {fileName, filePath, detectList, detectCount, formLevel, fitness};
 }
 
 // FormLevel : 1, 2, 3 -> 낮은 숫자일 수록 높은 등급
-let rows = [
-    createData('card2(1).jpg', 'C:/Users/HYS/Desktop/test/images/card2(1).jpg', ['카드번호'], 1, 2, '경고'),
-    createData('card2(2).jpg', 'C:/Users/HYS/Desktop/test/images/card2(2).jpg', ['카드번호'], 1, 2, '정상'),
-    createData('card3.jpg', 'C:/Users/HYS/Desktop/test/images/card3.jpg', ['카드번호'], 1, 2, '경고'),
-    createData('text-out.jpg', 'C:/Users/HYS/Desktop/test/images/text-out.jpg', [''], 0, 4, '위험'),
-    createData('sample.jpg', 'C:/Users/HYS/Desktop/test/images/sample.jpg', ['주소', '주민등록번호'], 2, 2, '정상'),
-    createData('sample2.jpg', 'C:/Users/HYS/Desktop/test/images/sample2.jpg', ['주소', '주민등록번호'], 2, 2, '정상'),
-    createData('sample3.jpg', 'C:/Users/HYS/Desktop/test/images/sample3.jpg', ['주소', '주민등록번호'], 2, 2, '정상'),
-    createData('sample2.jpg', 'C:/Users/HYS/Desktop/test/sample2.jpg', ['주소', '주민등록번호'], 2, 2, '정상'),
-];
+let rows = [];
 
 function desc(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -145,7 +137,7 @@ const useToolbarStyles = makeStyles(theme => ({
 
 const EnhancedTableToolbar = props => {
     const classes = useToolbarStyles();
-    const {numSelected} = props;
+    const {numSelected,selected} = props;
 
     return (
         <Toolbar
@@ -169,7 +161,16 @@ const EnhancedTableToolbar = props => {
                 {numSelected > 0 ? (
                     <div>
                         <Tooltip title="비식별화">
-                            <Fab className={classes.actions} variant="extended" label='비식별화'>비식별화</Fab>
+                            <Fab className={classes.actions} variant="extended" label='비식별화' onClick={async ()=>{
+                                for(const path of selected){
+                                    console.log(path);
+                                    await masking(path); //마스킹
+                                }
+                                notifier.notify({ //수행이 다 된 후 알람
+                                    title : '마스킹 성공!',
+                                    message : selected.length + '개의 파일이 마스킹 됐습니다.',
+                                })
+                            }}>비식별화</Fab>
                         </Tooltip>
                         <Tooltip title="문의">
                             <Fab className={classes.actions} variant="extended" label='문의'>문의</Fab>
@@ -233,19 +234,30 @@ export default function Result() {
 
     useEffect(() => {
         let tmpList = [];
+        rows = [];
         if (fs.exists('resultfile.json', (exists => {
+            console.log('file read');
             if (exists) {
                 tmpList = fs.readFileSync('resultfile.json', 'utf8');
                 tmpList = JSON.parse(tmpList);
+                for(const t of tmpList){
+                    rows.push(createData(t.fileName,t.filePath,t.detectList,t.detectCount,t.formLevel,t.fitness));
+                }
             }
             setUpdate();
-        }))) ;
+        })));
     }, []); //렌더링 이후 한번만 수행
 
     function handleSelectAllClick(event) {
-        if (event.target.checked) {
-            const newSelecteds = rows.map(n => n.FilePath);
-            setSelected(newSelecteds);
+        if (event.target.checked && selected.length === 0) {
+            let tmp = [];
+            const newSelecteds = rows.map(n => n.filePath);
+            const newCounts = rows.map(n => n.detectCount);
+            for(var i = 0; i < newSelecteds.length; i++)
+            {
+                if(newCounts[i] !== 0) tmp.push(newSelecteds[i]);
+            }
+            setSelected(tmp);
             return;
         }
         setSelected([]);
@@ -291,12 +303,12 @@ export default function Result() {
             color='secondary'/></MuiThemeProvider>
         else if (input === '위험') return <MuiThemeProvider theme={theme}><DangerIcon color='error'/></MuiThemeProvider>
         return <NormalIcon color='disabled'/>
-    }
+    };
 
     return (
         <div className={classes.root}>
             <Paper className={classes.paper}>
-                <EnhancedTableToolbar numSelected={selected.length}/>
+                <EnhancedTableToolbar numSelected={selected.length} selected={selected}/>
                 <div className={classes.tableWrapper}>
                     <Table
                         className={classes.table}
@@ -335,7 +347,7 @@ export default function Result() {
                                                 />
                                             </TableCell>
                                             <TableCell component="th" id={labelId} scope="row" padding="none">
-                                                <Typography noWrap>{row.FileName}</Typography>
+                                                <Typography noWrap>{row.fileName}</Typography>
                                             </TableCell>
                                             <TableCell align="right"><Typography className={classes.filepath}
                                                                                  noWrap>{row.filePath}</Typography></TableCell>
@@ -358,7 +370,7 @@ export default function Result() {
                     </Table>
                 </div>
                 <TablePagination
-                    rowsPerPageOptions={[5, 10, 25]}
+                    rowsPerPageOptions={[5]}
                     component="div"
                     count={rows.length}
                     rowsPerPage={rowsPerPage}
