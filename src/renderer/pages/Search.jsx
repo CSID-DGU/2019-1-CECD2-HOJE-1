@@ -89,6 +89,8 @@ let isDone = false; //검색 중지
 let check = true; //통신 여부
 let de = delay(250000); //일시 중지
 let rows = [];
+
+//ToDo 부분 렌더링 (SearchHeader, SearchCenter)
 export default function Search() {
     const classes = useStyles();
     const [value, setValue] = React.useState(0);
@@ -121,7 +123,8 @@ export default function Search() {
         let xhr = new XMLHttpRequest(); //서버 통신
         xhr.open('GET', `http://192.168.40.206:8080/classification?dhashValue=${hash}&depart=${depart}`);
         let data = null;
-        console.log('name : ' , name , ' hash : ' , hash);
+        let tmp = await makeDictionary(data, name, ppath, result1);
+        console.log('name : ' , name , ' hash : ' , hash , ' filePath : ' , ppath);
         xhr.onload = async function () {
             data = xhr.responseText;
             let tmp = await makeDictionary(data, name, ppath, result1); //검사 결과를 딕션너리 형태로
@@ -131,7 +134,6 @@ export default function Search() {
         xhr.timeout = 3000; //시간 2~3초
         xhr.ontimeout = function () {
             console.log('connection failed');
-            //addRow(tmp);
             check = false;
         };
         xhr.send();
@@ -150,7 +152,7 @@ export default function Search() {
                 await Exec(PATH.join(startPath, tmp.name), extension); //디렉토리 안의 파일을 탐색(재귀적으로 호출)
             } else { //파일 경우
                 let ppath = PATH.join(startPath, tmp.name);
-                setPath(ppath);
+                //setPath(ppath);
                 let extname = PATH.extname(ppath);
                 //console.log('extname : ' , extname);
                 if (extname.match(extension[0]) || extname.match(extension[1]) || extname.match(extension[2])) { //확장자가 jpg,png,tif 일 경우
@@ -163,7 +165,7 @@ export default function Search() {
                     });
                     console.log(check);
                     if(!check) {
-                        break; //서버와 연결이 끊어짐
+                       break; //서버와 연결이 끊어짐
                     }
                 }
             }
@@ -245,7 +247,6 @@ export default function Search() {
     // 검색 결과 추가
     const addRow = (list) => { //배열에 있는 위치 방식
         rows.push(createData(rows.length,list.fileName, list.classification, list.detectList, list.detectCount, list.formLevel));
-        console.log(rows);
        // forceUpdate();
     };
     const styles = theme => ({
@@ -571,13 +572,13 @@ export default function Search() {
                                 if (isStop && isPlaying) {
                                     de.clear(); //일시정지 일 경우
                                 }
-                                reset(); //경로, 검색해야되는 부분 리셋
-                                console.log(rows);
-                                if (rows.length > 0) { //배열에 값이 들어 갔을 경우
+                                console.log('rows : ' ,rows);
+                                if (rows.length > 0  && check === true) { //배열에 값이 들어 갔을 경우 && 완전히 통신이 완료 됐을 경우
                                     let json = JSON.stringify(rows);
                                     fs.writeFileSync('resultfile.json', json, 'utf8');
                                     console.log('file created');
                                 }
+                                reset(); //경로, 검색해야되는 부분 리셋
                             }}
                         >
                             검사 중지
