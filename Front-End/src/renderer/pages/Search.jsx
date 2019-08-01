@@ -165,7 +165,7 @@ export default function Search() {
                     });
                     console.log(check);
                     if(!check) {
-                       break; //서버와 연결이 끊어짐
+                        break; //서버와 연결이 끊어짐
                     }
                 }
             }
@@ -247,7 +247,7 @@ export default function Search() {
     // 검색 결과 추가
     const addRow = (list) => { //배열에 있는 위치 방식
         rows.push(createData(rows.length,list.fileName, list.classification, list.detectList, list.detectCount, list.formLevel));
-       // forceUpdate();
+        // forceUpdate();
     };
     const styles = theme => ({
         flexContainer: {

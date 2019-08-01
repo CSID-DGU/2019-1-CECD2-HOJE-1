@@ -152,30 +152,39 @@ var useStyles = (0, _styles.makeStyles)(function (theme) {
         content: {
             flexGrow: 1,
             padding: theme.spacing(3)
+        },
+        active: {
+            background: '#9e9e9e'
         }
     };
 });
 
 function ResponsiveDrawer(props) {
+    var _React$createElement;
+
     var container = props.container;
 
     var classes = useStyles();
-
-    var _React$useState = _react2.default.useState(0),
-        _React$useState2 = _slicedToArray(_React$useState, 2),
-        select = _React$useState2[0],
-        setSelect = _React$useState2[1];
-
     var theme = (0, _styles.useTheme)();
 
-    var _React$useState3 = _react2.default.useState(false),
-        _React$useState4 = _slicedToArray(_React$useState3, 2),
-        mobileOpen = _React$useState4[0],
-        setMobileOpen = _React$useState4[1];
+    var _React$useState = _react2.default.useState(false),
+        _React$useState2 = _slicedToArray(_React$useState, 2),
+        mobileOpen = _React$useState2[0],
+        setMobileOpen = _React$useState2[1];
 
     function handleDrawerToggle() {
         setMobileOpen(!mobileOpen);
     }
+
+    // Forced ReRendering
+
+    var _React$useState3 = _react2.default.useState(),
+        _React$useState4 = _slicedToArray(_React$useState3, 2),
+        updateState = _React$useState4[1];
+
+    var forceUpdate = _react2.default.useCallback(function () {
+        return updateState({});
+    }, []);
 
     // 위에 툴바
     var drawerToolbar = _react2.default.createElement(
@@ -209,9 +218,10 @@ function ResponsiveDrawer(props) {
                 null,
                 _react2.default.createElement(
                     _IconButton2.default,
-                    { component: _reactRouterDom.Link, to: '#', onClick: function onClick() {
+                    { onClick: function onClick() {
                             console.log('Download...');
                             (0, _DownloadFile2.default)();
+                            forceUpdate();
                         } },
                     _react2.default.createElement(_Update2.default, null)
                 )
@@ -230,11 +240,8 @@ function ResponsiveDrawer(props) {
                 _ListItem2.default,
                 {
                     button: true,
-                    selected: select % 8 === 0 ? true : false,
-                    component: _reactRouterDom.Link, to: '/',
-                    onClick: function onClick() {
-                        return setSelect(0);
-                    }
+                    activeClassName: classes.active,
+                    component: _reactRouterDom.NavLink, exact: true, to: '/'
                 },
                 _react2.default.createElement(
                     _ListItemIcon2.default,
@@ -247,11 +254,8 @@ function ResponsiveDrawer(props) {
                 _ListItem2.default,
                 {
                     button: true,
-                    selected: select % 8 === 1 ? true : false,
-                    component: _reactRouterDom.Link, to: '/search',
-                    onClick: function onClick() {
-                        return setSelect(1);
-                    }
+                    activeClassName: classes.active,
+                    component: _reactRouterDom.NavLink, to: '/search'
                 },
                 _react2.default.createElement(
                     _ListItemIcon2.default,
@@ -264,11 +268,8 @@ function ResponsiveDrawer(props) {
                 _ListItem2.default,
                 {
                     button: true,
-                    selected: select % 8 === 2 ? true : false,
-                    component: _reactRouterDom.Link, to: '/result',
-                    onClick: function onClick() {
-                        return setSelect(2);
-                    }
+                    activeClassName: classes.active,
+                    component: _reactRouterDom.NavLink, to: '/result'
                 },
                 _react2.default.createElement(
                     _ListItemIcon2.default,
@@ -281,11 +282,8 @@ function ResponsiveDrawer(props) {
                 _ListItem2.default,
                 {
                     button: true,
-                    selected: select % 8 === 3 ? true : false,
-                    component: _reactRouterDom.Link, to: '/setting',
-                    onClick: function onClick() {
-                        return setSelect(3);
-                    }
+                    activeClassName: classes.active,
+                    component: _reactRouterDom.NavLink, to: '/setting'
                 },
                 _react2.default.createElement(
                     _ListItemIcon2.default,
@@ -296,14 +294,10 @@ function ResponsiveDrawer(props) {
             ),
             _react2.default.createElement(
                 _ListItem2.default,
-                {
+                (_React$createElement = {
                     button: true,
-                    selected: select % 8 === 4 ? true : false,
-                    component: _reactRouterDom.Link, to: '/qna',
-                    onClick: function onClick() {
-                        return setSelect(4);
-                    }
-                },
+                    activeClassName: classes.active
+                }, _defineProperty(_React$createElement, 'activeClassName', classes.active), _defineProperty(_React$createElement, 'component', _reactRouterDom.NavLink), _defineProperty(_React$createElement, 'to', '/qna'), _React$createElement),
                 _react2.default.createElement(
                     _ListItemIcon2.default,
                     null,

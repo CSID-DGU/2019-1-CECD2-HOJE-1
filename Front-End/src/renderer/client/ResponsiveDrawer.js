@@ -1,5 +1,5 @@
 import React from 'react';
-import {Route, Link} from 'react-router-dom';
+import {Route, NavLink, Link} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Grid from '@material-ui/core/Grid';
 import AppBar from '@material-ui/core/AppBar';
@@ -61,18 +61,24 @@ const useStyles = makeStyles(theme => ({
         flexGrow: 1,
         padding: theme.spacing(3),
     },
+    active: {
+        background: '#9e9e9e',
+    }
 }));
 
 export default function ResponsiveDrawer(props) {
     const {container} = props;
     const classes = useStyles();
-    const [select, setSelect] = React.useState(0);
     const theme = useTheme();
     const [mobileOpen, setMobileOpen] = React.useState(false);
 
     function handleDrawerToggle() {
         setMobileOpen(!mobileOpen);
     }
+
+    // Forced ReRendering
+    const [, updateState] = React.useState();
+    const forceUpdate = React.useCallback(() => updateState({}), []);
 
     // 위에 툴바
     const drawerToolbar = (
@@ -93,9 +99,10 @@ export default function ResponsiveDrawer(props) {
                     </Typography>
                 </Grid>
                 <Grid>
-                    <IconButton component={Link} to="#" onClick={()=> {
+                    <IconButton onClick={()=> {
                         console.log('Download...');
                         DownloadFile();
+                        forceUpdate();
                     }}>
                         <UpdataIcon/>
                     </IconButton>
@@ -110,45 +117,41 @@ export default function ResponsiveDrawer(props) {
             <List>
                 <ListItem
                     button
-                    selected={select % 8 === 0 ? true : false}
-                    component={Link} to="/"
-                    onClick={() => setSelect(0)}
+                    activeClassName={classes.active}
+                    component={NavLink} exact to="/"
                 >
                     <ListItemIcon><HomeIcon/></ListItemIcon>
                     <ListItemText primary="홈"/>
                 </ListItem>
                 <ListItem
                     button
-                    selected={select % 8 === 1 ? true : false}
-                    component={Link} to="/search"
-                    onClick={() => setSelect(1)}
+                    activeClassName={classes.active}
+                    component={NavLink} to="/search"
                 >
                     <ListItemIcon><SearchIcon/></ListItemIcon>
                     <ListItemText primary="검사"/>
                 </ListItem>
                 <ListItem
                     button
-                    selected={select % 8 === 2 ? true : false}
-                    component={Link} to="/result"
-                    onClick={() => setSelect(2)}
+                    activeClassName={classes.active}
+                    component={NavLink} to="/result"
                 >
                     <ListItemIcon><ResultIcon/></ListItemIcon>
                     <ListItemText primary="검출내역"/>
                 </ListItem>
                 <ListItem
                     button
-                    selected={select % 8 === 3 ? true : false}
-                    component={Link} to="/setting"
-                    onClick={() => setSelect(3)}
+                    activeClassName={classes.active}
+                    component={NavLink} to="/setting"
                 >
                     <ListItemIcon><SettingIcon/></ListItemIcon>
                     <ListItemText primary="설정"/>
                 </ListItem>
                 <ListItem
                     button
-                    selected={select % 8 === 4 ? true : false}
-                    component={Link} to="/qna"
-                    onClick={() => setSelect(4)}
+                    activeClassName={classes.active}
+                    activeClassName={classes.active}
+                    component={NavLink} to="/qna"
                 >
                     <ListItemIcon><MailIcon/></ListItemIcon>
                     <ListItemText primary="문의"/>
