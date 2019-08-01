@@ -22,8 +22,6 @@ var _propTypes2 = _interopRequireDefault(_propTypes);
 
 var _styles = require('@material-ui/core/styles');
 
-var _styles2 = require('@material-ui/styles');
-
 var _colors = require('@material-ui/core/colors');
 
 var _Table = require('@material-ui/core/Table');
@@ -90,16 +88,22 @@ var _Warning = require('@material-ui/icons/Warning');
 
 var _Warning2 = _interopRequireDefault(_Warning);
 
+var _masking = require('../../main/FrameTest/masking');
+
+var _masking2 = _interopRequireDefault(_masking);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+var fs = require('fs');
+var notifier = require('node-notifier');
 function createData(fileName, filePath, detectList, detectCount, formLevel, fitness) {
     return { fileName: fileName, filePath: filePath, detectList: detectList, detectCount: detectCount, formLevel: formLevel, fitness: fitness };
 }
 
 // FormLevel : 1, 2, 3 -> 낮은 숫자일 수록 높은 등급
-var rows = [createData('card2(1).jpg', 'C:/Users/HYS/Desktop/test/images/card2(1).jpg', ['카드번호'], 1, 2, '경고'), createData('card2(2).jpg', 'C:/Users/HYS/Desktop/test/images/card2(2).jpg', ['카드번호'], 1, 2, '정상'), createData('card3.jpg', 'C:/Users/HYS/Desktop/test/images/card3.jpg', ['카드번호'], 1, 2, '경고'), createData('text-out.jpg', 'C:/Users/HYS/Desktop/test/images/text-out.jpg', [''], 0, 4, '위험'), createData('sample.jpg', 'C:/Users/HYS/Desktop/test/images/sample.jpg', ['주소', '주민등록번호'], 2, 2, '정상'), createData('sample2.jpg', 'C:/Users/HYS/Desktop/test/images/sample2.jpg', ['주소', '주민등록번호'], 2, 2, '정상'), createData('sample3.jpg', 'C:/Users/HYS/Desktop/test/images/sample3.jpg', ['주소', '주민등록번호'], 2, 2, '정상'), createData('sample2.jpg', 'C:/Users/HYS/Desktop/test/sample2.jpg', ['주소', '주민등록번호'], 2, 2, '정상')];
+var rows = [];
 
 function desc(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -225,7 +229,8 @@ var useToolbarStyles = (0, _styles.makeStyles)(function (theme) {
 
 var EnhancedTableToolbar = function EnhancedTableToolbar(props) {
     var classes = useToolbarStyles();
-    var numSelected = props.numSelected;
+    var numSelected = props.numSelected,
+        selected = props.selected;
 
 
     return _react2.default.createElement(
@@ -259,7 +264,38 @@ var EnhancedTableToolbar = function EnhancedTableToolbar(props) {
                     { title: '\uBE44\uC2DD\uBCC4\uD654' },
                     _react2.default.createElement(
                         _Fab2.default,
-                        { className: classes.actions, variant: 'extended', label: '\uBE44\uC2DD\uBCC4\uD654' },
+                        { className: classes.actions, variant: 'extended', label: '\uBE44\uC2DD\uBCC4\uD654', onClick: async function onClick() {
+                                var _iteratorNormalCompletion = true;
+                                var _didIteratorError = false;
+                                var _iteratorError = undefined;
+
+                                try {
+                                    for (var _iterator = selected[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                                        var path = _step.value;
+
+                                        console.log(path);
+                                        await (0, _masking2.default)(path); //마스킹
+                                    }
+                                } catch (err) {
+                                    _didIteratorError = true;
+                                    _iteratorError = err;
+                                } finally {
+                                    try {
+                                        if (!_iteratorNormalCompletion && _iterator.return) {
+                                            _iterator.return();
+                                        }
+                                    } finally {
+                                        if (_didIteratorError) {
+                                            throw _iteratorError;
+                                        }
+                                    }
+                                }
+
+                                notifier.notify({ //수행이 다 된 후 알람
+                                    title: '마스킹 성공!',
+                                    message: selected.length + '개의 파일이 마스킹 됐습니다.'
+                                });
+                            } },
                         '\uBE44\uC2DD\uBCC4\uD654'
                     )
                 ),
@@ -305,8 +341,21 @@ var useStyles = (0, _styles.makeStyles)(function (theme) {
     };
 });
 
+var theme = (0, _styles.createMuiTheme)({
+    palette: {
+        primary: { main: _colors.green[500] }, // Purple and green play nicely together.
+        secondary: { main: _colors.yellow[500] }, // This is just green.A700 as hex.
+        error: { main: _colors.red[500] }
+    }
+});
+
 function Result() {
     var classes = useStyles();
+
+    var _useState = (0, _react.useState)([]),
+        _useState2 = _slicedToArray(_useState, 2),
+        setUpdate = _useState2[1]; //강제 렌더링
+
 
     var _React$useState = _react2.default.useState('desc'),
         _React$useState2 = _slicedToArray(_React$useState, 2),
@@ -339,12 +388,56 @@ function Result() {
         setOrderBy(property);
     }
 
+    (0, _react.useEffect)(function () {
+        var tmpList = [];
+        rows = [];
+        if (fs.exists('resultfile.json', function (exists) {
+            console.log('file read');
+            if (exists) {
+                tmpList = fs.readFileSync('resultfile.json', 'utf8');
+                tmpList = JSON.parse(tmpList);
+                var _iteratorNormalCompletion2 = true;
+                var _didIteratorError2 = false;
+                var _iteratorError2 = undefined;
+
+                try {
+                    for (var _iterator2 = tmpList[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                        var t = _step2.value;
+
+                        rows.push(createData(t.fileName, t.filePath, t.detectList, t.detectCount, t.formLevel, t.fitness));
+                    }
+                } catch (err) {
+                    _didIteratorError2 = true;
+                    _iteratorError2 = err;
+                } finally {
+                    try {
+                        if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                            _iterator2.return();
+                        }
+                    } finally {
+                        if (_didIteratorError2) {
+                            throw _iteratorError2;
+                        }
+                    }
+                }
+            }
+            setUpdate();
+        })) ;
+    }, []); //렌더링 이후 한번만 수행
+
     function handleSelectAllClick(event) {
-        if (event.target.checked) {
+        if (event.target.checked && selected.length === 0) {
+            var tmp = [];
             var newSelecteds = rows.map(function (n) {
-                return n.FilePath;
+                return n.filePath;
             });
-            setSelected(newSelecteds);
+            var newCounts = rows.map(function (n) {
+                return n.detectCount;
+            });
+            for (var i = 0; i < newSelecteds.length; i++) {
+                if (newCounts[i] !== 0) tmp.push(newSelecteds[i]);
+            }
+            setSelected(tmp);
             return;
         }
         setSelected([]);
@@ -382,13 +475,23 @@ function Result() {
 
     var emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
-    var theme = (0, _styles.createMuiTheme)({
-        palette: {
-            primary: { main: _colors.green[500] }, // Purple and green play nicely together.
-            secondary: { main: _colors.yellow[500] }, // This is just green.A700 as hex.
-            error: { main: _colors.red[500] }
-        }
-    });
+    var iconDisplay = function iconDisplay(input) {
+        if (input === '정상') return _react2.default.createElement(
+            _styles.MuiThemeProvider,
+            { theme: theme },
+            _react2.default.createElement(_FiberManualRecord2.default, { color: 'primary' })
+        );else if (input === '경고') return _react2.default.createElement(
+            _styles.MuiThemeProvider,
+            { theme: theme },
+            _react2.default.createElement(_Error2.default, {
+                color: 'secondary' })
+        );else if (input === '위험') return _react2.default.createElement(
+            _styles.MuiThemeProvider,
+            { theme: theme },
+            _react2.default.createElement(_Warning2.default, { color: 'error' })
+        );
+        return _react2.default.createElement(_FiberManualRecord2.default, { color: 'disabled' });
+    };
 
     return _react2.default.createElement(
         'div',
@@ -396,7 +499,7 @@ function Result() {
         _react2.default.createElement(
             _Paper2.default,
             { className: classes.paper },
-            _react2.default.createElement(EnhancedTableToolbar, { numSelected: selected.length }),
+            _react2.default.createElement(EnhancedTableToolbar, { numSelected: selected.length, selected: selected }),
             _react2.default.createElement(
                 'div',
                 { className: classes.tableWrapper },
@@ -449,7 +552,7 @@ function Result() {
                                     _react2.default.createElement(
                                         _Typography2.default,
                                         { noWrap: true },
-                                        row.FileName
+                                        row.fileName
                                     )
                                 ),
                                 _react2.default.createElement(
@@ -457,13 +560,15 @@ function Result() {
                                     { align: 'right' },
                                     _react2.default.createElement(
                                         _Typography2.default,
-                                        { className: classes.filepath, noWrap: true },
+                                        { className: classes.filepath,
+                                            noWrap: true },
                                         row.filePath
                                     )
                                 ),
                                 _react2.default.createElement(
                                     _TableCell2.default,
-                                    { className: classes.detectlist, wrap: 'nowrap', align: 'right' },
+                                    { className: classes.detectlist, wrap: 'nowrap',
+                                        align: 'right' },
                                     row.detectList
                                 ),
                                 _react2.default.createElement(
@@ -479,15 +584,7 @@ function Result() {
                                 _react2.default.createElement(
                                     _TableCell2.default,
                                     { align: 'right' },
-                                    _react2.default.createElement(
-                                        _styles2.ThemeProvider,
-                                        { theme: theme },
-                                        function () {
-                                            var tmp = void 0;
-                                            if (row.fitness === '정상') tmp = _react2.default.createElement(_FiberManualRecord2.default, { color: 'primary' });else if (row.fitness === '경고') tmp = _react2.default.createElement(_Error2.default, { color: 'secondary' });else if (row.fitness === '위험') tmp = _react2.default.createElement(_Warning2.default, { color: 'error' });
-                                            return tmp;
-                                        }
-                                    )
+                                    iconDisplay(row.fitness)
                                 )
                             );
                         }),
@@ -500,7 +597,7 @@ function Result() {
                 )
             ),
             _react2.default.createElement(_TablePagination2.default, {
-                rowsPerPageOptions: [5, 10, 25],
+                rowsPerPageOptions: [5],
                 component: 'div',
                 count: rows.length,
                 rowsPerPage: rowsPerPage,

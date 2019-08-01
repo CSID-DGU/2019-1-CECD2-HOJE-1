@@ -4,7 +4,9 @@ const PATH = require('path');
 import React, {useState, useEffect, useReducer} from 'react';
 //import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import {makeStyles} from '@material-ui/core/styles';
+import clsx from 'clsx';
+import { withStyles, makeStyles, createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
+import { red, yellow, green, blue } from '@material-ui/core/colors';
 import Grid from '@material-ui/core/Grid';
 import Fab from '@material-ui/core/Fab';
 import TextField from '@material-ui/core/TextField';
@@ -21,12 +23,18 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Typography from '@material-ui/core/Typography';
 import DropdownTreeSelect from "react-dropdown-tree-select";
 import delay from 'delay';
-import CLASSIFICATION from '../../main/FrameTest/imageClassifications';
+import hashExec from '../../main/FrameTest/hashExec';
 import makeDictionary from "../../main/FrameTest/makeDictionary";
 import Tree from './Tree';
+import TableCell from '@material-ui/core/TableCell';
+import { AutoSizer, Column, Table } from 'react-virtualized';
+import Tooltip from '@material-ui/core/Tooltip';
+import NormalIcon from '@material-ui/icons/FiberManualRecord'
+import WarningIcon from '@material-ui/icons/Error';
+import DangerIcon from '@material-ui/icons/Warning';
 
 const notifier = require('node-notifier'); //notification 을 사용하기 위한 모듈
-const {regRead,regReset,TessNreg} = require('../../main/FrameTest/reg/regTojson');
+const {regRead, regReset, TessNreg} = require('../../main/FrameTest/regTojson');
 const useStyles = makeStyles(theme => ({
     root: {
         flexGrow: 1,
@@ -74,13 +82,15 @@ setting_data.searchSetting.map(element => {
     }
 });
 
-let resultList = []; //결과를 저장하는 리스트
 let isPlaying = false; //실행 버튼 클릭 여부
 let isStop = true; //일시 정지 버튼 클릭 여부
 let isDoing = false; //반복문이 동작하는지 여부
 let isDone = false; //검색 중지
+let check = true; //통신 여부
 let de = delay(250000); //일시 중지
+let rows = [];
 
+//ToDo 부분 렌더링 (SearchHeader, SearchCenter)
 export default function Search() {
     const classes = useStyles();
     const [value, setValue] = React.useState(0);
@@ -109,6 +119,25 @@ export default function Search() {
         //newChecked.sort();
         setChecked(newChecked);
     };
+    const imageClassification = async (result1, hash, depart, ppath, name) => {
+        let xhr = new XMLHttpRequest(); //서버 통신
+        xhr.open('GET', `http://192.168.40.206:8080/classification?dhashValue=${hash}&depart=${depart}`);
+        let data = null;
+        let tmp = await makeDictionary(data, name, ppath, result1);
+        console.log('name : ' , name , ' hash : ' , hash , ' filePath : ' , ppath);
+        xhr.onload = async function () {
+            data = xhr.responseText;
+            let tmp = await makeDictionary(data, name, ppath, result1); //검사 결과를 딕션너리 형태로
+            setPath(ppath); //탐색 경로 추가
+            addRow(tmp);
+        };
+        xhr.timeout = 3000; //시간 2~3초
+        xhr.ontimeout = function () {
+            console.log('connection failed');
+            check = false;
+        };
+        xhr.send();
+    };
     //핵심 모듈(Tesseract OCR 추출 및 정규식 검출, 문서 분류)
     const Exec = async function (startPath, extension) {
         let files = fs.readdirSync(startPath, {withFileTypes: true}); //해당 디렉토리에 파일 탐색
@@ -117,46 +146,32 @@ export default function Search() {
                 await de; //딜레이가 종료 될때까지 반복문 await
                 de = delay(250000);
             }
-            if(isDone)
+            if (isDone)
                 break;
             if (tmp.isDirectory()) { //디렉토리 경우
-                Exec(PATH.join(startPath, tmp.name), extension); //디렉토리 안의 파일을 탐색(재귀적으로 호출)
+                await Exec(PATH.join(startPath, tmp.name), extension); //디렉토리 안의 파일을 탐색(재귀적으로 호출)
             } else { //파일 경우
                 let ppath = PATH.join(startPath, tmp.name);
-                let data = null;
-                setPath(ppath);
-                let lowerCase = ppath.toLowerCase();
-                console.log(ppath);
-                if (lowerCase.match(extension[0]) || lowerCase.match(extension[1]) || lowerCase.match(extension[2])) { //확장자가 jpg,png,tif 일 경우
+                //setPath(ppath);
+                let extname = PATH.extname(ppath);
+                //console.log('extname : ' , extname);
+                if (extname.match(extension[0]) || extname.match(extension[1]) || extname.match(extension[2])) { //확장자가 jpg,png,tif 일 경우
                     let result1, result2;
                     result1 = TessNreg(ppath); //Tesseract OCR 및 정규식 표현
-                    result2 = CLASSIFICATION(ppath,"HR"); //문서 분류
-                    //result2 = null; //서버와 통신을 안할 때의 test용
+                    result2 = hashExec(ppath); //문서 분류
                     //결과값을 프로미스 형태로 받기 때문에 프로미스가 완전히 완료 될 때 까지 await
-                    await Promise.all([result1, result2]).then(async resolve => {
-                        data = await makeDictionary(resolve[1], tmp.name,ppath, resolve[0]); //검사 결과를 딕션너리 형태로
-                        setPath(ppath); //탐색 경로 추가
-                        //console.log(resolve[0], ' ' , resolve[1]);
-                        resultList.push(data); //검사 결과를 리스트에 추가
+                    await Promise.all([result1, result2]).then(resolve => { //ToDO 한개씩 보여줄것인지
+                        imageClassification(resolve[0], resolve[1], "HR", ppath, tmp.name); //서버 통신을 통해서 얻은 결과물
                     });
-                    if(data.CLASSIFICATION === null)
-                        break;
+                    console.log(check);
+                    if(!check) {
+                       break; //서버와 연결이 끊어짐
+                    }
                 }
             }
-            await delay(1000); //사용자에게 가시적으로 보여주기 위한 딜레이
+            await delay(3); //사용자에게 가시적으로 보여주기 위한 딜레이
         }
-
         return 0; //재귀 호출이기 때문에 리턴
-    };
-    ////// 경로 출력
-    const assignObjectPaths = (obj, stack) => {
-        Object.keys(obj).forEach(k => {
-            const node = obj[k];
-            if (typeof node === "object") {
-                node.path = stack ? `${stack}.${k}` : k;
-                assignObjectPaths(node, node.path);
-            }
-        });
     };
     // 기본 경로( Windows 기준 )
     const [path_data, setPathData] = React.useState({
@@ -169,11 +184,10 @@ export default function Search() {
         },
     });
     // Forced ReRendering
-    const [,updateState] = React.useState();
+    const [, updateState] = React.useState();
     const forceUpdate = React.useCallback(() => updateState({}), []);
     React.useEffect(() => {
-        if(ReRender !== 0)
-        {
+        if (ReRender !== 0) {
             var tmp = ReRender;
             tmp = tmp - 1;
             forceUpdate();
@@ -182,14 +196,13 @@ export default function Search() {
     })
     const onToggle = (currentNode) => {
         let tmp_path_data = path_data;
-        if(currentNode.isOpen){
+        if (currentNode.isOpen) {
             //console.log(currentNode);
-            fs.readdir(currentNode.path, function(error, dir){
+            fs.readdir(currentNode.path, function (error, dir) {
                 dir.map(value => {
-                    if(value.match('\\.') === null){
+                    if (value.match('\\.') === null) {
                         const path = currentNode.path + '/' + value;
-                        if(tmp_path_data[currentNode.path].children.indexOf(path) === -1)
-                        {
+                        if (tmp_path_data[currentNode.path].children.indexOf(path) === -1) {
                             //console.log(path);
                             tmp_path_data[currentNode.path].children.push(path);
                             tmp_path_data[path] = {
@@ -207,9 +220,8 @@ export default function Search() {
         }
         setReRender(3);
     };
-
     // 체크 목록 넣기
-    const onChecked  = (value) => {
+    const onChecked = (value) => {
         const currentIndex = selectedFile.indexOf(value.path);
         const newSelectFile = [...selectedFile];
 
@@ -220,27 +232,183 @@ export default function Search() {
         }
         setSelectedFile(newSelectFile);
     };
-
+    //리셋
     const reset = () => {
         setValue(0);
         setPuase(0);
-        for (var member in path_data)
-        {
-            if(member === 'C:/') path_data[member].children = [];
+        check = true;
+        isDone = true;
+        regReset();
+        for (var member in path_data) {
+            if (member === 'C:/') path_data[member].children = [];
             else delete path_data[member];
         }
-    }
-    const showList = (data) => { //리스트에 있는 값 출력
-        return data.map(element => {
-            return (
-                <div>
-                   FileName : {element.fileName} | Classification : {element.classification} | DetectList : {element.detectList} | DetectCount : {element.detectCount} | FormLevel : {element.formLevel}
-                </div>
-            )
-        })
     };
-    // 초기 셋팅
-    assignObjectPaths(path_data);
+    // 검색 결과 추가
+    const addRow = (list) => { //배열에 있는 위치 방식
+        rows.push(createData(rows.length,list.fileName, list.classification, list.detectList, list.detectCount, list.formLevel));
+       // forceUpdate();
+    };
+    const styles = theme => ({
+        flexContainer: {
+            display: 'flex',
+            alignItems: 'center',
+            boxSizing: 'border-box',
+        },
+        tableRow: {
+            cursor: 'pointer',
+        },
+        tableRowHover: {
+            '&:hover': {
+                backgroundColor: theme.palette.grey[200],
+            },
+        },
+        tableCell: {
+            flex: 1,
+        },
+        noClick: {
+            cursor: 'initial',
+        },
+    });
+    const theme = createMuiTheme({
+        palette: {
+            primary: { main: green[500] },
+            secondary: { main: yellow[500] },
+            error: { main: red[500] },
+            default: { main: blue[500] },
+        },
+    });
+    const iconDisplay = (input) => {
+        if(input === '정상')
+            return (
+                <MuiThemeProvider theme={theme}>
+                    <Tooltip title="정상" placement="top"><NormalIcon color='primary' /></Tooltip>
+                </MuiThemeProvider>)
+        else if(input === '경고') return (
+            <MuiThemeProvider theme={theme}>
+                <Tooltip title="경고" placement="top"><WarningIcon color='secondary'/></Tooltip>
+            </MuiThemeProvider>)
+        else if(input === '위험') return (
+            <MuiThemeProvider theme={theme}>
+                <Tooltip title="위험" placement="top"><DangerIcon color='error'/></Tooltip>
+            </MuiThemeProvider>)
+        return <Tooltip title="미등록" placement="top"><NormalIcon color='disabled' /></Tooltip>
+    }
+    const cellDisplay = (input) => {
+        let tmp = [];
+        for(var i = 0; i < input.length; i++)
+        {
+            tmp.push(input[i]);
+            if(i < input.length-1) tmp.push('/');
+        }
+        return tmp;
+    }
+
+    class MuiVirtualizedTable extends React.PureComponent {
+        constructor(props){
+            super(props);
+            this.getRowClassName = this.getRowClassName.bind(this);
+            this.cellRenderer = this.cellRenderer.bind(this);
+            this.headerRenderer = this.headerRenderer.bind(this);
+        }
+        getRowClassName({ index }){
+            const { classes, onRowClick } = this.props;
+
+            return clsx(classes.tableRow, classes.flexContainer, {
+                [classes.tableRowHover]: index !== -1 && onRowClick != null,
+            });
+        };
+        cellRenderer({ cellData, columnIndex }){
+            const { columns, classes, rowHeight, onRowClick } = this.props;
+            return (
+                <TableCell
+                    component="div"
+                    className={clsx(classes.tableCell, classes.flexContainer, {
+                        [classes.noClick]: onRowClick == null,
+                    })}
+                    variant="body"
+                    style={{ height: rowHeight }}
+                    align={(columnIndex != null && columns[columnIndex].numeric) || false ? 'right' : 'left'}
+                >
+                    {columnIndex === 2 ? cellDisplay(cellData) : (columnIndex === 4 ? iconDisplay(cellData) : cellData)}
+                </TableCell>
+            );
+        };
+        headerRenderer({ label, columnIndex }){
+            const { headerHeight, columns, classes } = this.props;
+            return (
+                <TableCell
+                    component="div"
+                    className={clsx(classes.tableCell, classes.flexContainer, classes.noClick)}
+                    variant="head"
+                    style={{ height: headerHeight }}
+                    align={columns[columnIndex].numeric || false ? 'right' : 'left'}
+                >
+                    <span>{label}</span>
+                </TableCell>
+            );
+        };
+        render() {
+            const { classes, columns, rowHeight, headerHeight, rowCount, rowGetter } = this.props;
+            return (
+                <AutoSizer>
+                    {({ height, width }) => (
+                        <Table
+                            height={height}
+                            width={width}
+                            rowHeight={rowHeight}
+                            headerHeight={headerHeight}
+                            rowCount={rowCount}
+                            rowGetter={rowGetter}
+                            rowClassName={this.getRowClassName}
+                        >
+                            {columns.map(({ dataKey, width, label, numeric }, index) => {
+                                return (
+                                    <Column
+                                        key={dataKey}
+                                        headerRenderer={() =>
+                                            this.headerRenderer({
+                                                label: label,
+                                                columnIndex: index,
+                                            })
+                                        }
+                                        className={classes.flexContainer}
+                                        cellRenderer={this.cellRenderer}
+                                        dataKey={dataKey}
+                                        width={width}
+                                        label={label}
+                                        numeric={numeric}
+                                    />
+                                );
+                            })}
+                        </Table>
+                    )}
+                </AutoSizer>
+            );
+        }
+    }
+    MuiVirtualizedTable.defaultProps = {
+        headerHeight: 48,
+        rowHeight: 40,
+    };
+    MuiVirtualizedTable.propTypes = {
+        classes: PropTypes.object.isRequired,
+        columns: PropTypes.arrayOf(
+            PropTypes.shape({
+                dataKey: PropTypes.string.isRequired,
+                label: PropTypes.string.isRequired,
+                numeric: PropTypes.bool,
+                width: PropTypes.number.isRequired,
+            }),
+        ).isRequired,
+        headerHeight: PropTypes.number,
+        onRowClick: PropTypes.func,
+        rowHeight: PropTypes.number,
+    };
+    const VirtualizedTable = withStyles(styles)(MuiVirtualizedTable);
+    function createData(id, fileName, classification, detectList, detectCount, formLevel) {
+        return {id, fileName, classification, detectList, detectCount, formLevel };
+    }
     return (
         <div className={classes.root}>
             <TabPanel value={value} index={0}>{/* 검색 시작 화면 */}
@@ -264,7 +432,7 @@ export default function Search() {
                             aria-label="Add"
                             className={classes.margin}
                             onClick={async () => { //시작 버튼
-                                if(open === true) {
+                                if (open === true) {
                                     setOpen(false);
                                 }
                                 setValue(1);
@@ -274,10 +442,23 @@ export default function Search() {
                                 isStop = false;
                                 isDone = false;
                                 setPath('');
-                                resultList = [];
-                                await regRead(checked);
+                                rows = [];
+                                await regRead(checked); //정규 표현식 파일 읽음
                                 //ToDo 해당 경로가 절대 경로, 차후에 상대경로로
-                                Exec(`C:\\Users\\FASOO_499\\Desktop\\FrameTest`, ['.jpg','.png','.tif']);
+                                let tmp = await Exec(`C:\\Users\\FASOO_499\\Desktop\\FrameTest`, ['.jpg', '.png', '.tif']);
+                                console.log(tmp);
+                                if(!check){
+                                    notifier.notify({
+                                        title : "Connection failed",
+                                        message : "서버와 연결이 끊어졌습니다."
+                                    });
+                                }else{
+                                    notifier.notify({
+                                        title : "Search Completed",
+                                        message : "검사 완료!"
+                                    })
+                                }
+
                             }}
                         >
                             검사 시작
@@ -388,27 +569,57 @@ export default function Search() {
                             onClick={() => {
                                 setValue(0);
                                 console.log('done');
-                                if(isStop && isPlaying){
+                                if (isStop && isPlaying) {
                                     de.clear(); //일시정지 일 경우
                                 }
-                                isDone = true;
-                                regReset();
-                                reset(); //경로, 검색해야되는 부분 리셋
-                                console.log(resultList);
-                                if(resultList.length > 0){ //배열에 값이 들어 갔을 경우
-                                    let json = JSON.stringify(resultList);
-                                    fs.writeFileSync('resultfile.json',json,'utf8');
+                                console.log('rows : ' ,rows);
+                                if (rows.length > 0  && check === true) { //배열에 값이 들어 갔을 경우 && 완전히 통신이 완료 됐을 경우
+                                    let json = JSON.stringify(rows);
+                                    fs.writeFileSync('resultfile.json', json, 'utf8');
                                     console.log('file created');
                                 }
+                                reset(); //경로, 검색해야되는 부분 리셋
                             }}
                         >
                             검사 중지
                         </Fab>
                     </Grid>
                 </Grid>
-                <Grid container justify="center" alignItems="center" spacing={5}>
-                    <h3>{showList(resultList)}</h3>
-                </Grid>
+                <Paper style={{ height: 400, width: '100%' }}>
+                    <VirtualizedTable
+                        rowCount={rows.length}
+                        rowGetter={({ index }) => rows[index]}
+                        columns={[
+                            {
+                                width: 200,
+                                label: '파일명',
+                                dataKey: 'fileName',
+                            },
+                            {
+                                width: 120,
+                                label: '분류',
+                                dataKey: 'classification',
+                            },
+                            {
+                                width: 120,
+                                label: '검출 내역',
+                                dataKey: 'detectList',
+                            },
+                            {
+                                width: 120,
+                                label: '검출 개수',
+                                dataKey: 'detectCount',
+                                numeric: true,
+                            },
+                            {
+                                width: 120,
+                                label: '문서등급',
+                                dataKey: 'formLevel',
+                                numeric: true,
+                            },
+                        ]}
+                    />
+                </Paper>
             </TabPanel>
         </div>
     );
