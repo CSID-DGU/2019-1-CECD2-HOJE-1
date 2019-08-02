@@ -27,7 +27,7 @@ exports.default = function (classResult, fileName, filePath, result) {
             case 'fitness':
                 classification.fitness = classResultObj[key];
                 break;
-            default:
+            case 'formLevel':
                 classification.formLevel = classResultObj[key];
                 break;
         }

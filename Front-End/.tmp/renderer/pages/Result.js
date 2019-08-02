@@ -256,7 +256,7 @@ var EnhancedTableToolbar = function EnhancedTableToolbar(props) {
         _react2.default.createElement(
             'div',
             null,
-            numSelected > 0 ? _react2.default.createElement(
+            numSelected > 0 ? numSelected === 1 ? _react2.default.createElement(
                 'div',
                 null,
                 _react2.default.createElement(
@@ -306,6 +306,49 @@ var EnhancedTableToolbar = function EnhancedTableToolbar(props) {
                         _Fab2.default,
                         { className: classes.actions, variant: 'extended', label: '\uBB38\uC758' },
                         '\uBB38\uC758'
+                    )
+                )
+            ) : _react2.default.createElement(
+                'div',
+                null,
+                _react2.default.createElement(
+                    _Tooltip2.default,
+                    { title: '\uBE44\uC2DD\uBCC4\uD654' },
+                    _react2.default.createElement(
+                        _Fab2.default,
+                        { className: classes.actions, variant: 'extended', label: '\uBE44\uC2DD\uBCC4\uD654', onClick: async function onClick() {
+                                var _iteratorNormalCompletion2 = true;
+                                var _didIteratorError2 = false;
+                                var _iteratorError2 = undefined;
+
+                                try {
+                                    for (var _iterator2 = selected[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                                        var path = _step2.value;
+
+                                        console.log(path);
+                                        await (0, _masking2.default)(path); //마스킹
+                                    }
+                                } catch (err) {
+                                    _didIteratorError2 = true;
+                                    _iteratorError2 = err;
+                                } finally {
+                                    try {
+                                        if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                                            _iterator2.return();
+                                        }
+                                    } finally {
+                                        if (_didIteratorError2) {
+                                            throw _iteratorError2;
+                                        }
+                                    }
+                                }
+
+                                notifier.notify({ //수행이 다 된 후 알람
+                                    title: '마스킹 성공!',
+                                    message: selected.length + '개의 파일이 마스킹 됐습니다.'
+                                });
+                            } },
+                        '\uBE44\uC2DD\uBCC4\uD654'
                     )
                 )
             ) : _react2.default.createElement('div', null)
@@ -396,27 +439,27 @@ function Result() {
             if (exists) {
                 tmpList = fs.readFileSync('resultfile.json', 'utf8');
                 tmpList = JSON.parse(tmpList);
-                var _iteratorNormalCompletion2 = true;
-                var _didIteratorError2 = false;
-                var _iteratorError2 = undefined;
+                var _iteratorNormalCompletion3 = true;
+                var _didIteratorError3 = false;
+                var _iteratorError3 = undefined;
 
                 try {
-                    for (var _iterator2 = tmpList[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                        var t = _step2.value;
+                    for (var _iterator3 = tmpList[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                        var t = _step3.value;
 
                         rows.push(createData(t.fileName, t.filePath, t.detectList, t.detectCount, t.formLevel, t.fitness));
                     }
                 } catch (err) {
-                    _didIteratorError2 = true;
-                    _iteratorError2 = err;
+                    _didIteratorError3 = true;
+                    _iteratorError3 = err;
                 } finally {
                     try {
-                        if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                            _iterator2.return();
+                        if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                            _iterator3.return();
                         }
                     } finally {
-                        if (_didIteratorError2) {
-                            throw _iteratorError2;
+                        if (_didIteratorError3) {
+                            throw _iteratorError3;
                         }
                     }
                 }
@@ -476,21 +519,36 @@ function Result() {
     var emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
     var iconDisplay = function iconDisplay(input) {
-        if (input === '정상') return _react2.default.createElement(
+        if (input === 'GREEN') return _react2.default.createElement(
             _styles.MuiThemeProvider,
             { theme: theme },
-            _react2.default.createElement(_FiberManualRecord2.default, { color: 'primary' })
-        );else if (input === '경고') return _react2.default.createElement(
+            _react2.default.createElement(
+                _Tooltip2.default,
+                { title: '\uC815\uC0C1', placement: 'top' },
+                _react2.default.createElement(_FiberManualRecord2.default, { color: 'primary' })
+            )
+        );else if (input === 'YELLOW') return _react2.default.createElement(
             _styles.MuiThemeProvider,
             { theme: theme },
-            _react2.default.createElement(_Error2.default, {
-                color: 'secondary' })
-        );else if (input === '위험') return _react2.default.createElement(
+            _react2.default.createElement(
+                _Tooltip2.default,
+                { title: '\uACBD\uACE0', placement: 'top' },
+                _react2.default.createElement(_Error2.default, { color: 'secondary' })
+            )
+        );else if (input === 'RED') return _react2.default.createElement(
             _styles.MuiThemeProvider,
             { theme: theme },
-            _react2.default.createElement(_Warning2.default, { color: 'error' })
+            _react2.default.createElement(
+                _Tooltip2.default,
+                { title: '\uC704\uD5D8', placement: 'top' },
+                _react2.default.createElement(_Warning2.default, { color: 'error' })
+            )
         );
-        return _react2.default.createElement(_FiberManualRecord2.default, { color: 'disabled' });
+        return _react2.default.createElement(
+            _Tooltip2.default,
+            { title: '\uBBF8\uB4F1\uB85D', placement: 'top' },
+            _react2.default.createElement(_FiberManualRecord2.default, { color: 'disabled' })
+        );
     };
 
     return _react2.default.createElement(

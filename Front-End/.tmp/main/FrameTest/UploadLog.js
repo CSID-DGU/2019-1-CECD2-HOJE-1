@@ -1,18 +1,21 @@
 'use strict';
 
-var fs = require('fs');
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = UploadLog;
 var os = require('os');
 var moment = require('moment'); //날짜를 사용하기 위한 모듈
+var request = require('request');
+
 //ToDo 경로 바꿔야됨
-var data = fs.readFileSync('resultfile.json', 'utf8'); //최근 json 파일
-function makeJSonFile(data) {
+function UploadLog(data) {
     var date = moment().format('YYYY-MM-DD HH:mm:ss');
     var ip = detectIpAddress(); //ip 주소
     var jsonArray = new Array();
     var json1 = {};
     var json = {};
-
-    data = JSON.parse(data);
+    console.log(data);
     var _iteratorNormalCompletion = true;
     var _didIteratorError = false;
     var _iteratorError = undefined;
@@ -22,13 +25,13 @@ function makeJSonFile(data) {
             var t = _step.value;
 
             var tmp = {
-                Classfication: t.ClASSIFICATION,
-                Fitness: t.FITNESS,
-                FileName: t.FileName,
-                FilePath: t.FILEPATH,
-                DetectCount: t.DETECTCOUNT,
-                Detectlist: t.DETECTLIST,
-                FormLevel: t.formLevel
+                classification: t.classification,
+                fitness: t.fitness,
+                fileName: t.fileName,
+                filePath: t.filePath,
+                detectCount: t.detectCount,
+                detectList: t.detectList,
+                formLevel: t.formLevel
             };
             jsonArray.push(tmp);
         }
@@ -50,11 +53,26 @@ function makeJSonFile(data) {
     json1.date = date;
     json1.list = jsonArray;
     json1.ip = ip;
-    json1.depart = "HR"; //임시 경로
+    json1.depart = "HR"; //Todo 부서 동적으로 변경 필요
     json = json1;
     json = JSON.stringify(json);
     //fs.writeFileSync('test.json',json,'utf8'); //테스트 용
-    console.log(json);
+
+    var options = {
+        method: "POST",
+        url: "http://192.168.40.206:8080/logResultUpload",
+        json: true,
+        headers: {
+            "Authorization": "test",
+            "Content-Type": "application/json"
+        },
+        body: json
+    };
+    console.log('json : ', json);
+    request(options, function (err, body) {
+        if (err) console.log('error : ', err);
+        console.log('body ', body);
+    });
 }
 
 function detectIpAddress() {
@@ -71,4 +89,3 @@ function detectIpAddress() {
 function parseKey(address, key) {
     return address[key][1].address;
 }
-makeJSonFile(data);

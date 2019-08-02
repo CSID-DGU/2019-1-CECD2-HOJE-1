@@ -158,8 +158,25 @@ const EnhancedTableToolbar = props => {
             </div>
             <div className={classes.spacer}/>
             <div>
-                {numSelected > 0 ? (
-                    <div>
+                {numSelected > 0 ? (numSelected===1?(
+                        <div>
+                            <Tooltip title="비식별화">
+                                <Fab className={classes.actions} variant="extended" label='비식별화' onClick={async ()=>{
+                                    for(const path of selected){
+                                        console.log(path);
+                                        await masking(path); //마스킹
+                                    }
+                                    notifier.notify({ //수행이 다 된 후 알람
+                                        title : '마스킹 성공!',
+                                        message : selected.length + '개의 파일이 마스킹 됐습니다.',
+                                    })
+                                }}>비식별화</Fab>
+                            </Tooltip>
+                            <Tooltip title="문의">
+                                <Fab className={classes.actions} variant="extended" label='문의'>문의</Fab>
+                            </Tooltip>
+                        </div>
+                    ):(<div>
                         <Tooltip title="비식별화">
                             <Fab className={classes.actions} variant="extended" label='비식별화' onClick={async ()=>{
                                 for(const path of selected){
@@ -172,10 +189,7 @@ const EnhancedTableToolbar = props => {
                                 })
                             }}>비식별화</Fab>
                         </Tooltip>
-                        <Tooltip title="문의">
-                            <Fab className={classes.actions} variant="extended" label='문의'>문의</Fab>
-                        </Tooltip>
-                    </div>
+                    </div>)
                 ) : (<div></div>
                 )}
             </div>
@@ -296,14 +310,22 @@ export default function Result() {
 
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
-
     const iconDisplay = (input) => {
-        if (input === '정상') return <MuiThemeProvider theme={theme}><NormalIcon color='primary'/></MuiThemeProvider>
-        else if (input === '경고') return <MuiThemeProvider theme={theme}><WarningIcon
-            color='secondary'/></MuiThemeProvider>
-        else if (input === '위험') return <MuiThemeProvider theme={theme}><DangerIcon color='error'/></MuiThemeProvider>
-        return <NormalIcon color='disabled'/>
-    };
+        if(input === 'GREEN')
+            return (
+                <MuiThemeProvider theme={theme}>
+                    <Tooltip title="정상" placement="top"><NormalIcon color='primary' /></Tooltip>
+                </MuiThemeProvider>)
+        else if(input === 'YELLOW') return (
+            <MuiThemeProvider theme={theme}>
+                <Tooltip title="경고" placement="top"><WarningIcon color='secondary'/></Tooltip>
+            </MuiThemeProvider>)
+        else if(input === 'RED') return (
+            <MuiThemeProvider theme={theme}>
+                <Tooltip title='위험' placement="top"><DangerIcon color='error'/></Tooltip>
+            </MuiThemeProvider>)
+        return <Tooltip title="미등록" placement="top"><NormalIcon color='disabled' /></Tooltip>
+    }
 
     return (
         <div className={classes.root}>

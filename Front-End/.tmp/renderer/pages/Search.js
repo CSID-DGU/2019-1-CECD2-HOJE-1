@@ -126,6 +126,10 @@ var _Warning = require('@material-ui/icons/Warning');
 
 var _Warning2 = _interopRequireDefault(_Warning);
 
+var _UploadLog = require('../../main/FrameTest/UploadLog');
+
+var _UploadLog2 = _interopRequireDefault(_UploadLog);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -141,7 +145,6 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 var fs = require('fs');
 var PATH = require('path');
 //import { Link } from 'react-router-dom';
-
 
 var notifier = require('node-notifier'); //notification 을 사용하기 위한 모듈
 
@@ -185,7 +188,6 @@ function TabPanel(props) {
         children
     );
 }
-
 TabPanel.propTypes = {
     children: _propTypes2.default.node,
     index: _propTypes2.default.any.isRequired,
@@ -213,41 +215,50 @@ var rows = [];
 //ToDo 부분 렌더링 (SearchHeader, SearchCenter)
 function Search() {
     var classes = useStyles();
+    // Forced ReRendering
 
-    var _React$useState = _react2.default.useState(0),
+    var _React$useState = _react2.default.useState(),
         _React$useState2 = _slicedToArray(_React$useState, 2),
-        value = _React$useState2[0],
-        setValue = _React$useState2[1];
+        setUpdate = _React$useState2[1];
+
+    var update = _react2.default.useCallback(function () {
+        return setUpdate({});
+    }, []);
 
     var _React$useState3 = _react2.default.useState(0),
         _React$useState4 = _slicedToArray(_React$useState3, 2),
-        puase = _React$useState4[0],
-        setPuase = _React$useState4[1];
+        value = _React$useState4[0],
+        setValue = _React$useState4[1];
 
-    var _React$useState5 = _react2.default.useState(null),
+    var _React$useState5 = _react2.default.useState(0),
         _React$useState6 = _slicedToArray(_React$useState5, 2),
-        anchorEl = _React$useState6[0],
-        setAnchorEl = _React$useState6[1];
+        puase = _React$useState6[0],
+        setPuase = _React$useState6[1];
 
-    var _React$useState7 = _react2.default.useState(false),
+    var _React$useState7 = _react2.default.useState(null),
         _React$useState8 = _slicedToArray(_React$useState7, 2),
-        open = _React$useState8[0],
-        setOpen = _React$useState8[1];
+        anchorEl = _React$useState8[0],
+        setAnchorEl = _React$useState8[1];
 
-    var _React$useState9 = _react2.default.useState(),
+    var _React$useState9 = _react2.default.useState(false),
         _React$useState10 = _slicedToArray(_React$useState9, 2),
-        placement = _React$useState10[0],
-        setPlacement = _React$useState10[1];
+        open = _React$useState10[0],
+        setOpen = _React$useState10[1];
 
-    var _React$useState11 = _react2.default.useState([]),
+    var _React$useState11 = _react2.default.useState(),
         _React$useState12 = _slicedToArray(_React$useState11, 2),
-        selectedFile = _React$useState12[0],
-        setSelectedFile = _React$useState12[1];
+        placement = _React$useState12[0],
+        setPlacement = _React$useState12[1];
 
-    var _React$useState13 = _react2.default.useState(0),
+    var _React$useState13 = _react2.default.useState([]),
         _React$useState14 = _slicedToArray(_React$useState13, 2),
-        ReRender = _React$useState14[0],
-        setReRender = _React$useState14[1];
+        selectedFile = _React$useState14[0],
+        setSelectedFile = _React$useState14[1];
+
+    var _React$useState15 = _react2.default.useState(0),
+        _React$useState16 = _slicedToArray(_React$useState15, 2),
+        ReRender = _React$useState16[0],
+        setReRender = _React$useState16[1];
 
     var _useState = (0, _react.useState)(''),
         _useState2 = _slicedToArray(_useState, 2),
@@ -264,10 +275,10 @@ function Search() {
         };
     };
 
-    var _React$useState15 = _react2.default.useState(test),
-        _React$useState16 = _slicedToArray(_React$useState15, 2),
-        checked = _React$useState16[0],
-        setChecked = _React$useState16[1];
+    var _React$useState17 = _react2.default.useState(test),
+        _React$useState18 = _slicedToArray(_React$useState17, 2),
+        checked = _React$useState18[0],
+        setChecked = _React$useState18[1];
 
     var handleToggle = function handleToggle(value) {
         return function () {
@@ -283,15 +294,17 @@ function Search() {
             setChecked(newChecked);
         };
     };
+
     var imageClassification = async function imageClassification(result1, hash, depart, ppath, name) {
         var xhr = new XMLHttpRequest(); //서버 통신
         xhr.open('GET', 'http://192.168.40.206:8080/classification?dhashValue=' + hash + '&depart=' + depart);
         var data = null;
-        var tmp = await (0, _makeDictionary2.default)(data, name, ppath, result1);
-        console.log('name : ', name, ' hash : ', hash, ' filePath : ', ppath);
+        //let tmp = null; //await makeDictionary(data, name, ppath, result1);
+        //console.log('name : ' , name , ' hash : ' , hash , ' filePath : ' , ppath , ' formlevel : ', tmp.formLevel);
         xhr.onload = async function () {
             data = xhr.responseText;
             var tmp = await (0, _makeDictionary2.default)(data, name, ppath, result1); //검사 결과를 딕션너리 형태로
+            console.log('name : ', name, ' hash : ', hash, ' filePath : ', ppath, ' formlevel : ', tmp.formLevel, ' fitness : ', tmp.fitness);
             setPath(ppath); //탐색 경로 추가
             addRow(tmp);
         };
@@ -325,7 +338,7 @@ function Search() {
                 } else {
                     //파일 경우
                     var ppath = PATH.join(startPath, tmp.name);
-                    //setPath(ppath);
+                    setPath(ppath);
                     var extname = PATH.extname(ppath);
                     //console.log('extname : ' , extname);
                     if (extname.match(extension[0]) || extname.match(extension[1]) || extname.match(extension[2])) {
@@ -372,7 +385,7 @@ function Search() {
     };
     // 기본 경로( Windows 기준 )
 
-    var _React$useState17 = _react2.default.useState({
+    var _React$useState19 = _react2.default.useState({
         'C:/': {
             path: 'C:/',
             type: 'folder',
@@ -381,15 +394,15 @@ function Search() {
             children: []
         }
     }),
-        _React$useState18 = _slicedToArray(_React$useState17, 2),
-        path_data = _React$useState18[0],
-        setPathData = _React$useState18[1];
+        _React$useState20 = _slicedToArray(_React$useState19, 2),
+        path_data = _React$useState20[0],
+        setPathData = _React$useState20[1];
     // Forced ReRendering
 
 
-    var _React$useState19 = _react2.default.useState(),
-        _React$useState20 = _slicedToArray(_React$useState19, 2),
-        updateState = _React$useState20[1];
+    var _React$useState21 = _react2.default.useState(),
+        _React$useState22 = _slicedToArray(_React$useState21, 2),
+        updateState = _React$useState22[1];
 
     var forceUpdate = _react2.default.useCallback(function () {
         return updateState({});
@@ -454,7 +467,7 @@ function Search() {
     // 검색 결과 추가
     var addRow = function addRow(list) {
         //배열에 있는 위치 방식
-        rows.push(createData(rows.length, list.fileName, list.classification, list.detectList, list.detectCount, list.formLevel));
+        rows.push(createData(rows.length, list.fileName, list.classification, list.detectList, list.detectCount, list.formLevel, list.filePath, list.fitness));
         // forceUpdate();
     };
     var styles = function styles(theme) {
@@ -489,7 +502,7 @@ function Search() {
         }
     });
     var iconDisplay = function iconDisplay(input) {
-        if (input === '정상') return _react2.default.createElement(
+        if (input === 'GREEN') return _react2.default.createElement(
             _styles.MuiThemeProvider,
             { theme: theme },
             _react2.default.createElement(
@@ -497,27 +510,27 @@ function Search() {
                 { title: '\uC815\uC0C1', placement: 'top' },
                 _react2.default.createElement(_FiberManualRecord2.default, { color: 'primary' })
             )
-        );else if (input === '경고') return _react2.default.createElement(
+        );else if (input === 'YELLOW') return _react2.default.createElement(
             _styles.MuiThemeProvider,
             { theme: theme },
             _react2.default.createElement(
                 _Tooltip2.default,
-                { title: '\uACBD\uACE0', placement: 'top' },
+                { title: 'YELLOW', placement: 'top' },
                 _react2.default.createElement(_Error2.default, { color: 'secondary' })
             )
-        );else if (input === '위험') return _react2.default.createElement(
+        );else if (input === 'RED') return _react2.default.createElement(
             _styles.MuiThemeProvider,
             { theme: theme },
             _react2.default.createElement(
                 _Tooltip2.default,
-                { title: '\uC704\uD5D8', placement: 'top' },
+                { title: 'RED', placement: 'top' },
                 _react2.default.createElement(_Warning2.default, { color: 'error' })
             )
         );
         return _react2.default.createElement(
             _Tooltip2.default,
             { title: '\uBBF8\uB4F1\uB85D', placement: 'top' },
-            _react2.default.createElement(_FiberManualRecord2.default, { color: 'disabled' })
+            _react2.default.createElement(_FiberManualRecord2.default, { color: 'primary' })
         );
     };
     var cellDisplay = function cellDisplay(input) {
@@ -681,8 +694,8 @@ function Search() {
         rowHeight: _propTypes2.default.number
     };
     var VirtualizedTable = (0, _styles.withStyles)(styles)(MuiVirtualizedTable);
-    function createData(id, fileName, classification, detectList, detectCount, formLevel) {
-        return { id: id, fileName: fileName, classification: classification, detectList: detectList, detectCount: detectCount, formLevel: formLevel };
+    function createData(id, fileName, classification, detectList, detectCount, formLevel, filePath, fitness) {
+        return { id: id, fileName: fileName, classification: classification, detectList: detectList, detectCount: detectCount, formLevel: formLevel, filePath: filePath, fitness: fitness };
     }
     return _react2.default.createElement(
         'div',
@@ -734,9 +747,10 @@ function Search() {
                                 isDone = false;
                                 setPath('');
                                 rows = [];
+                                update(); //강제 렌더링
                                 await regRead(checked); //정규 표현식 파일 읽음
                                 //ToDo 해당 경로가 절대 경로, 차후에 상대경로로
-                                var tmp = await Exec('C:\\Users\\FASOO_499\\Desktop\\FrameTest', ['.jpg', '.png', '.tif']);
+                                var tmp = await Exec('C:\\Users\\FASOO_499\\Desktop\\FrameTest\\image', ['.jpg', '.png', '.tif']);
                                 console.log(tmp);
                                 if (!check) {
                                     notifier.notify({
@@ -897,12 +911,13 @@ function Search() {
                                 if (isStop && isPlaying) {
                                     de.clear(); //일시정지 일 경우
                                 }
-                                console.log('rows : ', rows);
+                                //console.log('rows : ' ,rows);
                                 if (rows.length > 0 && check === true) {
                                     //배열에 값이 들어 갔을 경우 && 완전히 통신이 완료 됐을 경우
                                     var json = JSON.stringify(rows);
                                     fs.writeFileSync('resultfile.json', json, 'utf8');
                                     console.log('file created');
+                                    (0, _UploadLog2.default)(rows);
                                 }
                                 reset(); //경로, 검색해야되는 부분 리셋
                             }
@@ -940,7 +955,7 @@ function Search() {
                     }, {
                         width: 120,
                         label: '문서등급',
-                        dataKey: 'formLevel',
+                        dataKey: 'fitness',
                         numeric: true
                     }]
                 })

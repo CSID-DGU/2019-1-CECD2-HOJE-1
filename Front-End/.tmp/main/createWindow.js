@@ -16,7 +16,7 @@ var MainWindow = function MainWindow() {
 
     this.window = new _electron.BrowserWindow({
         width: 1500,
-        height: 600,
+        height: 700,
         show: false,
         webPreferences: {
             nodeIntegration: true

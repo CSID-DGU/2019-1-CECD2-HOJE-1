@@ -1,7 +1,7 @@
 const fs = require('fs');
 const PATH = require('path');
 
-import React, {useState, useEffect, useReducer} from 'react';
+import React, {useState, useEffect, useReducer, useCallback} from 'react';
 //import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
@@ -32,7 +32,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import NormalIcon from '@material-ui/icons/FiberManualRecord'
 import WarningIcon from '@material-ui/icons/Error';
 import DangerIcon from '@material-ui/icons/Warning';
-
+import UploadLog from "../../main/FrameTest/UploadLog";
 const notifier = require('node-notifier'); //notification 을 사용하기 위한 모듈
 const {regRead, regReset, TessNreg} = require('../../main/FrameTest/regTojson');
 const useStyles = makeStyles(theme => ({
@@ -65,7 +65,6 @@ function TabPanel(props) {
         </Typography>
     );
 }
-
 TabPanel.propTypes = {
     children: PropTypes.node,
     index: PropTypes.any.isRequired,
@@ -93,6 +92,9 @@ let rows = [];
 //ToDo 부분 렌더링 (SearchHeader, SearchCenter)
 export default function Search() {
     const classes = useStyles();
+    // Forced ReRendering
+    const [, setUpdate] = React.useState();
+    const update = React.useCallback(() => setUpdate({}), []);
     const [value, setValue] = React.useState(0);
     const [puase, setPuase] = React.useState(0);
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -119,15 +121,18 @@ export default function Search() {
         //newChecked.sort();
         setChecked(newChecked);
     };
+
+
     const imageClassification = async (result1, hash, depart, ppath, name) => {
         let xhr = new XMLHttpRequest(); //서버 통신
         xhr.open('GET', `http://192.168.40.206:8080/classification?dhashValue=${hash}&depart=${depart}`);
         let data = null;
-        let tmp = await makeDictionary(data, name, ppath, result1);
-        console.log('name : ' , name , ' hash : ' , hash , ' filePath : ' , ppath);
+        //let tmp = null; //await makeDictionary(data, name, ppath, result1);
+        //console.log('name : ' , name , ' hash : ' , hash , ' filePath : ' , ppath , ' formlevel : ', tmp.formLevel);
         xhr.onload = async function () {
             data = xhr.responseText;
             let tmp = await makeDictionary(data, name, ppath, result1); //검사 결과를 딕션너리 형태로
+            console.log('name : ' , name , ' hash : ' , hash , ' filePath : ' , ppath , ' formlevel : ', tmp.formLevel, ' fitness : ' , tmp.fitness);
             setPath(ppath); //탐색 경로 추가
             addRow(tmp);
         };
@@ -152,7 +157,7 @@ export default function Search() {
                 await Exec(PATH.join(startPath, tmp.name), extension); //디렉토리 안의 파일을 탐색(재귀적으로 호출)
             } else { //파일 경우
                 let ppath = PATH.join(startPath, tmp.name);
-                //setPath(ppath);
+                setPath(ppath);
                 let extname = PATH.extname(ppath);
                 //console.log('extname : ' , extname);
                 if (extname.match(extension[0]) || extname.match(extension[1]) || extname.match(extension[2])) { //확장자가 jpg,png,tif 일 경우
@@ -246,7 +251,7 @@ export default function Search() {
     };
     // 검색 결과 추가
     const addRow = (list) => { //배열에 있는 위치 방식
-        rows.push(createData(rows.length,list.fileName, list.classification, list.detectList, list.detectCount, list.formLevel));
+        rows.push(createData(rows.length,list.fileName, list.classification, list.detectList, list.detectCount, list.formLevel,list.filePath,list.fitness));
         // forceUpdate();
     };
     const styles = theme => ({
@@ -279,20 +284,20 @@ export default function Search() {
         },
     });
     const iconDisplay = (input) => {
-        if(input === '정상')
+        if(input === 'GREEN')
             return (
                 <MuiThemeProvider theme={theme}>
                     <Tooltip title="정상" placement="top"><NormalIcon color='primary' /></Tooltip>
                 </MuiThemeProvider>)
-        else if(input === '경고') return (
+        else if(input === 'YELLOW') return (
             <MuiThemeProvider theme={theme}>
-                <Tooltip title="경고" placement="top"><WarningIcon color='secondary'/></Tooltip>
+                <Tooltip title="YELLOW" placement="top"><WarningIcon color='secondary'/></Tooltip>
             </MuiThemeProvider>)
-        else if(input === '위험') return (
+        else if(input === 'RED') return (
             <MuiThemeProvider theme={theme}>
-                <Tooltip title="위험" placement="top"><DangerIcon color='error'/></Tooltip>
+                <Tooltip title='RED' placement="top"><DangerIcon color='error'/></Tooltip>
             </MuiThemeProvider>)
-        return <Tooltip title="미등록" placement="top"><NormalIcon color='disabled' /></Tooltip>
+        return <Tooltip title="미등록" placement="top"><NormalIcon color='primary' /></Tooltip>
     }
     const cellDisplay = (input) => {
         let tmp = [];
@@ -406,8 +411,8 @@ export default function Search() {
         rowHeight: PropTypes.number,
     };
     const VirtualizedTable = withStyles(styles)(MuiVirtualizedTable);
-    function createData(id, fileName, classification, detectList, detectCount, formLevel) {
-        return {id, fileName, classification, detectList, detectCount, formLevel };
+    function createData(id, fileName,classification, detectList, detectCount, formLevel, filePath, fitness) {
+        return {id, fileName,classification, detectList, detectCount, formLevel ,filePath,fitness};
     }
     return (
         <div className={classes.root}>
@@ -443,9 +448,10 @@ export default function Search() {
                                 isDone = false;
                                 setPath('');
                                 rows = [];
+                                update(); //강제 렌더링
                                 await regRead(checked); //정규 표현식 파일 읽음
                                 //ToDo 해당 경로가 절대 경로, 차후에 상대경로로
-                                let tmp = await Exec(`C:\\Users\\FASOO_499\\Desktop\\FrameTest`, ['.jpg', '.png', '.tif']);
+                                let tmp = await Exec(`C:\\Users\\FASOO_499\\Desktop\\FrameTest\\image`, ['.jpg', '.png', '.tif']);
                                 console.log(tmp);
                                 if(!check){
                                     notifier.notify({
@@ -572,11 +578,12 @@ export default function Search() {
                                 if (isStop && isPlaying) {
                                     de.clear(); //일시정지 일 경우
                                 }
-                                console.log('rows : ' ,rows);
+                                //console.log('rows : ' ,rows);
                                 if (rows.length > 0  && check === true) { //배열에 값이 들어 갔을 경우 && 완전히 통신이 완료 됐을 경우
                                     let json = JSON.stringify(rows);
                                     fs.writeFileSync('resultfile.json', json, 'utf8');
                                     console.log('file created');
+                                    UploadLog(rows);
                                 }
                                 reset(); //경로, 검색해야되는 부분 리셋
                             }}
@@ -614,7 +621,7 @@ export default function Search() {
                             {
                                 width: 120,
                                 label: '문서등급',
-                                dataKey: 'formLevel',
+                                dataKey: 'fitness',
                                 numeric: true,
                             },
                         ]}
