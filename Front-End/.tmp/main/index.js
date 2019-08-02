@@ -33,6 +33,12 @@ _electron.app.on('ready', function () {
         win.window.show();
         win.window.webContents.openDevTools();
     });
+    _electron.ipcMain.on('RESULT1', function (event, result) {
+        data = result;
+        _electron.ipcMain.on('QNA_READY', function () {
+            win.window.webContents.send('RESULT2', data);
+        });
+    });
 });
 
 _electron.app.on('window-all-closed', function () {

@@ -12,6 +12,10 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _reactRouterDom = require('react-router-dom');
+
+var _electron = require('electron');
+
 var _clsx2 = require('clsx');
 
 var _clsx3 = _interopRequireDefault(_clsx2);
@@ -304,7 +308,10 @@ var EnhancedTableToolbar = function EnhancedTableToolbar(props) {
                     { title: '\uBB38\uC758' },
                     _react2.default.createElement(
                         _Fab2.default,
-                        { className: classes.actions, variant: 'extended', label: '\uBB38\uC758' },
+                        { className: classes.actions, variant: 'extended', component: _reactRouterDom.Link, to: '/qna', label: '\uBB38\uC758', onClick: function onClick() {
+                                console.log('Result : ', selected);
+                                _electron.ipcRenderer.send('RESULT1', selected);
+                            } },
                         '\uBB38\uC758'
                     )
                 )

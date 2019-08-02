@@ -1,4 +1,6 @@
 import React, {useEffect, useState} from 'react';
+import {Link} from 'react-router-dom';
+import {ipcRenderer} from 'electron';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import {lighten, makeStyles, createMuiTheme, MuiThemeProvider} from '@material-ui/core/styles';
@@ -173,7 +175,10 @@ const EnhancedTableToolbar = props => {
                                 }}>비식별화</Fab>
                             </Tooltip>
                             <Tooltip title="문의">
-                                <Fab className={classes.actions} variant="extended" label='문의'>문의</Fab>
+                                <Fab className={classes.actions} variant="extended" component={Link} to='/qna' label='문의' onClick={()=>{
+                                    console.log('Result : ', selected);
+                                    ipcRenderer.send('RESULT1',selected);
+                                }}>문의</Fab>
                             </Tooltip>
                         </div>
                     ):(<div>

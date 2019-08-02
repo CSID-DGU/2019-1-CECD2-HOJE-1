@@ -24,8 +24,13 @@ var _Typography2 = _interopRequireDefault(_Typography);
 
 var _core = require('@material-ui/core');
 
+var _electron = require('electron');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var path = require('path');
+var nativeImage = require('electron').nativeImage;
+var findImage = nativeImage.createFromPath('');
 var useStyles = (0, _styles.makeStyles)(function (theme) {
     return {
         root: {
@@ -70,7 +75,8 @@ var mylistStyles = (0, _styles.makeStyles)(function (theme) {
             height: 40
         },
         fullimage: {
-            height: '90%'
+            height: 300,
+            width: '100%'
         },
         textfiled: {
             maxWidth: 300
@@ -105,21 +111,45 @@ TabPanel.propTypes = {
     index: _propTypes2.default.any.isRequired,
     value: _propTypes2.default.any.isRequired
 };
-
+var data = null;
 function QnAMail(props) {
+    console.log('렌더링.....');
+    console.time('test');
     var sendingImagePath = props.sendingImagePath;
 
     var classes = useStyles();
     var classes2 = mylistStyles();
 
-    var _React$useState = _react2.default.useState(null),
+    var _React$useState = _react2.default.useState(1),
         _React$useState2 = _slicedToArray(_React$useState, 2),
         value = _React$useState2[0],
-        setValue = _React$useState2[1];
+        setValue = _React$useState2[1]; //null: 기본 페이지, 1: 구분요청, 2: 오탐
 
     function handleChange(event) {
         setValue(event.target.value);
-    }
+    };
+
+    var _React$useState3 = _react2.default.useState(''),
+        _React$useState4 = _slicedToArray(_React$useState3, 2),
+        imagePath = _React$useState4[0],
+        setImagePath = _React$useState4[1];
+
+    (0, _react.useEffect)(function () {
+        console.log('useEffect start...');
+        _electron.ipcRenderer.send('QNA_READY', 'ready'); //페이지 로딩이 완료되면
+        _electron.ipcRenderer.once('RESULT2', function (event, result) {
+            data = result.pop();
+            console.log('useEffect data : ', data);
+            if (data !== null) {
+                setImagePath(data);
+                findImage = nativeImage.createFromPath(path.normalize(data));
+            }
+        });
+        console.log('마운트 되었습니다.');
+    });
+
+    console.log('렌더링 종료');
+    console.timeEnd('test');
     return _react2.default.createElement(
         'div',
         { className: classes.root },
@@ -170,7 +200,7 @@ function QnAMail(props) {
             _react2.default.createElement(
                 _core.Fab,
                 { variant: 'extended', className: classes.fab },
-                '\uC804  \uC1A1'
+                '\uC804 \uC1A1'
             ),
             _react2.default.createElement(
                 _core.Grid,
@@ -182,7 +212,7 @@ function QnAMail(props) {
                     fullWidth: true,
                     margin: 'normal',
                     variant: 'outlined',
-                    value: '',
+                    value: imagePath,
                     InputLabelProps: {
                         shrink: true
                     }
@@ -211,9 +241,9 @@ function QnAMail(props) {
                     _react2.default.createElement(
                         _core.Grid,
                         { xs: 6, item: true },
-                        _react2.default.createElement(_core.CardMedia, { className: classes2.fullimage })
+                        _react2.default.createElement('img', { style: { marginTop: 12, marginBottom: 12 }, maxHeight: '303', maxWidth: '352', height: '100%', width: '100%',
+                            src: findImage.toDataURL() })
                     ),
-                    ' //teimage',
                     _react2.default.createElement(
                         _core.Grid,
                         { xs: 6, item: true },
@@ -238,7 +268,8 @@ function QnAMail(props) {
                                 _react2.default.createElement(
                                     _core.Grid,
                                     { xs: 6, item: true },
-                                    _react2.default.createElement(_core.CardMedia, { className: classes2.image, image: 'C:/Users/HYS/Desktop/electronReactTest/src/pages/' + item })
+                                    _react2.default.createElement('img', { style: { marginTop: 12, marginBottom: 12 }, maxHeight: '303', maxWidth: '343', height: '100%', width: '100%',
+                                        src: findImage.toDataURL() })
                                 ),
                                 _react2.default.createElement(
                                     _core.Grid,
