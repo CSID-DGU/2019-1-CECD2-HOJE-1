@@ -18,7 +18,8 @@ public class Classification {
     private Clustering clustering;
     private DimensionReduce dimensionReduce;
 
-    private HashMap<String, ArrayList<Object>> classResult;
+    //private HashMap<String, ArrayList<Object>> classResult;
+    private HashMap<String, Object> classResult;
 
     public Classification(){}
 
@@ -56,30 +57,34 @@ public class Classification {
 
             // 해당 이미지에 대한 부서를 확인하고, 아닐경우 red 반환
             // todo: 다른 부서에도 권한 부여
-            // todo : fitnessCheck 내부 코드도 수정해야함. 뭔가 덜 반영됨.
-            String classificationResult = (String)map.getValue("majorClass").get(0);
+            //String classificationResult = (String)map.getValue("majorClass").get(0);
+            String classificationResult = (String)map.getValue("majorClass");
             FITNESS fitness = Utilization.fitnessCheck(classificationResult, depart);
 
-            map.setMapping("fitness", fitness);
+            map.setValueMapping("fitness", fitness);
 
+            System.out.println(classificationResult);
             LEVEL formLevel = Utilization.formLevelCheck(classificationResult);
 
-            map.setMapping("formLevel", formLevel);
+            map.setValueMapping("formLevel", formLevel);
             map.printMappingList();
             classResult = map.getMapping();
 
         }else{
             MappingLabel map = new MappingLabel();
-            map.setMapping("majorClass", "Unregistered");
-            map.setMapping("fitness", FITNESS.YELLOW);
-            map.setMapping("formLevel", LEVEL.NONE);
+            map.setValueMapping("majorClass", "Unregistered");
+            map.setValueMapping("fitness", FITNESS.YELLOW);
+            map.setValueMapping("formLevel", LEVEL.NONE);
 
             classResult = map.getMapping();
         }
 
     }
 
-    public HashMap<String, ArrayList<Object>>  getPredictResult() {
+    public HashMap<String, Object>  getPredictResult() {
         return classResult;
     }
+//    public HashMap<String, ArrayList<Object>>  getPredictResult() {
+//        return classResult;
+//    }
 }

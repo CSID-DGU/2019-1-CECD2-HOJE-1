@@ -19,7 +19,7 @@ public class FormLevelCountChartData {
         InspectionLogDAO inspectionLogDAO = new InspectionLogDAO();
         Map<String, Integer> formLevelMap = inspectionLogDAO.totalFormLevelCountList();
 
-        int totalCount = formLevelMap.get("대외비") + formLevelMap.get("공개")+ formLevelMap.get("사내한");
+        int totalCount = formLevelMap.get("대외비") + formLevelMap.get("공개") + formLevelMap.get("사내한");
 
         for(String key : formLevelMap.keySet()){
             map = new HashMap<Object,Object>();

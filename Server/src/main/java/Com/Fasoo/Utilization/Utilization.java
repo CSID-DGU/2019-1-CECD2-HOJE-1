@@ -67,11 +67,11 @@ public class Utilization {
         LEVEL formLevel;
         String inputFormName = imageFormLevelDTO.getFormName();
 
-        if(inputFormName.equals("public")){
+        if(inputFormName.equals("공개")){
             formLevel = LEVEL.PUBLIC;
-        }else if(inputFormName.equals("companyOnly")){
+        }else if(inputFormName.equals("사내한")){
             formLevel = LEVEL.COMPANY_ONLY;
-        }else if(inputFormName.equals("confidentiality")){
+        }else if(inputFormName.equals("대외비")){
             formLevel = LEVEL.CONFIDENTIALITY;
         }else{
             formLevel = LEVEL.NONE;
