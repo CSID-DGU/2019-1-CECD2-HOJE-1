@@ -125,6 +125,7 @@ function QnAMail(props) {
         value = _React$useState2[0],
         setValue = _React$useState2[1]; //null: 기본 페이지, 1: 구분요청, 2: 오탐
 
+
     function handleChange(event) {
         setValue(event.target.value);
     };
@@ -133,6 +134,11 @@ function QnAMail(props) {
         _React$useState4 = _slicedToArray(_React$useState3, 2),
         imagePath = _React$useState4[0],
         setImagePath = _React$useState4[1];
+
+    var _React$useState5 = _react2.default.useState(nativeImage.createFromPath('').toDataURL()),
+        _React$useState6 = _slicedToArray(_React$useState5, 2),
+        iimage = _React$useState6[0],
+        setImage = _React$useState6[1];
 
     (0, _react.useEffect)(function () {
         console.log('useEffect start...');
@@ -143,6 +149,7 @@ function QnAMail(props) {
             if (data !== null) {
                 setImagePath(data);
                 findImage = nativeImage.createFromPath(path.normalize(data));
+                setImage(findImage.toDataURL());
             }
         });
         console.log('마운트 되었습니다.');
@@ -242,7 +249,7 @@ function QnAMail(props) {
                         _core.Grid,
                         { xs: 6, item: true },
                         _react2.default.createElement('img', { style: { marginTop: 12, marginBottom: 12 }, maxHeight: '303', maxWidth: '352', height: '100%', width: '100%',
-                            src: findImage.toDataURL() })
+                            src: iimage })
                     ),
                     _react2.default.createElement(
                         _core.Grid,
@@ -269,7 +276,7 @@ function QnAMail(props) {
                                     _core.Grid,
                                     { xs: 6, item: true },
                                     _react2.default.createElement('img', { style: { marginTop: 12, marginBottom: 12 }, maxHeight: '303', maxWidth: '343', height: '100%', width: '100%',
-                                        src: findImage.toDataURL() })
+                                        src: iimage })
                                 ),
                                 _react2.default.createElement(
                                     _core.Grid,

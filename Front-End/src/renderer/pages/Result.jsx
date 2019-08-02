@@ -176,7 +176,6 @@ const EnhancedTableToolbar = props => {
                             </Tooltip>
                             <Tooltip title="문의">
                                 <Fab className={classes.actions} variant="extended" component={Link} to='/qna' label='문의' onClick={()=>{
-                                    console.log('Result : ', selected);
                                     ipcRenderer.send('RESULT1',selected);
                                 }}>문의</Fab>
                             </Tooltip>

@@ -90,11 +90,11 @@ export default function QnAMail(props) {
     const classes = useStyles();
     const classes2 = mylistStyles();
     const [value, setValue] = React.useState(1);//null: 기본 페이지, 1: 구분요청, 2: 오탐
-
     function handleChange(event) {
         setValue(event.target.value);
     };
     const [imagePath, setImagePath] = React.useState('');
+    const [iimage, setImage] = React.useState(nativeImage.createFromPath('').toDataURL());
     useEffect(() => {
         console.log('useEffect start...');
         ipcRenderer.send('QNA_READY', 'ready'); //페이지 로딩이 완료되면
@@ -104,6 +104,7 @@ export default function QnAMail(props) {
             if (data !== null) {
                 setImagePath(data);
                 findImage = nativeImage.createFromPath(path.normalize(data));
+                setImage(findImage.toDataURL());
             }
         });
        console.log('마운트 되었습니다.');
@@ -164,7 +165,7 @@ export default function QnAMail(props) {
                 <TabPanel value={value} index={1}>{ /* 분류구분 추가신청 화면 */}
                     <Grid container zeroMinWidth className={classes2.item}>
                         <Grid xs={6} item><img style={{marginTop: 12, marginBottom: 12}} maxHeight="303" maxWidth="352" height="100%" width="100%"
-                                                     src={findImage.toDataURL()}/></Grid>
+                                                     src={iimage}/></Grid>
                         <Grid xs={6} item>
                             <TextField id={`classification-require`} label="이미지 분류를 위한 문서종류를 적으세요" multiline
                                        rows="14" fullWidth margin="normal" variant="filled"/>
@@ -178,7 +179,7 @@ export default function QnAMail(props) {
                                 <div>
                                     <Grid container divider zeroMinWidth className={classes2.item}>
                                         <Grid xs={6} item><img style={{marginTop: 12, marginBottom: 12}} maxHeight="303" maxWidth="343" height="100%" width="100%"
-                                                               src={findImage.toDataURL()}/></Grid>
+                                                               src={iimage}/></Grid>
                                         <Grid xs={6} item>
                                             <TextField id={`submit-text-${item}`} label="이미지 내의 텍스트를 적어주세요" multiline
                                                        rows="3" fullWidth margin="normal" variant="filled"/>
