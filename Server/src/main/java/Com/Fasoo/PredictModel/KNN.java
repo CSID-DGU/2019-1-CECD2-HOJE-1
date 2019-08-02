@@ -132,12 +132,12 @@ public class KNN implements Clustering {
 
         for(int i=0; i<k; i++){
             System.out.println(resultList.get(i).getFormName()+"...."+resultList.get(i).getDistance());;
-            mappingLabel.setMapping(resultList.get(i).getFormName(), resultList.get(i).getDistance());
+            mappingLabel.setListMapping(resultList.get(i).getFormName(), resultList.get(i).getDistance());
             formNameInK[i] = resultList.get(i).getFormName();
         }
 
         String majorClass = findMajorityClass(formNameInK);
-        mappingLabel.setMapping("majorClass", majorClass);
+        mappingLabel.setValueMapping("majorClass", majorClass);
         System.out.println("Class of new instance is :" + majorClass);
 
 

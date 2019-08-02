@@ -33,6 +33,8 @@ public class DetectLog {
         body = body.replaceAll("\\\\\\\\","/");
         body = body.replaceAll("\\\\","");
 
+        System.out.println(body);
+
         this.map = this.mapper.readValue(body, new TypeReference<Map<Object, Object>>() {});
 
         this.ip = map.get("ip").toString();

@@ -103,7 +103,8 @@ public class controller {
     }
 
     @GetMapping(value = "/classification") //, @RequestParam String filePath
-    public @ResponseBody HashMap<String, ArrayList<Object>> classification(@RequestParam String dhashValue, @RequestParam String depart) throws Exception { //List<Animal>
+    //public @ResponseBody HashMap<String, ArrayList<Object>> classification(@RequestParam String dhashValue, @RequestParam String depart) throws Exception
+    public @ResponseBody HashMap<String, Object> classification(@RequestParam String dhashValue, @RequestParam String depart) throws Exception { //List<Animal>
 
         // todo : dhashValue or depart value null processing will need!
         Classification classification = new Classification(dhashValue, depart);
@@ -111,7 +112,8 @@ public class controller {
         classification.setClassificationAlgorithm(new KNN(), new PrincipleComponentAnalysis());
         classification.classification();
 
-        HashMap<String, ArrayList<Object>> predictResult = classification.getPredictResult();
+        //HashMap<String, ArrayList<Object>> predictResult = classification.getPredictResult();
+        HashMap<String,Object> predictResult = classification.getPredictResult();
 
         System.out.println(predictResult.get("majorClass"));
 
@@ -191,9 +193,11 @@ public class controller {
             classification.setClassificationAlgorithm(new KNN(), new PrincipleComponentAnalysis());
             classification.classification();
 
-            HashMap<String, ArrayList<Object>> predictResult = classification.getPredictResult();
+            //HashMap<String, ArrayList<Object>> predictResult = classification.getPredictResult();
+            HashMap<String, Object> predictResult = classification.getPredictResult();
 
-            String recommendFormName = (String)predictResult.get("majorClass").get(0);
+            //String recommendFormName = (String)predictResult.get("majorClass").get(0);
+            String recommendFormName = (String)predictResult.get("majorClass");
 
             //todo : 미분류된것을 찾으려고 하니 에러발생
             if(!recommendFormName.equals("Unregistered")) {
@@ -320,6 +324,7 @@ public class controller {
     public @ResponseBody String logResultUpload(@RequestBody String body){
         try {
             DetectLog detectLog = new DetectLog();
+            System.out.println(body);
             //detectLog.jsonMapping();
             detectLog.insertLog(body);
 
