@@ -61,8 +61,37 @@ public class DetectLog {
                 String fileName = list.get(i).getFileName();
                 String filePath = list.get(i).getFilePath();
                 String classification = list.get(i).getClassification();
-                String formLevel = list.get(i).getFormLevel();
-                String fitness = list.get(i).getFitness();
+
+                String formLevel;
+                switch(list.get(i).getFormLevel()){
+                    case "PUBLIC":
+                        formLevel = "공개";
+                        break;
+                    case "COMPANY_ONLY":
+                        formLevel = "사내한";
+                        break;
+                    case "CONFIDENTIALITY":
+                        formLevel = "기밀";
+                        break;
+                    default:
+                        formLevel="미분류";
+                }
+
+                String fitness;
+                switch(list.get(i).getFitness()){
+                    case "RED":
+                        fitness = "부적합";
+                        break;
+                    case "GREEN":
+                        fitness = "적합";
+                        break;
+                    case "YELLOW":
+                        fitness = "보통";
+                        break;
+                    default:
+                        fitness = "오류";
+                }
+
                 int detectCount = list.get(i).getDetectCount();
 
                 String fileCode = Utilization.getMD5(inspectionCode+filePath);

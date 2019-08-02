@@ -29,8 +29,8 @@ public class FitnessCountChartData {
                 {
                     map = new HashMap<Object, Object>();
                     map.put("x", ts.getTime());
-                    if(fitnessMap.get("RED") != null)
-                        map.put("y", fitnessMap.get("RED"));
+                    if(fitnessMap.get("부적합") != null)
+                        map.put("y", fitnessMap.get("부적합"));
                     else
                         map.put("y", 0);
                     dataPoints1.add(map);
@@ -39,8 +39,8 @@ public class FitnessCountChartData {
                 {
                     map = new HashMap<Object, Object>();
                     map.put("x", ts.getTime());
-                    if(fitnessMap.get("GREEN") != null)
-                        map.put("y", fitnessMap.get("GREEN"));
+                    if(fitnessMap.get("적합") != null)
+                        map.put("y", fitnessMap.get("적합"));
                     else
                         map.put("y", 0);
                     dataPoints2.add(map);
@@ -49,8 +49,8 @@ public class FitnessCountChartData {
                 {
                     map = new HashMap<Object, Object>();
                     map.put("x", ts.getTime());
-                    if(fitnessMap.get("YELLOW")!=null)
-                        map.put("y", fitnessMap.get("YELLOW"));
+                    if(fitnessMap.get("보통")!=null)
+                        map.put("y", fitnessMap.get("보통"));
                     else
                         map.put("y", 0);
                     dataPoints3.add(map);

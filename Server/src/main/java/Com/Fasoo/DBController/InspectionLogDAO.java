@@ -77,7 +77,7 @@ public class InspectionLogDAO {
         ResultSet rs = null;
         boolean check = false;
         Map<String, Integer> map = new HashMap<String, Integer>();
-        String[] formLevel = {"대외비", "사내한", "공개"};
+        String[] formLevel = {"대외비", "사내한", "공개", "미분류"};
         try{
             sql = "SELECT COUNT(*) FROM public.inspection_info_log WHERE form_level = ?";
             pstmt = con.prepareStatement(sql);
@@ -105,6 +105,15 @@ public class InspectionLogDAO {
                 map.put(formLevel[2], rs.getInt(1));
             }else{
                 map.put(formLevel[2], rs.getInt(1));
+            }
+
+            pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, formLevel[3]);
+            rs = pstmt.executeQuery();
+            if(rs.next()) {
+                map.put(formLevel[3], rs.getInt(1));
+            }else{
+                map.put(formLevel[3], rs.getInt(1));
             }
 
         } catch (SQLException e) {

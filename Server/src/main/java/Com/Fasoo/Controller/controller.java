@@ -24,7 +24,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -188,32 +187,34 @@ public class controller {
             String[] hashList = imageRegistry.DhashCalcuate(imageFilePath);
 
             //관리자가 이미지 등록을 원활히 하기 위해 추천 리스트를 작성하기 위한 classification
-            Classification classification = new Classification(hashList[0].replaceAll("\\n|\\s", ""), imageRegistrationInfo.getRequestDepart());
+//            Classification classification = new Classification(hashList[0].replaceAll("\\n|\\s", ""), imageRegistrationInfo.getRequestDepart());
+//
+//            classification.setClassificationAlgorithm(new KNN(), new PrincipleComponentAnalysis());
+//            classification.classification();
+//
+//            //HashMap<String, ArrayList<Object>> predictResult = classification.getPredictResult();
+//            HashMap<String, Object> predictResult = classification.getPredictResult();
+//
+//            //String recommendFormName = (String)predictResult.get("majorClass").get(0);
+//            String recommendFormName = (String)predictResult.get("majorClass");
+//
+//            //todo : 미분류된것을 찾으려고 하니 에러발생
+//            if(!recommendFormName.equals("Unregistered")) {
+//                ImageFormLevelDAO imageFormLevelDAO = new ImageFormLevelDAO();
+//                String recommendFormLevel = imageFormLevelDAO.getFormLevel(recommendFormName).getFormName();
+//
+//                model.addAttribute("recommendFormName", recommendFormName);
+//                model.addAttribute("recommendFormLevel", recommendFormLevel);
+//
+//                return "requestImage";
+//            }else{
+//                model.addAttribute("recommendFormName", "");
+//                model.addAttribute("recommendFormLevel", "");
+//
+//                return "requestImage";
+//            }
 
-            classification.setClassificationAlgorithm(new KNN(), new PrincipleComponentAnalysis());
-            classification.classification();
-
-            //HashMap<String, ArrayList<Object>> predictResult = classification.getPredictResult();
-            HashMap<String, Object> predictResult = classification.getPredictResult();
-
-            //String recommendFormName = (String)predictResult.get("majorClass").get(0);
-            String recommendFormName = (String)predictResult.get("majorClass");
-
-            //todo : 미분류된것을 찾으려고 하니 에러발생
-            if(!recommendFormName.equals("Unregistered")) {
-                ImageFormLevelDAO imageFormLevelDAO = new ImageFormLevelDAO();
-                String recommendFormLevel = imageFormLevelDAO.getFormLevel(recommendFormName).getFormName();
-
-                model.addAttribute("recommendFormName", recommendFormName);
-                model.addAttribute("recommendFormLevel", recommendFormLevel);
-
-                return "requestImage";
-            }else{
-                model.addAttribute("recommendFormName", "");
-                model.addAttribute("recommendFormLevel", "");
-
-                return "requestImage";
-            }
+            return "requestImage";
 
         }catch (Exception e){
             e.printStackTrace();
