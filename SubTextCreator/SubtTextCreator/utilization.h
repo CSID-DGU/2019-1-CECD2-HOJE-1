@@ -68,16 +68,33 @@ std::vector<cv::Rect> detectLetters(cv::Mat img)
 
 
 void scaleBoundingBoxSize(std::vector<cv::Rect> &letterBBoxes1, int cols, int rows, int input_width, int input_height) {
+
 	const int standard_width = 400;
 	const int standard_height = 250;
 	int inputImage_width = input_width;
 	int inputImage_height = input_height;
-	
+
 	//letterBox의 평균 높이, 넓이에 맞춰서
 	//todo: 박스크기에 맞춰 좌우 크기 조절
 	//크기가 0이 되지 않도록 조절
+
+
+	////
+	int min_distance_between_rectangle = inputImage_height;
+	for (int i = 0; i < letterBBoxes1.size(); i++) {
+		for(int j = i+1; j<letterBBoxes1.size(); j++){
+			//
+			if ((letterBBoxes1[i].x <= letterBBoxes1[j].x) && (letterBBoxes1[j].x <= (letterBBoxes1[i].x + letterBBoxes1[i].width))
+				&& ((letterBBoxes1[i].y - (letterBBoxes1[j].y + letterBBoxes1[j].height)) < min_distance_between_rectangle)) {
+				min_distance_between_rectangle = letterBBoxes1[i].y - (letterBBoxes1[j].y + letterBBoxes1[j].height);
+				break;//이미 bbox는 정렬되어 있는 형태이므로 이때가 가장 letterBBoxes1[i]와 가까운 사각형
+			}
+		}
+	}
+
 	int x_margin = 10 * (inputImage_width / standard_width);
-	int y_margin = 5 * (inputImage_height / standard_height);
+	int y_margin = min_distance_between_rectangle + 2;
+
 
 	for (int i = 0; i < letterBBoxes1.size(); i++) {
 		if (letterBBoxes1[i].x - x_margin < 0 && letterBBoxes1[i].y - y_margin < 0) {
