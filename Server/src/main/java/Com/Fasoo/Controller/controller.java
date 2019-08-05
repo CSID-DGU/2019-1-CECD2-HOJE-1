@@ -4,6 +4,7 @@ import Com.Fasoo.ImageClassification.Classification;
 import Com.Fasoo.ImageRegister.ImageRegistry;
 import Com.Fasoo.ManageLog.DetectLog;
 import Com.Fasoo.ManageLog.ManageOCRFile;
+import Com.Fasoo.ManageLog.UploadOCRTrainImage;
 import Com.Fasoo.PredictModel.KNN;
 import Com.Fasoo.PredictModel.PrincipleComponentAnalysis;
 import Com.Fasoo.Utilization.Utilization;
@@ -20,10 +21,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+
+import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 
@@ -340,8 +344,88 @@ public class controller {
             e.printStackTrace();
             return "ioException";
         }
+    }
+
+    @PostMapping("/multipleFileUpload")
+    public @ResponseBody String multipleFileUpload(HttpServletRequest requestContext, @RequestParam("mediaFile") MultipartFile[] files, String[] text, Model model) throws IOException {
+        // Save mediaFile on system
+        for (int i =0; i<files.length; i++) {
+            if (!files[i].getOriginalFilename().isEmpty()) {
+                String fileName = files[i].getOriginalFilename();
+                String fileTextPath ="C:/Users/GIGABYTE/IdeaProjects/RestAPI_Test/out/artifacts/_/WEB-INF/resources/ManageTrainImageFile";
+                int index = fileName.lastIndexOf(".");
+                String pureFileName = fileName.substring(0, index);
+                String textFileName = fileName.substring(0, index) + ".txt";
+
+                try {
+                    ByteArrayInputStream in = new ByteArrayInputStream(files[i].getBytes());
+                    BufferedImage bufferedImage = ImageIO.read(in);
+                    ImageIO.write(bufferedImage, "tif", new File("C:/Users/GIGABYTE/IdeaProjects/RestAPI_Test/out/artifacts/_/WEB-INF/resources/ManageTrainImageFile", pureFileName+".tif"));
+                    System.out.println("C:/Users/GIGABYTE/IdeaProjects/RestAPI_Test/out/artifacts/_/WEB-INF/resources/ManageTrainImageFile/"+pureFileName+".tif");
+                }catch (Exception e){
+                    e.printStackTrace();
+                    return "write image file error";
+                }
+
+                try {
+                    FileWriter fileWriter = new FileWriter(fileTextPath + "/" + textFileName);
+                    fileWriter.write(text[i]);
+                    fileWriter.close();
+                    System.out.println(text[i]);
+                }catch (Exception e){
+                    e.printStackTrace();
+                    return "write text File Error";
+                }
+
+            } else {
+                return "Please select at least one mediaFile..";
+            }
+        }
+        return "Multiple files uploaded successfully.";
+    }
 
 
+    @PostMapping("/multipleFileUploadConvert")
+    public @ResponseBody String multipleFileUploadTestConvert(HttpServletRequest requestContext, @RequestParam("mediaFile") MultipartFile[] files, String[] text, String originFileName, String depart, Model model){
+        String ip = requestContext.getRemoteAddr();
+        UploadOCRTrainImage uploadOCRTrainImage = null;
+
+        // Save mediaFile on system
+        if(files.length != 0) {
+            try {
+                uploadOCRTrainImage = new UploadOCRTrainImage(ip, depart, originFileName);
+            }catch (Exception e){
+                e.printStackTrace();
+                return "directory create Error";
+            }
+        }
+
+        for (int i =0; i<files.length; i++) {
+            if (!files[i].getOriginalFilename().isEmpty()) {
+                String fileName = files[i].getOriginalFilename();
+
+                int index = fileName.lastIndexOf(".");
+                String pureFileName = fileName.substring(0, index);
+                String textFileName = fileName.substring(0, index) + ".txt";
+
+                try {
+                    uploadOCRTrainImage.saveFile(files[i], text[i], pureFileName, textFileName);
+                }catch (Exception e) {
+                    e.printStackTrace();
+                    return "file save Error";
+                }
+                //TODO: DB에 저장 경로 fileName, textFileName 저장
+            } else {
+                return "Please select at least one mediaFile";
+            }
+        }
+
+
+        if(!uploadOCRTrainImage.insertUploadImageInfo()){
+            return "sql Insert error";
+        }
+
+        return "Multiple files uploaded successfully.";
     }
 
 }

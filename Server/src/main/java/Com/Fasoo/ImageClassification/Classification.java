@@ -72,7 +72,7 @@ public class Classification {
 
         }else{
             MappingLabel map = new MappingLabel();
-            map.setValueMapping("majorClass", "Unregistered");
+            map.setValueMapping("majorClass", "미등록");
             map.setValueMapping("fitness", FITNESS.YELLOW);
             map.setValueMapping("formLevel", LEVEL.NONE);
 
