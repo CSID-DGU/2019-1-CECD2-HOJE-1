@@ -1,8 +1,17 @@
 #pragma once
+#define _WIN32_WINNT _WIN32_WINNT_XP
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
 #include <opencv2\opencv.hpp>
 #include <vector>
 #include <math.h>
+#include <iostream>
 #include <algorithm>
+#include <io.h>
+#include <direct.h>
+#include <errno.h>
+#include <Windows.h>
+
 
 bool isRectangleOverlap(cv::Rect &rect1, cv::Rect &rect2) {
 	if ((rect1 & rect2).area() > 0)
@@ -227,10 +236,10 @@ cv::Mat order_point(cv::Mat& roiBox)
 
 
 	cv::Mat orderRoiBox;
-	std::vector<cv::Mat> matrices = { bl, tl, tr, br };
-	vconcat(matrices, orderRoiBox);
+std::vector<cv::Mat> matrices = { bl, tl, tr, br };
+vconcat(matrices, orderRoiBox);
 
-	return orderRoiBox;
+return orderRoiBox;
 }
 
 cv::Mat four_point_transform(cv::Mat& img, cv::Mat& roiBox)
@@ -320,4 +329,49 @@ std::string splitPath(std::string path, char sep) {
 	}
 
 	return out.back();
+}
+
+void createDir(char* Path){
+	char DirName[256];  //생성할 디렉초리 이름
+	char* p = Path;     //인자로 받은 디렉토리
+	char* q = DirName;
+
+	while (*p){
+		if (('\\' == *p) || ('/' == *p)){
+			if (':' != *(p - 1)){
+				CreateDirectory(DirName, NULL);
+			}
+		}
+		*q++ = *p++;
+		*q = '\0';
+	}
+	CreateDirectory(DirName, NULL);
+}
+
+void DeleteAllFiles(const char* folderPath){
+	char fileFound[256];
+	WIN32_FIND_DATA info;
+	HANDLE hp;
+
+	sprintf_s(fileFound, "%s\\*.*", folderPath);
+	hp = FindFirstFile(fileFound, &info); //디렉토리에 파일이 있는지 첫번째 파일만.
+	do{
+		sprintf_s(fileFound, "%s\\%s", folderPath, info.cFileName);
+		DeleteFile(fileFound);
+	} while (FindNextFile(hp, &info));  //다른 파일이 있을때 까지
+
+	FindClose(hp);
+}
+
+bool prepareDirectory(char* dirName) {
+	if (NULL == dirName) {
+		return false;
+	}
+
+	if ((_access(dirName, 0)) != -1) {
+		DeleteAllFiles(dirName); //존재한다면 내부에 존재하는 파일 삭제
+	}
+	else {
+		createDir(dirName);
+	}
 }
