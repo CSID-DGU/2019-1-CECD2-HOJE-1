@@ -4,11 +4,12 @@ import {makeStyles} from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import {Paper, FormControl, InputLabel, Select, MenuItem, Fab, Grid, TextField} from '@material-ui/core';
 import {List, Divider, CardMedia} from '@material-ui/core';
-import {ipcRenderer} from 'electron';
+import {ipcRenderer, shell} from 'electron';
 import cropImage from '../../main/FrameTest/cropImage';
-
+const PATH = 'C:\\Users\\FASOO_499\\Desktop\\image';
 const path = require('path');
 const fs = require('fs');
+import UploadSubImage from '../../main/FrameTest/UploadSubImage';
 const nativeImage = require('electron').nativeImage;
 let findImage = nativeImage.createFromPath('');
 const useStyles = makeStyles(theme => ({
@@ -63,7 +64,7 @@ const mylistStyles = makeStyles(theme => ({
     },
 }));
 let listImage = [];
-
+const notifier = require('node-notifier');
 function TabPanel(props) {
     const {children, value, index} = props;
 
@@ -114,6 +115,11 @@ export default function QnAMail(props) {
         //console.log('마운트 되었습니다.');
     });
 
+    const [send, setSend] = React.useState([]);
+    const txtChange = prop => event => {
+        const index = listImage.indexOf(prop);
+        send[index] = event.target.value;
+    }
    // console.log('렌더링 종료');
     //console.timeEnd('test');
     return (
@@ -145,7 +151,7 @@ export default function QnAMail(props) {
                 <div className={classes.spacer}/>
                 <Fab variant="extended" className={classes.fab}
                 onClick={()=>{
-
+                    UploadSubImage(send,data,"HR");
                 }}>전 송</Fab>
                 {/* 두번째 줄 */}
                 <Grid item xs={9}>
@@ -165,15 +171,28 @@ export default function QnAMail(props) {
                 <Fab variant="extended" disabled={value !== 2 ? true : false} className={classes.imagecrop}
                      onClick={async () => {
                          console.log('imagePath : ', imagePath);
-                         await cropImage(imagePath, 'C:\\Users\\FASOO_499\\Desktop\\image');  //Todo 경로 설정
-                         let files = fs.readdirSync('C:\\Users\\FASOO_499\\Desktop\\image'); //해당 디렉토리 탐색
+                         await cropImage(imagePath, PATH);  //Todo 경로 설정
+                         let files = fs.readdirSync(PATH); //해당 디렉토리 탐색
+                         for(let i = 0; i < files.length; i++)
+                         {
+                             const newsend = send;
+                             newsend.push(i);
+                             setSend(newsend);
+                         }
                          for(const tmp of files){
-                             let p = path.join('C:\\Users\\FASOO_499\\Desktop\\image',tmp);
+                             let p = path.join(PATH,tmp);
                              listImage.push(nativeImage.createFromPath(p).toDataURL());
                          }
-                         console.log(listImage);
+                         notifier.notify({
+                             title : "Image Crop Success",
+                             message : "이미지 확인을 하고 싶으면 클릭하세요",
+                             wait : true,
+                         });
+                         notifier.on('click',(object,options,event)=>{
+                             console.log('test');
+                             shell.openItem(PATH);
+                         })
                          setUpdate();
-
                      }}>이미지
                     자르기</Fab>
             </Grid>
@@ -202,7 +221,7 @@ export default function QnAMail(props) {
                                                                maxWidth="343" height="98%" width="100%"
                                                                src={item} alt={""}/></Grid>
                                         <Grid xs={6} item>
-                                            <TextField id={`submit-text-${item}`} label="이미지 내의 텍스트를 적어주세요" multiline
+                                            <TextField id={`submit-text-${item}`} onChange={txtChange(item)} label="이미지 내의 텍스트를 적어주세요" multiline
                                                        rows="3" fullWidth margin="normal" variant="filled"/>
                                         </Grid>
                                     </Grid>

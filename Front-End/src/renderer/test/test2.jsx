@@ -34,7 +34,9 @@ export default function test2() {
     const [value, setValue] = useState([]);
     useEffect(() => {
         ipcRenderer.once('TEST3',(event,result)=>{
+            console.log('body listening.....');
             setValue([...value,result]);
+            console.log(value);
         })}
     );
     const classes2 = mylistStyles();

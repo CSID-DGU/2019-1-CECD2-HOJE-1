@@ -30,10 +30,16 @@ var _cropImage = require('../../main/FrameTest/cropImage');
 
 var _cropImage2 = _interopRequireDefault(_cropImage);
 
+var _UploadSubImage = require('../../main/FrameTest/UploadSubImage');
+
+var _UploadSubImage2 = _interopRequireDefault(_UploadSubImage);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var PATH = 'C:\\Users\\FASOO_499\\Desktop\\image';
 var path = require('path');
 var fs = require('fs');
+
 var nativeImage = require('electron').nativeImage;
 var findImage = nativeImage.createFromPath('');
 var useStyles = (0, _styles.makeStyles)(function (theme) {
@@ -92,7 +98,7 @@ var mylistStyles = (0, _styles.makeStyles)(function (theme) {
     };
 });
 var listImage = [];
-
+var notifier = require('node-notifier');
 function TabPanel(props) {
     var children = props.children,
         value = props.value,
@@ -166,6 +172,17 @@ function QnAMail(props) {
         //console.log('마운트 되었습니다.');
     });
 
+    var _React$useState7 = _react2.default.useState([]),
+        _React$useState8 = _slicedToArray(_React$useState7, 2),
+        send = _React$useState8[0],
+        setSend = _React$useState8[1];
+
+    var txtChange = function txtChange(prop) {
+        return function (event) {
+            var index = listImage.indexOf(prop);
+            send[index] = event.target.value;
+        };
+    };
     // console.log('렌더링 종료');
     //console.timeEnd('test');
     return _react2.default.createElement(
@@ -217,7 +234,10 @@ function QnAMail(props) {
             _react2.default.createElement('div', { className: classes.spacer }),
             _react2.default.createElement(
                 _core.Fab,
-                { variant: 'extended', className: classes.fab },
+                { variant: 'extended', className: classes.fab,
+                    onClick: function onClick() {
+                        (0, _UploadSubImage2.default)(send, data, "HR");
+                    } },
                 '\uC804 \uC1A1'
             ),
             _react2.default.createElement(
@@ -241,8 +261,13 @@ function QnAMail(props) {
                 { variant: 'extended', disabled: value !== 2 ? true : false, className: classes.imagecrop,
                     onClick: async function onClick() {
                         console.log('imagePath : ', imagePath);
-                        await (0, _cropImage2.default)(imagePath, 'C:\\Users\\FASOO_499\\Desktop\\image'); //Todo 경로 설정
-                        var files = fs.readdirSync('C:\\Users\\FASOO_499\\Desktop\\image'); //해당 디렉토리 탐색
+                        await (0, _cropImage2.default)(imagePath, PATH); //Todo 경로 설정
+                        var files = fs.readdirSync(PATH); //해당 디렉토리 탐색
+                        for (var i = 0; i < files.length; i++) {
+                            var newsend = send;
+                            newsend.push(i);
+                            setSend(newsend);
+                        }
                         var _iteratorNormalCompletion = true;
                         var _didIteratorError = false;
                         var _iteratorError = undefined;
@@ -251,7 +276,7 @@ function QnAMail(props) {
                             for (var _iterator = files[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
                                 var tmp = _step.value;
 
-                                var p = path.join('C:\\Users\\FASOO_499\\Desktop\\image', tmp);
+                                var p = path.join(PATH, tmp);
                                 listImage.push(nativeImage.createFromPath(p).toDataURL());
                             }
                         } catch (err) {
@@ -269,7 +294,15 @@ function QnAMail(props) {
                             }
                         }
 
-                        console.log(listImage);
+                        notifier.notify({
+                            title: "Image Crop Success",
+                            message: "이미지 확인을 하고 싶으면 클릭하세요",
+                            wait: true
+                        });
+                        notifier.on('click', function (object, options, event) {
+                            console.log('test');
+                            _electron.shell.openItem(PATH);
+                        });
                         setUpdate();
                     } },
                 '\uC774\uBBF8\uC9C0 \uC790\uB974\uAE30'
@@ -327,7 +360,7 @@ function QnAMail(props) {
                                 _react2.default.createElement(
                                     _core.Grid,
                                     { xs: 6, item: true },
-                                    _react2.default.createElement(_core.TextField, { id: 'submit-text-' + item, label: '\uC774\uBBF8\uC9C0 \uB0B4\uC758 \uD14D\uC2A4\uD2B8\uB97C \uC801\uC5B4\uC8FC\uC138\uC694', multiline: true,
+                                    _react2.default.createElement(_core.TextField, { id: 'submit-text-' + item, onChange: txtChange(item), label: '\uC774\uBBF8\uC9C0 \uB0B4\uC758 \uD14D\uC2A4\uD2B8\uB97C \uC801\uC5B4\uC8FC\uC138\uC694', multiline: true,
                                         rows: '3', fullWidth: true, margin: 'normal', variant: 'filled' })
                                 )
                             ),

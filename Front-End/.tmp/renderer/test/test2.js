@@ -59,7 +59,9 @@ function test2() {
 
     (0, _react.useEffect)(function () {
         _electron.ipcRenderer.once('TEST3', function (event, result) {
+            console.log('body listening.....');
             setValue([].concat(_toConsumableArray(value), [result]));
+            console.log(value);
         });
     });
     var classes2 = mylistStyles();
