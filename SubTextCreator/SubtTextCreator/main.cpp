@@ -16,6 +16,9 @@ int main(int argc, char** argv)
 	//Read
 	std::string input_name(argv[1]);
 	std::string ext = input_name.substr(input_name.find_last_of("."), 4);
+	std::string pureInput_name = splitPath(input_name, '\\');
+
+	pureInput_name = pureInput_name.erase(pureInput_name.find_last_of("."), 4);
 	input_name = input_name.erase(input_name.find_last_of("."), 4);
 
 	std::string savePath(argv[2]);
@@ -100,7 +103,7 @@ int main(int argc, char** argv)
 	}
 
 	for (int i = 0; i < subImage.size(); i++) {
-		imwrite(savePath+ "\\" + input_name + "_" + to_string(i) + ".tif", subImage[i]);
+		imwrite(savePath+ "\\" + pureInput_name + "_" + to_string(i) + ".tif", subImage[i]);
 	}
 
 	cout << "code:200 subImage crop complete"  << endl;
