@@ -581,7 +581,7 @@ export default function Search() {
                                 //console.log('rows : ' ,rows);
                                 if (rows.length > 0  && check === true) { //배열에 값이 들어 갔을 경우 && 완전히 통신이 완료 됐을 경우
                                     let json = JSON.stringify(rows);
-                                    fs.writeFileSync('resultfile.json', json, 'utf8');
+                                    fs.writeFileSync('resultfile.json', json, 'utf8'); //Todo 경로 위치 바꿔야 됨
                                     console.log('file created');
                                     UploadLog(rows);
                                 }

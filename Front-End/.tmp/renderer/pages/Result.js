@@ -309,7 +309,7 @@ var EnhancedTableToolbar = function EnhancedTableToolbar(props) {
                     _react2.default.createElement(
                         _Fab2.default,
                         { className: classes.actions, variant: 'extended', component: _reactRouterDom.Link, to: '/qna', label: '\uBB38\uC758', onClick: function onClick() {
-                                _electron.ipcRenderer.send('RESULT1', selected);
+                                _electron.ipcRenderer.send('RESULT1', selected.pop());
                             } },
                         '\uBB38\uC758'
                     )

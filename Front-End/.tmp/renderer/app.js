@@ -14,6 +14,14 @@ var _ResponsiveDrawer2 = _interopRequireDefault(_ResponsiveDrawer);
 
 var _reactRouterDom = require('react-router-dom');
 
+var _test = require('./test/test');
+
+var _test2 = _interopRequireDefault(_test);
+
+var _test3 = require('./test/test1');
+
+var _test4 = _interopRequireDefault(_test3);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }

@@ -1,0 +1,10 @@
+var cropImageCallExec = require('./cropImageCallExec.js');
+
+export default async function main(filePath,savePath){
+
+    var modulePath="C:\\Users\\FASOO_499\\source\\repos\\subTextCreater\\x64\\Release\\subTextCreater.exe";
+    //"C:\\Users\\FASOO_499\\Desktop\\sample6.mask.jpg"; //making file name is sample2.mask.jpg
+    var log = await cropImageCallExec(modulePath, filePath,savePath);
+
+    console.log(log);
+}

@@ -26,9 +26,14 @@ var _core = require('@material-ui/core');
 
 var _electron = require('electron');
 
+var _cropImage = require('../../main/FrameTest/cropImage');
+
+var _cropImage2 = _interopRequireDefault(_cropImage);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var path = require('path');
+var fs = require('fs');
 var nativeImage = require('electron').nativeImage;
 var findImage = nativeImage.createFromPath('');
 var useStyles = (0, _styles.makeStyles)(function (theme) {
@@ -86,6 +91,7 @@ var mylistStyles = (0, _styles.makeStyles)(function (theme) {
         }
     };
 });
+var listImage = [];
 
 function TabPanel(props) {
     var children = props.children,
@@ -113,8 +119,8 @@ TabPanel.propTypes = {
 };
 var data = null;
 function QnAMail(props) {
-    console.log('렌더링.....');
-    console.time('test');
+    //console.log('렌더링.....');
+    //console.time('test');
     var sendingImagePath = props.sendingImagePath;
 
     var classes = useStyles();
@@ -124,6 +130,11 @@ function QnAMail(props) {
         _React$useState2 = _slicedToArray(_React$useState, 2),
         value = _React$useState2[0],
         setValue = _React$useState2[1]; //null: 기본 페이지, 1: 구분요청, 2: 오탐
+
+
+    var _useState = (0, _react.useState)([]),
+        _useState2 = _slicedToArray(_useState, 2),
+        setUpdate = _useState2[1]; //강제 렌더링
 
 
     function handleChange(event) {
@@ -141,22 +152,22 @@ function QnAMail(props) {
         setImage = _React$useState6[1];
 
     (0, _react.useEffect)(function () {
-        console.log('useEffect start...');
+        //console.log('useEffect start...');
         _electron.ipcRenderer.send('QNA_READY', 'ready'); //페이지 로딩이 완료되면
         _electron.ipcRenderer.once('RESULT2', function (event, result) {
-            data = result.pop();
-            console.log('useEffect data : ', data);
+            data = result;
+            //console.log('useEffect data : ', data);
             if (data !== null) {
-                setImagePath(data);
                 findImage = nativeImage.createFromPath(path.normalize(data));
                 setImage(findImage.toDataURL());
+                setImagePath(data);
             }
         });
-        console.log('마운트 되었습니다.');
+        //console.log('마운트 되었습니다.');
     });
 
-    console.log('렌더링 종료');
-    console.timeEnd('test');
+    // console.log('렌더링 종료');
+    //console.timeEnd('test');
     return _react2.default.createElement(
         'div',
         { className: classes.root },
@@ -227,7 +238,40 @@ function QnAMail(props) {
             ),
             _react2.default.createElement(
                 _core.Fab,
-                { variant: 'extended', disabled: value !== 2 ? true : false, className: classes.imagecrop },
+                { variant: 'extended', disabled: value !== 2 ? true : false, className: classes.imagecrop,
+                    onClick: async function onClick() {
+                        console.log('imagePath : ', imagePath);
+                        await (0, _cropImage2.default)(imagePath, 'C:\\Users\\FASOO_499\\Desktop\\image'); //Todo 경로 설정
+                        var files = fs.readdirSync('C:\\Users\\FASOO_499\\Desktop\\image'); //해당 디렉토리 탐색
+                        var _iteratorNormalCompletion = true;
+                        var _didIteratorError = false;
+                        var _iteratorError = undefined;
+
+                        try {
+                            for (var _iterator = files[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                                var tmp = _step.value;
+
+                                var p = path.join('C:\\Users\\FASOO_499\\Desktop\\image', tmp);
+                                listImage.push(nativeImage.createFromPath(p).toDataURL());
+                            }
+                        } catch (err) {
+                            _didIteratorError = true;
+                            _iteratorError = err;
+                        } finally {
+                            try {
+                                if (!_iteratorNormalCompletion && _iterator.return) {
+                                    _iterator.return();
+                                }
+                            } finally {
+                                if (_didIteratorError) {
+                                    throw _iteratorError;
+                                }
+                            }
+                        }
+
+                        console.log(listImage);
+                        setUpdate();
+                    } },
                 '\uC774\uBBF8\uC9C0 \uC790\uB974\uAE30'
             )
         ),
@@ -248,8 +292,9 @@ function QnAMail(props) {
                     _react2.default.createElement(
                         _core.Grid,
                         { xs: 6, item: true },
-                        _react2.default.createElement('img', { style: { marginTop: 12, marginBottom: 12 }, maxHeight: '303', maxWidth: '352', height: '100%', width: '100%',
-                            src: iimage })
+                        _react2.default.createElement('img', { style: { marginTop: 12, marginBottom: 12 }, maxHeight: '303', maxWidth: '352',
+                            height: '100%', width: '100%',
+                            src: iimage, alt: "" })
                     ),
                     _react2.default.createElement(
                         _core.Grid,
@@ -265,7 +310,7 @@ function QnAMail(props) {
                 _react2.default.createElement(
                     _core.List,
                     { className: classes2.root },
-                    ['Pattern.png', 'Bookmark.png', 'Find.png', 'Identification.png', 'SearchIcon.png'].map(function (item) {
+                    listImage.map(function (item) {
                         return _react2.default.createElement(
                             'div',
                             null,
@@ -275,8 +320,9 @@ function QnAMail(props) {
                                 _react2.default.createElement(
                                     _core.Grid,
                                     { xs: 6, item: true },
-                                    _react2.default.createElement('img', { style: { marginTop: 12, marginBottom: 12 }, maxHeight: '303', maxWidth: '343', height: '100%', width: '100%',
-                                        src: iimage })
+                                    _react2.default.createElement('img', { style: { marginTop: 12, marginBottom: 12 }, maxHeight: '303',
+                                        maxWidth: '343', height: '98%', width: '100%',
+                                        src: item, alt: "" })
                                 ),
                                 _react2.default.createElement(
                                     _core.Grid,
