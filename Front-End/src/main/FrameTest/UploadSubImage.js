@@ -14,6 +14,7 @@ export default function UploadSubImage(textList,fileName,depart){
         mediaList.push(fs.createReadStream(tmpPath));
     }
 
+    console.log('mediaList : ' , mediaList.length , ' textList : ' , textList.length);
     const options = {
         method: "POST",
         url : "http://192.168.40.206:8080/multipleFileUpload",
@@ -39,5 +40,16 @@ export default function UploadSubImage(textList,fileName,depart){
             })
         }
         console.log(body);
+        recursiveDelete(PATH);
     });
+}
+
+function recursiveDelete(ppath){
+    if(fs.existsSync(ppath)) { //폴더가 존재할 경우
+        let files = fs.readdirSync(ppath);
+        for (const tmp of files) {
+            fs.unlinkSync(path.join(ppath, tmp)); //파일 각각 삭제
+        }
+        fs.rmdirSync(ppath); //빈 디렉토리 삭제
+    }
 }

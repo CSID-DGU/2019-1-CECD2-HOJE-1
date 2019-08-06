@@ -9,7 +9,6 @@ export default function UploadLog(data) {
     let jsonArray = new Array();
     let json1= {};
     let json = {};
-    console.log(data);
     for (const t of data) {
         let tmp = {
             classification: t.classification,
@@ -40,7 +39,6 @@ export default function UploadLog(data) {
         },
         body : json
     };
-    console.log('json : ' , json);
     request(options, function(err, body){
         if(err) console.log('error : ' , err);
         console.log('body ' , body);

@@ -20,21 +20,22 @@ var _makeDictionary = require('./FrameTest/makeDictionary');
 
 var _makeDictionary2 = _interopRequireDefault(_makeDictionary);
 
-var _electronFetch = require('electron-fetch');
+var _UploadLog = require('./FrameTest/UploadLog');
 
-var _electronFetch2 = _interopRequireDefault(_electronFetch);
+var _UploadLog2 = _interopRequireDefault(_UploadLog);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var fs = require('fs');
 var PATH = require('path');
+var notifier = require('node-notifier');
 
 var _require = require('./FrameTest/regTojson'),
     regRead = _require.regRead,
-    TessNreg = _require.TessNreg;
+    TessNreg = _require.TessNreg,
+    regReset = _require.regReset;
 
 var XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
-
 var win = void 0;
 var data = void 0;
 
@@ -44,7 +45,7 @@ var isDoing = false; //반복문이 동작하는지 여부
 var isDone = false; //검색 중지
 var check = true; //통신 여부
 var de = (0, _delay2.default)(250000); //일시 중지
-
+var tmpList = [];
 _electron.app.on('ready', function () {
     var splash = new _electron.BrowserWindow({
         width: 600,
@@ -71,23 +72,37 @@ _electron.app.on('ready', function () {
             win.window.webContents.send('RESULT2', data);
         });
     });
-    _electron.ipcMain.on('TEST1', async function (event, result) {
-        for (var i = 0; i < 100; i++) {
-            console.log(i);
-            win.window.webContents.send('TEST3', i);
-            await (0, _delay2.default)(1000);
-        }
-    });
-    _electron.ipcMain.once('START_SEARCH', async function (event, result) {
+
+    _electron.ipcMain.on('START_SEARCH', async function (event, result) {
+        //검색 시작
         isDoing = true;
+        isDone = false;
+        isPlaying = true;
+        isStop = false;
         await regRead(result); //정규 표현식 파일 읽음
         var tmp = await Exec('C:\\Users\\FASOO_499\\Desktop\\FrameTest', ['.jpg', '.png', '.tif']); //함수 실행
+        notifier.notify({
+            title: "Search Completed",
+            message: "검색이 완료되었습니다."
+        });
     });
-    _electron.ipcMain.once('STOP_SEARCH', function (event, result) {
+    _electron.ipcMain.on('STOP_SEARCH', function (event, result) {
         isDone = result; //검사 종료
+        _electron.ipcMain.once('TEST1', function (event, result) {
+            tmpList = result;
+            if (tmpList.length > 0 && check === true) {
+                //배열에 값이 들어 갔을 경우 && 완전히 통신이 완료 됐을 경우
+                var json = JSON.stringify(tmpList);
+                fs.writeFileSync('resultfile.json', json, 'utf8'); //Todo 경로 위치 바꿔야 됨
+                console.log('file created');
+                (0, _UploadLog2.default)(tmpList);
+                tmpList = [];
+            }
+        });
         if (isStop && isPlaying) {
             de.clear();
         }
+        regReset();
     });
     _electron.ipcMain.on('PAUSE_SEARCH', function (event, result) {
         isStop = result; //일시 정지
@@ -146,6 +161,7 @@ var Exec = async function Exec(startPath, extension) {
                         imageClassification(resolve[0], resolve[1], "HR", ppath, tmp.name); //서버 통신을 통해서 얻은 결과물
                     });
                 }
+                if (!check) return 'break'; //통신 오류시 멈춤
                 win.window.webContents.send('SEARCH_START', ppath);
                 await (0, _delay2.default)(3);
             }
@@ -178,21 +194,31 @@ var Exec = async function Exec(startPath, extension) {
 var imageClassification = async function imageClassification(result1, hash, depart, ppath, name) {
     var xhr = new XMLHttpRequest(); //서버 통신
     xhr.open('GET', 'http://192.168.40.206:8080/classification?dhashValue=' + hash + '&depart=' + depart);
-    var data = null;
-    var tmp = await (0, _makeDictionary2.default)(data, name, ppath, result1);
     //console.log('name : ' , name , ' hash : ' , hash , ' filePath : ' , ppath , ' formlevel : ', tmp.formLevel);
-    xhr.onload = async function () {
+    /*xhr.onload = async function () {
         console.log('connection success............');
         data = xhr.responseText;
-        var tmp = await (0, _makeDictionary2.default)(data, name, ppath, result1); //검사 결과를 딕션너리 형태로
-        win.window.webContents.send('RESULT_DICTIONARY', tmp);
+        let tmp = await makeDictionary(data, name, ppath, result1); //검사 결과를 딕션너리 형태로
+        win.window.webContents.send('RESULT_DICTIONARY',tmp);
         //console.log('name : ' , name , ' hash : ' , hash , ' filePath : ' , ppath , ' formlevel : ', tmp.formLevel, ' fitness : ' , tmp.fitness);
+    };*/
+
+    xhr.onreadystatechange = async function () {
+        if (this.readyState === 4 && this.status === 200) {
+            data = xhr.responseText;
+            var _tmp = await (0, _makeDictionary2.default)(data, name, ppath, result1); //검사 결과를 딕션너리 형태로
+            win.window.webContents.send('RESULT_DICTIONARY', _tmp);
+        } else if (this.readyState === 4 && this.status === 0) {
+            check = false;
+            notifier.notify({
+                title: "Connection failed..",
+                message: '서버와 연결이 끊어 졌습니다.'
+            });
+        }
     };
-    xhr.timeout = 2; //시간 2~3초
     xhr.ontimeout = function () {
         console.log('connection failed..............');
         check = false;
     };
     xhr.send();
-    // win.window.webContents.send('RESULT_DICTIONARY',tmp);
 };

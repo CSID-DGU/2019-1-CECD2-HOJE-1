@@ -65,16 +65,7 @@ function SearchHeader() {
         _React$useState4 = _slicedToArray(_React$useState3, 2),
         path = _React$useState4[0],
         setPath = _React$useState4[1];
-    // Forced ReRendering
 
-
-    var _React$useState5 = _react2.default.useState(),
-        _React$useState6 = _slicedToArray(_React$useState5, 2),
-        updateState = _React$useState6[1];
-
-    var forceUpdate = _react2.default.useCallback(function () {
-        return updateState({});
-    }, []);
     (0, _react.useEffect)(function () {
         _electron.ipcRenderer.once('SEARCH_START', function (event, result) {
             setPath(result); //경로 바꿈

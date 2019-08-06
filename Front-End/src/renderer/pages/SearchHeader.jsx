@@ -30,9 +30,6 @@ export default function SearchHeader() {
     const classes = useStyles();
     const [puase, setPuase] = React.useState(0);
     const [path, setPath] = React.useState('');
-    // Forced ReRendering
-    const [, updateState] = React.useState();
-    const forceUpdate = React.useCallback(() => updateState({}), []);
     useEffect(() => {
         ipcRenderer.once('SEARCH_START', (event, result) => {
             setPath(result); //경로 바꿈

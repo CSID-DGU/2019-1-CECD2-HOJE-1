@@ -17,8 +17,9 @@ import Tooltip from '@material-ui/core/Tooltip';
 import NormalIcon from '@material-ui/icons/FiberManualRecord'
 import WarningIcon from '@material-ui/icons/Error';
 import DangerIcon from '@material-ui/icons/Warning';
+import UploadLog from "../../main/FrameTest/UploadLog";
 const {ipcRenderer} = require('electron');
-
+const delay = require('delay');
 const useStyles = makeStyles(theme => ({
     root: {
         flexGrow: 1,
@@ -66,17 +67,22 @@ setting_data.searchSetting.map(value => {
         test.push(value.name);
     }
 });
-
+let check = false;
 export default function SearchBefore() {
     const classes = useStyles();
-    const [,setUpdate] = useState([]);
     const [rows ,setRow] = useState([]);
-    console.log('body rendering.....');
-    useEffect(()=>{
-        ipcRenderer.once('RESULT_DICTIONARY',(event,result)=>{
-            setRow([...rows,createData(rows.length, result.fileName,result.classification,result.detectList,result.detectCount,result.formLevel)])
-        })
-    });
+    //console.log('body rendering.....');
+    useEffect( ()=>{
+        ipcRenderer.once('RESULT_DICTIONARY',async (event,result)=>{
+            setRow([...rows,createData(rows.length, result.fileName,result.classification,result.detectList,result.detectCount,result.formLevel,result.filePath,result.fitness)]);
+            //console.log(rows);
+            await delay(30);
+        });
+        return ()=>{
+            //console.log('closed : ' ,rows);
+            ipcRenderer.send('TEST1',rows);
+        }
+    },);
     ///////////////////// 검색결과 //////////////////////////
 
     const styles = theme => ({
@@ -118,13 +124,13 @@ export default function SearchBefore() {
                 </MuiThemeProvider>)
         else if(input === 'YELLOW') return (
             <MuiThemeProvider theme={theme}>
-                <Tooltip title="YELLOW" placement="top"><WarningIcon color='secondary'/></Tooltip>
+                <Tooltip title="미등록" placement="top"><WarningIcon color='secondary'/></Tooltip>
             </MuiThemeProvider>)
         else if(input === 'RED') return (
             <MuiThemeProvider theme={theme}>
-                <Tooltip title='RED' placement="top"><DangerIcon color='error'/></Tooltip>
+                <Tooltip title='위험' placement="top"><DangerIcon color='error'/></Tooltip>
             </MuiThemeProvider>)
-        return <Tooltip title="미등록" placement="top"><NormalIcon color='primary' /></Tooltip>
+        return <Tooltip title="분류실패" placement="top"><NormalIcon color='disabled' /></Tooltip>
     }
 
     const cellDisplay = (input) => {
@@ -241,11 +247,11 @@ export default function SearchBefore() {
 
     const VirtualizedTable = withStyles(styles)(MuiVirtualizedTable);
 
-    function createData(id, fileName, classification, detectList, detectCount, formLevel) {
-        return {id, fileName, classification, detectList, detectCount, formLevel };
+    function createData(id, fileName,classification, detectList, detectCount, formLevel, filePath, fitness) {
+        return {id, fileName,classification, detectList, detectCount, formLevel, filePath, fitness };
     }
 
-    console.log('body end........');
+   // console.log('body end........');
     return (
         <Paper style={{ height: 400, width: '100%' }}>
             <VirtualizedTable
@@ -276,7 +282,7 @@ export default function SearchBefore() {
                     {
                         width: 120,
                         label: '문서등급',
-                        dataKey: 'formLevel',
+                        dataKey: 'fitness',
                         numeric: true,
                     },
                 ]}

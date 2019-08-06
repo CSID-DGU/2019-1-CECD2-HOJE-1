@@ -98,6 +98,7 @@ var mylistStyles = (0, _styles.makeStyles)(function (theme) {
     };
 });
 var listImage = [];
+var send = [];
 var notifier = require('node-notifier');
 function TabPanel(props) {
     var children = props.children,
@@ -125,8 +126,6 @@ TabPanel.propTypes = {
 };
 var data = null;
 function QnAMail(props) {
-    //console.log('렌더링.....');
-    //console.time('test');
     var sendingImagePath = props.sendingImagePath;
 
     var classes = useStyles();
@@ -136,29 +135,41 @@ function QnAMail(props) {
         _React$useState2 = _slicedToArray(_React$useState, 2),
         value = _React$useState2[0],
         setValue = _React$useState2[1]; //null: 기본 페이지, 1: 구분요청, 2: 오탐
+    // Forced ReRendering
 
 
     var _useState = (0, _react.useState)([]),
         _useState2 = _slicedToArray(_useState, 2),
-        setUpdate = _useState2[1]; //강제 렌더링
+        setUpdate = _useState2[1];
 
+    var _React$useState3 = _react2.default.useState(),
+        _React$useState4 = _slicedToArray(_React$useState3, 2),
+        updateState = _React$useState4[1];
+
+    var forceUpdate = _react2.default.useCallback(function () {
+        return updateState({});
+    }, []);
+
+    var _useState3 = (0, _react.useState)(false),
+        _useState4 = _slicedToArray(_useState3, 2),
+        crop = _useState4[0],
+        setCrop = _useState4[1];
 
     function handleChange(event) {
         setValue(event.target.value);
     };
 
-    var _React$useState3 = _react2.default.useState(''),
-        _React$useState4 = _slicedToArray(_React$useState3, 2),
-        imagePath = _React$useState4[0],
-        setImagePath = _React$useState4[1];
-
-    var _React$useState5 = _react2.default.useState(nativeImage.createFromPath('').toDataURL()),
+    var _React$useState5 = _react2.default.useState(''),
         _React$useState6 = _slicedToArray(_React$useState5, 2),
-        iimage = _React$useState6[0],
-        setImage = _React$useState6[1];
+        imagePath = _React$useState6[0],
+        setImagePath = _React$useState6[1];
+
+    var _React$useState7 = _react2.default.useState(nativeImage.createFromPath('').toDataURL()),
+        _React$useState8 = _slicedToArray(_React$useState7, 2),
+        iimage = _React$useState8[0],
+        setImage = _React$useState8[1];
 
     (0, _react.useEffect)(function () {
-        //console.log('useEffect start...');
         _electron.ipcRenderer.send('QNA_READY', 'ready'); //페이지 로딩이 완료되면
         _electron.ipcRenderer.once('RESULT2', function (event, result) {
             data = result;
@@ -169,13 +180,7 @@ function QnAMail(props) {
                 setImagePath(data);
             }
         });
-        //console.log('마운트 되었습니다.');
     });
-
-    var _React$useState7 = _react2.default.useState([]),
-        _React$useState8 = _slicedToArray(_React$useState7, 2),
-        send = _React$useState8[0],
-        setSend = _React$useState8[1];
 
     var txtChange = function txtChange(prop) {
         return function (event) {
@@ -183,8 +188,7 @@ function QnAMail(props) {
             send[index] = event.target.value;
         };
     };
-    // console.log('렌더링 종료');
-    //console.timeEnd('test');
+
     return _react2.default.createElement(
         'div',
         { className: classes.root },
@@ -235,8 +239,12 @@ function QnAMail(props) {
             _react2.default.createElement(
                 _core.Fab,
                 { variant: 'extended', className: classes.fab,
+                    disabled: value === 2 ? crop ? false : true : false,
                     onClick: function onClick() {
                         (0, _UploadSubImage2.default)(send, data, "HR");
+                        send = [];
+                        listImage = [];
+                        forceUpdate();
                     } },
                 '\uC804 \uC1A1'
             ),
@@ -258,15 +266,15 @@ function QnAMail(props) {
             ),
             _react2.default.createElement(
                 _core.Fab,
-                { variant: 'extended', disabled: value !== 2 ? true : false, className: classes.imagecrop,
+                { variant: 'extended', disabled: value !== 2 || crop ? true : false, className: classes.imagecrop,
                     onClick: async function onClick() {
                         console.log('imagePath : ', imagePath);
-                        await (0, _cropImage2.default)(imagePath, PATH); //Todo 경로 설정
+                        await (0, _cropImage2.default)(imagePath); //Todo 경로 설정
                         var files = fs.readdirSync(PATH); //해당 디렉토리 탐색
+                        send = [];
+                        listImage = [];
                         for (var i = 0; i < files.length; i++) {
-                            var newsend = send;
-                            newsend.push(i);
-                            setSend(newsend);
+                            send.push(i);
                         }
                         var _iteratorNormalCompletion = true;
                         var _didIteratorError = false;
@@ -303,6 +311,7 @@ function QnAMail(props) {
                             console.log('test');
                             _electron.shell.openItem(PATH);
                         });
+                        setCrop(true);
                         setUpdate();
                     } },
                 '\uC774\uBBF8\uC9C0 \uC790\uB974\uAE30'

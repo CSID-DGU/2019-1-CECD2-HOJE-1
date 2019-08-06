@@ -64,6 +64,7 @@ const mylistStyles = makeStyles(theme => ({
     },
 }));
 let listImage = [];
+let send = [];
 const notifier = require('node-notifier');
 function TabPanel(props) {
     const {children, value, index} = props;
@@ -88,20 +89,21 @@ TabPanel.propTypes = {
 };
 let data = null;
 export default function QnAMail(props) {
-    //console.log('렌더링.....');
-    //console.time('test');
     const {sendingImagePath} = props;
     const classes = useStyles();
     const classes2 = mylistStyles();
     const [value, setValue] = React.useState(1);//null: 기본 페이지, 1: 구분요청, 2: 오탐
-    const [,setUpdate] = useState([]); //강제 렌더링
+    // Forced ReRendering
+    const [,setUpdate] = useState([]);
+    const [, updateState] = React.useState();
+    const forceUpdate = React.useCallback(() => updateState({}), []);
+    const [crop, setCrop] = useState(false);
     function handleChange(event) {
         setValue(event.target.value);
     };
     const [imagePath, setImagePath] = React.useState('');
     const [iimage, setImage] = React.useState(nativeImage.createFromPath('').toDataURL());
     useEffect(() => {
-         //console.log('useEffect start...');
         ipcRenderer.send('QNA_READY', 'ready'); //페이지 로딩이 완료되면
         ipcRenderer.once('RESULT2', (event, result) => {
             data = result;
@@ -112,16 +114,13 @@ export default function QnAMail(props) {
                 setImagePath(data);
             }
         });
-        //console.log('마운트 되었습니다.');
     });
 
-    const [send, setSend] = React.useState([]);
     const txtChange = prop => event => {
         const index = listImage.indexOf(prop);
         send[index] = event.target.value;
-    }
-   // console.log('렌더링 종료');
-    //console.timeEnd('test');
+    };
+
     return (
         <div className={classes.root}>
             {sendingImagePath}
@@ -150,8 +149,12 @@ export default function QnAMail(props) {
                 </Grid>
                 <div className={classes.spacer}/>
                 <Fab variant="extended" className={classes.fab}
+                     disabled={value === 2? (crop? false: true) : false}
                 onClick={()=>{
                     UploadSubImage(send,data,"HR");
+                    send = [];
+                    listImage = [];
+                    forceUpdate();
                 }}>전 송</Fab>
                 {/* 두번째 줄 */}
                 <Grid item xs={9}>
@@ -168,16 +171,16 @@ export default function QnAMail(props) {
                         }}
                     />
                 </Grid>
-                <Fab variant="extended" disabled={value !== 2 ? true : false} className={classes.imagecrop}
+                <Fab variant="extended" disabled={value !== 2 || crop ? true : false} className={classes.imagecrop}
                      onClick={async () => {
                          console.log('imagePath : ', imagePath);
-                         await cropImage(imagePath, PATH);  //Todo 경로 설정
+                         await cropImage(imagePath);  //Todo 경로 설정
                          let files = fs.readdirSync(PATH); //해당 디렉토리 탐색
+                         send = [];
+                         listImage = [];
                          for(let i = 0; i < files.length; i++)
                          {
-                             const newsend = send;
-                             newsend.push(i);
-                             setSend(newsend);
+                             send.push(i);
                          }
                          for(const tmp of files){
                              let p = path.join(PATH,tmp);
@@ -192,6 +195,7 @@ export default function QnAMail(props) {
                              console.log('test');
                              shell.openItem(PATH);
                          })
+                         setCrop(true);
                          setUpdate();
                      }}>이미지
                     자르기</Fab>

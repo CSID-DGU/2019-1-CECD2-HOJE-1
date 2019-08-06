@@ -15,7 +15,6 @@ function UploadLog(data) {
     var jsonArray = new Array();
     var json1 = {};
     var json = {};
-    console.log(data);
     var _iteratorNormalCompletion = true;
     var _didIteratorError = false;
     var _iteratorError = undefined;
@@ -68,7 +67,6 @@ function UploadLog(data) {
         },
         body: json
     };
-    console.log('json : ', json);
     request(options, function (err, body) {
         if (err) console.log('error : ', err);
         console.log('body ', body);

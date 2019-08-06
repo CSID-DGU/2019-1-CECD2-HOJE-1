@@ -62,6 +62,10 @@ var _Warning = require('@material-ui/icons/Warning');
 
 var _Warning2 = _interopRequireDefault(_Warning);
 
+var _UploadLog = require('../../main/FrameTest/UploadLog');
+
+var _UploadLog2 = _interopRequireDefault(_UploadLog);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -77,6 +81,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 var _require = require('electron'),
     ipcRenderer = _require.ipcRenderer;
 
+var delay = require('delay');
 var useStyles = (0, _styles.makeStyles)(function (theme) {
     return {
         root: {
@@ -129,24 +134,27 @@ _settingdata2.default.searchSetting.map(function (value) {
         test.push(value.name);
     }
 });
-
+var check = false;
 function SearchBefore() {
     var classes = useStyles();
 
     var _useState = (0, _react.useState)([]),
         _useState2 = _slicedToArray(_useState, 2),
-        setUpdate = _useState2[1];
+        rows = _useState2[0],
+        setRow = _useState2[1];
+    //console.log('body rendering.....');
 
-    var _useState3 = (0, _react.useState)([]),
-        _useState4 = _slicedToArray(_useState3, 2),
-        rows = _useState4[0],
-        setRow = _useState4[1];
 
-    console.log('body rendering.....');
     (0, _react.useEffect)(function () {
-        ipcRenderer.once('RESULT_DICTIONARY', function (event, result) {
-            setRow([].concat(_toConsumableArray(rows), [createData(rows.length, result.fileName, result.classification, result.detectList, result.detectCount, result.formLevel)]));
+        ipcRenderer.once('RESULT_DICTIONARY', async function (event, result) {
+            setRow([].concat(_toConsumableArray(rows), [createData(rows.length, result.fileName, result.classification, result.detectList, result.detectCount, result.formLevel, result.filePath, result.fitness)]));
+            //console.log(rows);
+            await delay(30);
         });
+        return function () {
+            //console.log('closed : ' ,rows);
+            ipcRenderer.send('TEST1', rows);
+        };
     });
     ///////////////////// 검색결과 //////////////////////////
 
@@ -197,7 +205,7 @@ function SearchBefore() {
             { theme: theme },
             _react2.default.createElement(
                 _Tooltip2.default,
-                { title: 'YELLOW', placement: 'top' },
+                { title: '\uBBF8\uB4F1\uB85D', placement: 'top' },
                 _react2.default.createElement(_Error2.default, { color: 'secondary' })
             )
         );else if (input === 'RED') return _react2.default.createElement(
@@ -205,14 +213,14 @@ function SearchBefore() {
             { theme: theme },
             _react2.default.createElement(
                 _Tooltip2.default,
-                { title: 'RED', placement: 'top' },
+                { title: '\uC704\uD5D8', placement: 'top' },
                 _react2.default.createElement(_Warning2.default, { color: 'error' })
             )
         );
         return _react2.default.createElement(
             _Tooltip2.default,
-            { title: '\uBBF8\uB4F1\uB85D', placement: 'top' },
-            _react2.default.createElement(_FiberManualRecord2.default, { color: 'primary' })
+            { title: '\uBD84\uB958\uC2E4\uD328', placement: 'top' },
+            _react2.default.createElement(_FiberManualRecord2.default, { color: 'disabled' })
         );
     };
 
@@ -379,11 +387,11 @@ function SearchBefore() {
 
     var VirtualizedTable = (0, _styles.withStyles)(styles)(MuiVirtualizedTable);
 
-    function createData(id, fileName, classification, detectList, detectCount, formLevel) {
-        return { id: id, fileName: fileName, classification: classification, detectList: detectList, detectCount: detectCount, formLevel: formLevel };
+    function createData(id, fileName, classification, detectList, detectCount, formLevel, filePath, fitness) {
+        return { id: id, fileName: fileName, classification: classification, detectList: detectList, detectCount: detectCount, formLevel: formLevel, filePath: filePath, fitness: fitness };
     }
 
-    console.log('body end........');
+    // console.log('body end........');
     return _react2.default.createElement(
         _Paper2.default,
         { style: { height: 400, width: '100%' } },
@@ -413,7 +421,7 @@ function SearchBefore() {
             }, {
                 width: 120,
                 label: '문서등급',
-                dataKey: 'formLevel',
+                dataKey: 'fitness',
                 numeric: true
             }]
         })
