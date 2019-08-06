@@ -300,7 +300,7 @@ int main(int argc, char** argv)
 
 		//cv::imshow("reverseWarped", reverseWarped);
 		//cv::waitKey(0);
-
+		
 		cv::Rect rect(Point(5, 5), Point(img.cols - 5, img.rows - 5));
 		cv::imwrite(input_name + ".mask"+ext, reverseWarped(rect));
 		makeBoxToJsonFile(subImageRectList, roiBox, pureInput_name);
