@@ -1,0 +1,56 @@
+﻿  maskingMain.cpp
+c:\users\gigabyte\source\repos\recoveringmasking\recoveringmasking\utilization.h(34): warning C4244: '인수': 'float'에서 '_Tp'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+          with
+          [
+              _Tp=int
+          ]
+c:\users\gigabyte\source\repos\recoveringmasking\recoveringmasking\utilization.h(127): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\gigabyte\source\repos\recoveringmasking\recoveringmasking\utilization.h(131): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\gigabyte\source\repos\recoveringmasking\recoveringmasking\utilization.h(142): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\gigabyte\source\repos\recoveringmasking\recoveringmasking\utilization.h(146): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\gigabyte\source\repos\recoveringmasking\recoveringmasking\utilization.h(218): warning C4244: '인수': 'int'에서 '_Tp'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+          with
+          [
+              _Tp=float
+          ]
+c:\users\gigabyte\source\repos\recoveringmasking\recoveringmasking\utilization.h(219): warning C4244: '인수': 'int'에서 '_Tp'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+          with
+          [
+              _Tp=float
+          ]
+c:\users\gigabyte\source\repos\recoveringmasking\recoveringmasking\utilization.h(220): warning C4244: '인수': 'int'에서 '_Tp'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+          with
+          [
+              _Tp=float
+          ]
+c:\users\gigabyte\source\repos\recoveringmasking\recoveringmasking\utilization.h(254): warning C4244: '인수': 'int'에서 '_Tp'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+          with
+          [
+              _Tp=float
+          ]
+c:\users\gigabyte\source\repos\recoveringmasking\recoveringmasking\utilization.h(255): warning C4244: '인수': 'int'에서 '_Tp'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+          with
+          [
+              _Tp=float
+          ]
+c:\users\gigabyte\source\repos\recoveringmasking\recoveringmasking\utilization.h(256): warning C4244: '인수': 'int'에서 '_Tp'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+          with
+          [
+              _Tp=float
+          ]
+c:\users\gigabyte\source\repos\recoveringmasking\recoveringmasking\utilization.h(403): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+c:\users\gigabyte\source\repos\recoveringmasking\recoveringmasking\utilization.h(404): warning C4244: '인수': 'float'에서 '_Tp'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+          with
+          [
+              _Tp=int
+          ]
+c:\users\gigabyte\source\repos\recoveringmasking\recoveringmasking\maskingmain.cpp(76): warning C4244: '초기화 중': 'double'에서 'long'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\gigabyte\source\repos\recoveringmasking\recoveringmasking\maskingmain.cpp(93): warning C4267: '초기화 중': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\gigabyte\source\repos\recoveringmasking\recoveringmasking\maskingmain.cpp(201): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\gigabyte\source\repos\recoveringmasking\recoveringmasking\maskingmain.cpp(211): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+  코드를 생성하고 있습니다.
+  1 of 1929 functions (<0.1%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
+  코드를 생성했습니다.
+  recoveringMasking.vcxproj -> C:\Users\GIGABYTE\source\repos\recoveringMasking\x64\Release\recoveringMasking.exe
