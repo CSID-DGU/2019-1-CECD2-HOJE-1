@@ -8,8 +8,13 @@ using namespace cv;
 
 int main(int argc, char** argv)
 {
-	if (argc != 3) {
-		cout << "error 400 : argument error(.exe imagePath SavePath )" << endl;
+	//if (argc != 3) {
+	//	cout << "error 400 : argument error(.exe imagePath SavePath )" << endl;
+	//	return 0;
+	//}
+
+	if (argc != 2) {
+		cout << "error 400 : argument error(.exe imagePath)" << endl;
 		return 0;
 	}
 
@@ -21,7 +26,10 @@ int main(int argc, char** argv)
 	pureInput_name = pureInput_name.erase(pureInput_name.find_last_of("."), 4);
 	input_name = input_name.erase(input_name.find_last_of("."), 4);
 
-	std::string savePath(argv[2]);
+	std::string savePath("C:\\Users\\GIGABYTE\\Desktop\\subTextTest");
+	char c_savePath[40] = "C:\\Users\\GIGABYTE\\Desktop\\subTextTest";
+
+	prepareDirectory(c_savePath);
 	
 	Preprocess p_tool;
 
@@ -96,16 +104,17 @@ int main(int argc, char** argv)
 	std::vector<cv::Rect> letterBBoxes1 = detectLetters(roiImg);
 	scaleBoundingBoxSize(letterBBoxes1, roiImg.cols, roiImg.rows, img.cols, img.rows);
 
-	cout << roiImg.size() << endl;
+	//cout << roiImg.size() << endl;
 	vector<Mat> subImage;
 	for (int i = 0; i < letterBBoxes1.size(); i++) {		
 		subImage.push_back(roiImg(letterBBoxes1[i]));
 	}
 
 	for (int i = 0; i < subImage.size(); i++) {
-		imwrite(savePath+ "\\" + pureInput_name + "_" + to_string(i) + ".tif", subImage[i]);
+		imwrite(savePath+ "\\" + pureInput_name + "_" + to_string(i) + ".jpg", subImage[i]);
 	}
 
 	cout << "code:200 subImage crop complete"  << endl;
+	//system("pause");
 	return 0;
 }
