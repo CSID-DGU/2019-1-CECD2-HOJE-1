@@ -63,8 +63,6 @@ const mylistStyles = makeStyles(theme => ({
         padding: 10,
     },
 }));
-let listImage = [];
-let send = [];
 const notifier = require('node-notifier');
 function TabPanel(props) {
     const {children, value, index} = props;
@@ -98,6 +96,8 @@ export default function QnAMail(props) {
     const [, updateState] = React.useState();
     const forceUpdate = React.useCallback(() => updateState({}), []);
     const [crop, setCrop] = useState(false);
+    const [list,setList] = useState([]);
+    const [send,setSend] = useState([]);
     function handleChange(event) {
         setValue(event.target.value);
     };
@@ -109,9 +109,10 @@ export default function QnAMail(props) {
             data = result;
             //console.log('useEffect data : ', data);
             if (data !== null) {
-                findImage = nativeImage.createFromPath(path.normalize(data));
-                setImage(findImage.toDataURL());
                 setImagePath(data);
+                findImage = nativeImage.createFromPath(path.normalize(imagePath));
+                setImage(findImage.toDataURL());
+
             }
         });
     });
@@ -152,8 +153,6 @@ export default function QnAMail(props) {
                      disabled={value === 2? (crop? false: true) : false}
                 onClick={()=>{
                     UploadSubImage(send,data,"HR");
-                    send = [];
-                    listImage = [];
                     forceUpdate();
                 }}>전 송</Fab>
                 {/* 두번째 줄 */}
@@ -176,16 +175,18 @@ export default function QnAMail(props) {
                          console.log('imagePath : ', imagePath);
                          await cropImage(imagePath);  //Todo 경로 설정
                          let files = fs.readdirSync(PATH); //해당 디렉토리 탐색
-                         send = [];
-                         listImage = [];
+                         const newsend = send;
+                         let listImage = [];
                          for(let i = 0; i < files.length; i++)
                          {
-                             send.push(i);
+                             newsend.push(i);
                          }
+                         setSend(newsend);
                          for(const tmp of files){
                              let p = path.join(PATH,tmp);
                              listImage.push(nativeImage.createFromPath(p).toDataURL());
                          }
+                         setList(listImage);
                          notifier.notify({
                              title : "Image Crop Success",
                              message : "이미지 확인을 하고 싶으면 클릭하세요",
@@ -194,9 +195,8 @@ export default function QnAMail(props) {
                          notifier.on('click',(object,options,event)=>{
                              console.log('test');
                              shell.openItem(PATH);
-                         })
+                         });
                          setCrop(true);
-                         setUpdate();
                      }}>이미지
                     자르기</Fab>
             </Grid>
@@ -218,7 +218,7 @@ export default function QnAMail(props) {
                 <TabPanel value={value} index={2}>{ /* 오탐지 수정요청 화면 */}
                     <List className={classes2.root}>
                         {
-                            listImage.map(item =>
+                            list.map(item =>
                                 <div>
                                     <Grid container divider zeroMinWidth className={classes2.item}>
                                         <Grid xs={6} item><img style={{marginTop: 12, marginBottom: 12}} maxHeight="303"

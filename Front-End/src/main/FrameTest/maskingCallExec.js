@@ -10,7 +10,7 @@ module.exports = async function(moduleName, filePath, mode){
     var modeArgc = mode;
     var config = moduleName + ' ' + sysArgc + ' ' + modeArgc;
 
-    //console.log(config);
+    console.log(config);
     
     var { stdout, stderr } = await exec(config);
         

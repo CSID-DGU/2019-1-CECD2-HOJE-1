@@ -97,8 +97,6 @@ var mylistStyles = (0, _styles.makeStyles)(function (theme) {
         }
     };
 });
-var listImage = [];
-var send = [];
 var notifier = require('node-notifier');
 function TabPanel(props) {
     var children = props.children,
@@ -155,6 +153,16 @@ function QnAMail(props) {
         crop = _useState4[0],
         setCrop = _useState4[1];
 
+    var _useState5 = (0, _react.useState)([]),
+        _useState6 = _slicedToArray(_useState5, 2),
+        list = _useState6[0],
+        setList = _useState6[1];
+
+    var _useState7 = (0, _react.useState)([]),
+        _useState8 = _slicedToArray(_useState7, 2),
+        send = _useState8[0],
+        setSend = _useState8[1];
+
     function handleChange(event) {
         setValue(event.target.value);
     };
@@ -175,9 +183,9 @@ function QnAMail(props) {
             data = result;
             //console.log('useEffect data : ', data);
             if (data !== null) {
-                findImage = nativeImage.createFromPath(path.normalize(data));
-                setImage(findImage.toDataURL());
                 setImagePath(data);
+                findImage = nativeImage.createFromPath(path.normalize(imagePath));
+                setImage(findImage.toDataURL());
             }
         });
     });
@@ -242,8 +250,6 @@ function QnAMail(props) {
                     disabled: value === 2 ? crop ? false : true : false,
                     onClick: function onClick() {
                         (0, _UploadSubImage2.default)(send, data, "HR");
-                        send = [];
-                        listImage = [];
                         forceUpdate();
                     } },
                 '\uC804 \uC1A1'
@@ -271,11 +277,12 @@ function QnAMail(props) {
                         console.log('imagePath : ', imagePath);
                         await (0, _cropImage2.default)(imagePath); //Todo 경로 설정
                         var files = fs.readdirSync(PATH); //해당 디렉토리 탐색
-                        send = [];
-                        listImage = [];
+                        var newsend = send;
+                        var listImage = [];
                         for (var i = 0; i < files.length; i++) {
-                            send.push(i);
+                            newsend.push(i);
                         }
+                        setSend(newsend);
                         var _iteratorNormalCompletion = true;
                         var _didIteratorError = false;
                         var _iteratorError = undefined;
@@ -302,6 +309,7 @@ function QnAMail(props) {
                             }
                         }
 
+                        setList(listImage);
                         notifier.notify({
                             title: "Image Crop Success",
                             message: "이미지 확인을 하고 싶으면 클릭하세요",
@@ -312,7 +320,6 @@ function QnAMail(props) {
                             _electron.shell.openItem(PATH);
                         });
                         setCrop(true);
-                        setUpdate();
                     } },
                 '\uC774\uBBF8\uC9C0 \uC790\uB974\uAE30'
             )
@@ -352,7 +359,7 @@ function QnAMail(props) {
                 _react2.default.createElement(
                     _core.List,
                     { className: classes2.root },
-                    listImage.map(function (item) {
+                    list.map(function (item) {
                         return _react2.default.createElement(
                             'div',
                             null,
