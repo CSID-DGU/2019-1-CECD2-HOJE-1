@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Link } from 'react-router-dom';
+import { Route, Link, NavLink } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import Grid from '@material-ui/core/Grid';
@@ -29,6 +29,7 @@ import Search from '../pages/Search';
 import Setting from '../pages/Setting';
 import QnAMail from '../pages/QnAMail';
 import Result from '../pages/Result';
+import Test from '../components/Test';
 //import Menu from '../component/Menu';
 
 const drawerWidth = 180;
@@ -63,14 +64,17 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
     padding: theme.spacing(3),
   },
+  active: {
+    background: '#e0e0e0',
+  },
 }));
 
 export default function App(props) {
   const { container } = props;
   const classes = useStyles();
-  const [select, setSelect] = React.useState(0);
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [updateActive, setUpdateActive] = React.useState(false);
 
   function handleDrawerToggle() {
     setMobileOpen(!mobileOpen);
@@ -79,7 +83,7 @@ export default function App(props) {
   // 위에 툴바
 	const drawerToolbar = (
 		<Toolbar>
-      <Grid container direction="row" justify="space-between">
+      <Grid container direction="row" justify="space-between"  alignItems="center">
         <Grid>
           <IconButton
             color="inherit"
@@ -90,12 +94,12 @@ export default function App(props) {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6">
+          <Typography variant="h6" noWrap>
             HOJE-OCR
           </Typography>
         </Grid>
         <Grid>
-          <IconButton component={Link} to="/#">
+          <IconButton disabled={updateActive} component={Link} to="#/">
             <UpdataIcon/>
           </IconButton>
         </Grid>
@@ -110,48 +114,56 @@ export default function App(props) {
     <List>
 			<ListItem
       button
-      selected={select%8 === 0 ? true : false}
-      component={Link} to="/"
-      onClick={()=>setSelect(0)}
+      activeClassName={classes.active}
+      component={NavLink} exact to="/"
+      onClick={()=>setUpdateActive(false)}
 			>
 			<ListItemIcon><HomeIcon /></ListItemIcon>
 			<ListItemText primary="홈" />
 			</ListItem>
 			<ListItem
       button
-      selected={select%8 === 1 ? true : false}
-      component={Link} to="/search"
-      onClick={()=>setSelect(1)}
+      activeClassName={classes.active}
+      component={NavLink} exact to="/search"
+      onClick={()=>setUpdateActive(true)}
 			>
 			<ListItemIcon><SearchIcon /></ListItemIcon>
 			<ListItemText primary="검사" />
 			</ListItem>
 			<ListItem
       button
-      selected={select%8 === 2 ? true : false}
-      component={Link} to="/result"
-      onClick={()=>setSelect(2)}
+      activeClassName={classes.active}
+      component={NavLink} exact to="/result"
+      onClick={()=>setUpdateActive(false)}
 			>
       <ListItemIcon><ResultIcon /></ListItemIcon>
 			<ListItemText primary="검출내역" />
 			</ListItem>
 			<ListItem
       button
-      selected={select%8 === 3 ? true : false}
-      component={Link} to="/setting"
-      onClick={()=>setSelect(3)}
+      activeClassName={classes.active}
+      component={NavLink} exact to="/setting"
+      onClick={()=>setUpdateActive(false)}
 			>
 			<ListItemIcon><SettingIcon /></ListItemIcon>
 			<ListItemText primary="설정" />
 			</ListItem>
 			<ListItem
       button
-      selected={select%8 === 4 ? true : false}
-      component={Link} to="/qna"
-      onClick={()=>setSelect(4)}
+      activeClassName={classes.active}
+      component={NavLink} exact to="/qna"
 			>
 			<ListItemIcon><MailIcon /></ListItemIcon>
 			<ListItemText primary="문의" />
+			</ListItem>
+      <ListItem
+      button
+      activeClassName={classes.active}
+      component={NavLink} exact to="/test"
+      onClick={()=>setUpdateActive(false)}
+			>
+			<ListItemIcon><MailIcon /></ListItemIcon>
+			<ListItemText primary="테스트" />
 			</ListItem>
 		</List>
 		</div>
@@ -163,7 +175,7 @@ export default function App(props) {
       <AppBar position="fixed" className={classes.appBar}>
         {drawerToolbar}
       </AppBar>
-      <nav className={classes.drawer} aria-label="Mailbox folders">
+      <nav className={classes.drawer}>
         <Hidden smUp implementation="css">
           <Drawer
             container={container}
@@ -200,6 +212,7 @@ export default function App(props) {
         <Route exact path="/setting" component={ Setting } />
         <Route exact path="/qna" component={ QnAMail } />
         <Route exact path="/result" component={ Result } />
+        <Route exact path="/test" component={ Test } />
       </main>
     </div>
   );
