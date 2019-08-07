@@ -100,8 +100,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var fs = require('fs');
+var path = require('path');
 var notifier = require('node-notifier');
+
 function createData(fileName, filePath, detectList, detectCount, formLevel, fitness) {
     return { fileName: fileName, filePath: filePath, detectList: detectList, detectCount: detectCount, formLevel: formLevel, fitness: fitness };
 }
@@ -141,7 +142,7 @@ function getSorting(order, orderBy) {
     };
 }
 
-var headRows = [{ id: 'fileName', numeric: false, disablePadding: true, label: '파일명' }, { id: 'filePath', numeric: false, disablePadding: false, label: '파일 경로' }, { id: 'detectList', numeric: false, disablePadding: false, label: '검출 내역' }, { id: 'detectCount', numeric: true, disablePadding: false, label: '검출 개수' }, { id: 'formLevel', numeric: false, disablePadding: false, label: '문서등급' }, { id: 'fitness', numeric: false, disablePadding: false, label: '위반여부' }];
+var headRows = [{ id: 'fileName', numeric: false, disablePadding: true, label: '파일명' }, { id: 'filePath', numeric: false, disablePadding: false, label: '파일 경로' }, { id: 'detectList', numeric: false, disablePadding: false, label: '검출 내역' }, { id: 'detectCount', numeric: true, disablePadding: false, label: '검출 개수' }, { id: 'formLevel', numeric: false, disablePadding: false, label: '문서등급' }, { id: 'fitness', numeric: false, disablePadding: false, label: '적합도' }];
 
 function EnhancedTableHead(props) {
     var onSelectAllClick = props.onSelectAllClick,
@@ -206,6 +207,47 @@ EnhancedTableHead.propTypes = {
     rowCount: _propTypes2.default.number.isRequired
 };
 
+var parsingPath = function parsingPath(ppath, mode) {
+    var r = rows.find(function (item) {
+        return item.filePath === ppath;
+    });
+    var dir = path.dirname(ppath);
+    var ext = path.extname(ppath);
+    var basename = path.basename(ppath, ext); //파일 이름
+    if (mode === 1) {
+        var renaming = basename + '.mask';
+        basename = renaming + ext; //새로운 파일 이름
+        var renew = path.join(dir, basename); //새로운 경로
+        r.fileName = basename;
+        r.filePath = renew;
+        r.detectList = [];
+        r.detectCount = 0;
+        notifier.notify({ //수행이 다 된 후 알람
+            title: 'Masking Success!',
+            message: '파일이 마스킹 됐습니다.',
+            wait: true,
+            timeout: false
+        }, function (err, response) {
+            _electron.shell.openItem(r.filePath);
+        });
+    } else if (mode === 2) {
+        basename = basename.substring(0, basename.length - 5) + ext; //새로운 파일 이름
+        var _renew = path.join(dir, basename); //새로운 경로
+        r.fileName = basename;
+        r.filePath = _renew;
+        r.detectList = [];
+        r.detectCount = 0;
+        notifier.notify({ //수행이 다 된 후 알람
+            title: 'Unmasking Success!',
+            message: '파일이 재식별화 됐습니다.',
+            wait: true,
+            timeout: false
+        }, function (err, response) {
+            _electron.shell.openItem(r.filePath);
+        });
+    }
+};
+
 var useToolbarStyles = (0, _styles.makeStyles)(function (theme) {
     return {
         root: {
@@ -231,140 +273,73 @@ var useToolbarStyles = (0, _styles.makeStyles)(function (theme) {
     };
 });
 
-var EnhancedTableToolbar = function EnhancedTableToolbar(props) {
-    var classes = useToolbarStyles();
-    var numSelected = props.numSelected,
-        selected = props.selected;
-
-
-    return _react2.default.createElement(
-        _Toolbar2.default,
-        {
-            className: (0, _clsx3.default)(classes.root, _defineProperty({}, classes.highlight, numSelected > 0))
-        },
-        _react2.default.createElement(
-            'div',
-            { className: classes.title },
-            numSelected > 0 ? _react2.default.createElement(
-                _Typography2.default,
-                { color: 'inherit', variant: 'subtitle1' },
-                numSelected,
-                ' selected'
-            ) : _react2.default.createElement(
-                _Typography2.default,
-                { variant: 'h6', id: 'tableTitle' },
-                '\uAC80\uC0AC \uB0B4\uC5ED'
-            )
-        ),
-        _react2.default.createElement('div', { className: classes.spacer }),
-        _react2.default.createElement(
-            'div',
-            null,
-            numSelected > 0 ? numSelected === 1 ? _react2.default.createElement(
-                'div',
-                null,
-                _react2.default.createElement(
-                    _Tooltip2.default,
-                    { title: '\uBE44\uC2DD\uBCC4\uD654' },
-                    _react2.default.createElement(
-                        _Fab2.default,
-                        { className: classes.actions, variant: 'extended', label: '\uBE44\uC2DD\uBCC4\uD654', onClick: async function onClick() {
-                                var _iteratorNormalCompletion = true;
-                                var _didIteratorError = false;
-                                var _iteratorError = undefined;
-
-                                try {
-                                    for (var _iterator = selected[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                                        var path = _step.value;
-
-                                        console.log(path);
-                                        await (0, _masking2.default)(path); //마스킹
-                                    }
-                                } catch (err) {
-                                    _didIteratorError = true;
-                                    _iteratorError = err;
-                                } finally {
-                                    try {
-                                        if (!_iteratorNormalCompletion && _iterator.return) {
-                                            _iterator.return();
-                                        }
-                                    } finally {
-                                        if (_didIteratorError) {
-                                            throw _iteratorError;
-                                        }
-                                    }
-                                }
-
-                                notifier.notify({ //수행이 다 된 후 알람
-                                    title: '마스킹 성공!',
-                                    message: selected.length + '개의 파일이 마스킹 됐습니다.'
-                                });
-                            } },
-                        '\uBE44\uC2DD\uBCC4\uD654'
-                    )
-                ),
-                _react2.default.createElement(
-                    _Tooltip2.default,
-                    { title: '\uBB38\uC758' },
-                    _react2.default.createElement(
-                        _Fab2.default,
-                        { className: classes.actions, variant: 'extended', component: _reactRouterDom.Link, to: '/qna', label: '\uBB38\uC758', onClick: function onClick() {
-                                _electron.ipcRenderer.send('RESULT1', selected.pop());
-                            } },
-                        '\uBB38\uC758'
-                    )
-                )
-            ) : _react2.default.createElement(
-                'div',
-                null,
-                _react2.default.createElement(
-                    _Tooltip2.default,
-                    { title: '\uBE44\uC2DD\uBCC4\uD654' },
-                    _react2.default.createElement(
-                        _Fab2.default,
-                        { className: classes.actions, variant: 'extended', label: '\uBE44\uC2DD\uBCC4\uD654', onClick: async function onClick() {
-                                var _iteratorNormalCompletion2 = true;
-                                var _didIteratorError2 = false;
-                                var _iteratorError2 = undefined;
-
-                                try {
-                                    for (var _iterator2 = selected[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                                        var path = _step2.value;
-
-                                        console.log(path);
-                                        await (0, _masking2.default)(path); //마스킹
-                                    }
-                                } catch (err) {
-                                    _didIteratorError2 = true;
-                                    _iteratorError2 = err;
-                                } finally {
-                                    try {
-                                        if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                                            _iterator2.return();
-                                        }
-                                    } finally {
-                                        if (_didIteratorError2) {
-                                            throw _iteratorError2;
-                                        }
-                                    }
-                                }
-
-                                notifier.notify({ //수행이 다 된 후 알람
-                                    title: '마스킹 성공!',
-                                    message: selected.length + '개의 파일이 마스킹 됐습니다.'
-                                });
-                            } },
-                        '\uBE44\uC2DD\uBCC4\uD654'
-                    )
-                )
-            ) : _react2.default.createElement('div', null)
-        )
+/*
+const EnhancedTableToolbar = props => {
+    const classes = useToolbarStyles();
+    const {numSelected, selected} = props;
+    const masked = [];
+    const noneMasked = [];
+    selected.forEach(element => {
+        if (element.indexOf('.mask') !== -1) masked.push(element);
+        else noneMasked.push(element);
+    });
+    return (
+        <Toolbar
+            className={clsx(classes.root, {
+                [classes.highlight]: numSelected > 0,
+            })}
+        >
+            <div className={classes.title}>
+                {numSelected > 0 ? (
+                    <Typography color="inherit" variant="subtitle1">
+                        {numSelected} selected
+                    </Typography>
+                ) : (
+                    <Typography variant="h6" id="tableTitle">
+                        검사 내역
+                    </Typography>
+                )}
+            </div>
+            <div className={classes.spacer}/>
+            <div>
+                {numSelected > 0 ? (
+                        masked.length > 0 && noneMasked.length > 0 ? ('재식별화 항목과 비식별화 항목을 각각 선택하세요') :
+                            (masked.length > 0 ? (
+                                    <Tooltip title="재식별화">
+                                        <Fab className={classes.actions} variant="extended" label='재식별화'>재식별화</Fab>
+                                    </Tooltip>
+                                ) :
+                                (noneMasked.length > 0 ? (
+                                        <Tooltip title="비식별화">
+                                            <Fab className={classes.actions} variant="extended" label='비식별화' onClick={async ()=>{
+                                                for (const path of selected) {
+                                                    await masking(path); //마스킹
+                                                    await parsingPath(path);
+                                                };
+                                                notifier.notify({ //수행이 다 된 후 알람
+                                                    title: '마스킹 성공!',
+                                                    message: selected.length + '개의 파일이 마스킹 됐습니다.',
+                                                });
+                                            }}>비식별화</Fab>
+                                        </Tooltip>) :
+                                    ('')))
+                    ) :
+                    ('')
+                }
+                {numSelected > 0 && numSelected === 1 && masked.length === 0 ? (
+                    <Tooltip title="문의">
+                        <Fab className={classes.actions} variant="extended" label='문의' component={Link}
+                             to='/qna'onClick={()=>{
+                            ipcRenderer.send('RESULT1', selected.pop());
+                        }}>문의</Fab>
+                    </Tooltip>
+                ) : ('')
+                }
+            </div>
+        </Toolbar>
     );
 };
-
-EnhancedTableToolbar.propTypes = {
-    numSelected: _propTypes2.default.number.isRequired
-};
+*/
 
 var useStyles = (0, _styles.makeStyles)(function (theme) {
     return {
@@ -431,26 +406,169 @@ function Result() {
         rowsPerPage = _React$useState10[0],
         setRowsPerPage = _React$useState10[1];
 
+    var EnhancedTableToolbar = function EnhancedTableToolbar(props) {
+        var classes = useToolbarStyles();
+        var numSelected = props.numSelected,
+            selected = props.selected;
+
+        var masked = [];
+        var noneMasked = [];
+        selected.forEach(function (element) {
+            if (element.indexOf('.mask') !== -1) masked.push(element);else noneMasked.push(element);
+        });
+        return _react2.default.createElement(
+            _Toolbar2.default,
+            {
+                className: (0, _clsx3.default)(classes.root, _defineProperty({}, classes.highlight, numSelected > 0))
+            },
+            _react2.default.createElement(
+                'div',
+                { className: classes.title },
+                numSelected > 0 ? _react2.default.createElement(
+                    _Typography2.default,
+                    { color: 'inherit', variant: 'subtitle1' },
+                    numSelected,
+                    ' selected'
+                ) : _react2.default.createElement(
+                    _Typography2.default,
+                    { variant: 'h6', id: 'tableTitle' },
+                    '\uAC80\uC0AC \uB0B4\uC5ED'
+                )
+            ),
+            _react2.default.createElement('div', { className: classes.spacer }),
+            _react2.default.createElement(
+                'div',
+                null,
+                numSelected > 0 ? masked.length > 0 && noneMasked.length > 0 ? '재식별화 항목과 비식별화 항목을 각각 선택하세요' : masked.length > 0 ? _react2.default.createElement(
+                    _Tooltip2.default,
+                    { title: '\uC7AC\uC2DD\uBCC4\uD654' },
+                    _react2.default.createElement(
+                        _Fab2.default,
+                        { className: classes.actions, variant: 'extended', label: '\uC7AC\uC2DD\uBCC4\uD654',
+                            onClick: async function onClick() {
+                                var _iteratorNormalCompletion = true;
+                                var _didIteratorError = false;
+                                var _iteratorError = undefined;
+
+                                try {
+                                    for (var _iterator = selected[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                                        var _path = _step.value;
+
+                                        await (0, _masking2.default)(_path, 'unmasking'); //재 식별화
+                                        await parsingPath(_path, 2);
+                                    }
+                                } catch (err) {
+                                    _didIteratorError = true;
+                                    _iteratorError = err;
+                                } finally {
+                                    try {
+                                        if (!_iteratorNormalCompletion && _iterator.return) {
+                                            _iterator.return();
+                                        }
+                                    } finally {
+                                        if (_didIteratorError) {
+                                            throw _iteratorError;
+                                        }
+                                    }
+                                }
+
+                                ;
+                                setSelected([]);
+                            } },
+                        '\uC7AC\uC2DD\uBCC4\uD654'
+                    )
+                ) : noneMasked.length > 0 ? _react2.default.createElement(
+                    _Tooltip2.default,
+                    { title: '\uBE44\uC2DD\uBCC4\uD654' },
+                    _react2.default.createElement(
+                        _Fab2.default,
+                        { className: classes.actions, variant: 'extended', label: '\uBE44\uC2DD\uBCC4\uD654',
+                            onClick: async function onClick() {
+                                var _iteratorNormalCompletion2 = true;
+                                var _didIteratorError2 = false;
+                                var _iteratorError2 = undefined;
+
+                                try {
+                                    for (var _iterator2 = selected[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                                        var _path2 = _step2.value;
+
+                                        await (0, _masking2.default)(_path2, 'masking'); //마스킹
+                                        await parsingPath(_path2, 1);
+                                    }
+                                } catch (err) {
+                                    _didIteratorError2 = true;
+                                    _iteratorError2 = err;
+                                } finally {
+                                    try {
+                                        if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                                            _iterator2.return();
+                                        }
+                                    } finally {
+                                        if (_didIteratorError2) {
+                                            throw _iteratorError2;
+                                        }
+                                    }
+                                }
+
+                                ;
+                                setSelected([]);
+                            } },
+                        '\uBE44\uC2DD\uBCC4\uD654'
+                    )
+                ) : '' : '',
+                numSelected > 0 && numSelected === 1 && masked.length === 0 ? _react2.default.createElement(
+                    _Tooltip2.default,
+                    { title: '\uBB38\uC758' },
+                    _react2.default.createElement(
+                        _Fab2.default,
+                        { className: classes.actions, variant: 'extended', label: '\uBB38\uC758', component: _reactRouterDom.Link,
+                            to: '/qna', onClick: function onClick() {
+                                _electron.ipcRenderer.send('RESULT1', selected.pop());
+                            } },
+                        '\uBB38\uC758'
+                    )
+                ) : ''
+            )
+        );
+    };
+    EnhancedTableToolbar.propTypes = {
+        numSelected: _propTypes2.default.number.isRequired
+    };
+
     function handleRequestSort(event, property) {
         var isDesc = orderBy === property && order === 'desc';
         setOrder(isDesc ? 'asc' : 'desc');
         setOrderBy(property);
     }
 
+    /*
+        useEffect(() => {
+            let tmpList = [];
+            rows = [];
+            if (fs.exists('resultfile.json', (exists => { //
+                console.log('file read');
+                if (exists) {
+                    tmpList = fs.readFileSync('resultfile.json', 'utf8');
+                    tmpList = JSON.parse(tmpList);
+                    for(const t of tmpList){
+                        rows.push(createData(t.fileName,t.filePath,t.detectList,t.detectCount,t.formLevel,t.fitness));
+                    }
+                }
+                setUpdate();
+            })));
+        }, []); //렌더링 이후 한번만 수행
+    */
     (0, _react.useEffect)(function () {
-        var tmpList = [];
-        rows = [];
-        if (fs.exists('resultfile.json', function (exists) {
-            console.log('file read');
-            if (exists) {
-                tmpList = fs.readFileSync('resultfile.json', 'utf8');
-                tmpList = JSON.parse(tmpList);
+        _electron.ipcRenderer.send('RESULT_PAGE', true);
+        _electron.ipcRenderer.once('RESULT_LIST', function (event, result) {
+            if (result.length > 0) {
+                rows = [];
                 var _iteratorNormalCompletion3 = true;
                 var _didIteratorError3 = false;
                 var _iteratorError3 = undefined;
 
                 try {
-                    for (var _iterator3 = tmpList[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                    for (var _iterator3 = result[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
                         var t = _step3.value;
 
                         rows.push(createData(t.fileName, t.filePath, t.detectList, t.detectCount, t.formLevel, t.fitness));
@@ -469,10 +587,14 @@ function Result() {
                         }
                     }
                 }
+
+                setUpdate();
             }
-            setUpdate();
-        })) ;
-    }, []); //렌더링 이후 한번만 수행
+        });
+        return function () {
+            _electron.ipcRenderer.removeAllListeners('RESULT_LIST');
+        };
+    }, []);
 
     function handleSelectAllClick(event) {
         if (event.target.checked && selected.length === 0) {
@@ -556,7 +678,6 @@ function Result() {
             _react2.default.createElement(_FiberManualRecord2.default, { color: 'disabled' })
         );
     };
-
     return _react2.default.createElement(
         'div',
         { className: classes.root },

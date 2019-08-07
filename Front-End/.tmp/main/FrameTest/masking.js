@@ -5,13 +5,13 @@ Object.defineProperty(exports, "__esModule", {
 });
 var maskingCallexec = require('./maskingCallExec.js');
 
-exports.default = async function main(filePath) {
+exports.default = async function main(filePath, mode) {
 
     var modulePath = "C:\\Users\\FASOO_499\\source\\repos\\recoveringMasking\\x64\\Release\\recoveringMasking.exe";
     //"C:\\Users\\FASOO_499\\Desktop\\sample6.mask.jpg"; //making file name is sample2.mask.jpg
-    var mode = "masking"; // or unmasking
+    var m = mode; // or unmasking
 
-    var log = await maskingCallexec(modulePath, filePath, mode);
+    var log = await maskingCallexec(modulePath, filePath, m);
 
     console.log(log);
 };

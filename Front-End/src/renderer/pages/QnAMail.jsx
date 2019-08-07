@@ -92,7 +92,6 @@ export default function QnAMail(props) {
     const classes2 = mylistStyles();
     const [value, setValue] = React.useState(1);//null: 기본 페이지, 1: 구분요청, 2: 오탐
     // Forced ReRendering
-    const [,setUpdate] = useState([]);
     const [, updateState] = React.useState();
     const forceUpdate = React.useCallback(() => updateState({}), []);
     const [crop, setCrop] = useState(false);
@@ -191,9 +190,7 @@ export default function QnAMail(props) {
                              title : "Image Crop Success",
                              message : "이미지 확인을 하고 싶으면 클릭하세요",
                              wait : true,
-                         });
-                         notifier.on('click',(object,options,event)=>{
-                             console.log('test');
+                         },function(err,response){
                              shell.openItem(PATH);
                          });
                          setCrop(true);

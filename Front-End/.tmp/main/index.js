@@ -44,7 +44,7 @@ var isStop = false; //일시 정지 버튼 클릭 여부
 var isDoing = false; //반복문이 동작하는지 여부
 var isDone = false; //검색 중지
 var check = true; //통신 여부
-var de = (0, _delay2.default)(250000); //일시 중지
+var de = (0, _delay2.default)(250000); //Todo 일시정지 시간 조정
 var tmpList = [];
 _electron.app.on('ready', function () {
     var splash = new _electron.BrowserWindow({
@@ -66,13 +66,12 @@ _electron.app.on('ready', function () {
         win.window.webContents.openDevTools();
     });
     _electron.ipcMain.on('RESULT1', function (event, result) {
-        //결과 이미지 전송 및 반환
+        //QnA 페이지에 결과 이미지 전송 및 반환
         data = result;
         _electron.ipcMain.on('QNA_READY', function () {
             win.window.webContents.send('RESULT2', data);
         });
     });
-
     _electron.ipcMain.on('START_SEARCH', async function (event, result) {
         //검색 시작
         isDoing = true;
@@ -81,10 +80,6 @@ _electron.app.on('ready', function () {
         isStop = false;
         await regRead(result); //정규 표현식 파일 읽음
         var tmp = await Exec('C:\\Users\\FASOO_499\\Desktop\\FrameTest', ['.jpg', '.png', '.tif']); //함수 실행
-        notifier.notify({
-            title: "Search Completed",
-            message: "검색이 완료되었습니다."
-        });
     });
     _electron.ipcMain.on('STOP_SEARCH', function (event, result) {
         isDone = result; //검사 종료
@@ -95,8 +90,7 @@ _electron.app.on('ready', function () {
                 var json = JSON.stringify(tmpList);
                 fs.writeFileSync('resultfile.json', json, 'utf8'); //Todo 경로 위치 바꿔야 됨
                 console.log('file created');
-                (0, _UploadLog2.default)(tmpList);
-                tmpList = [];
+                // UploadLog(tmpList);
             }
         });
         if (isStop && isPlaying) {
@@ -112,6 +106,13 @@ _electron.app.on('ready', function () {
         de.clear(); //다시 시작
         isStop = false;
         isPlaying = true;
+    });
+    _electron.ipcMain.on('RESULT_PAGE', function (event, result) {
+        //Result 페이지에 결과 배열 전송
+        if (result) {
+            win.window.webContents.send('RESULT_LIST', tmpList);
+            tmpList = [];
+        }
     });
 });
 

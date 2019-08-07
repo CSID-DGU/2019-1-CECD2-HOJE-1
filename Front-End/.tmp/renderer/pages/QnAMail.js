@@ -136,10 +136,6 @@ function QnAMail(props) {
     // Forced ReRendering
 
 
-    var _useState = (0, _react.useState)([]),
-        _useState2 = _slicedToArray(_useState, 2),
-        setUpdate = _useState2[1];
-
     var _React$useState3 = _react2.default.useState(),
         _React$useState4 = _slicedToArray(_React$useState3, 2),
         updateState = _React$useState4[1];
@@ -148,20 +144,20 @@ function QnAMail(props) {
         return updateState({});
     }, []);
 
-    var _useState3 = (0, _react.useState)(false),
+    var _useState = (0, _react.useState)(false),
+        _useState2 = _slicedToArray(_useState, 2),
+        crop = _useState2[0],
+        setCrop = _useState2[1];
+
+    var _useState3 = (0, _react.useState)([]),
         _useState4 = _slicedToArray(_useState3, 2),
-        crop = _useState4[0],
-        setCrop = _useState4[1];
+        list = _useState4[0],
+        setList = _useState4[1];
 
     var _useState5 = (0, _react.useState)([]),
         _useState6 = _slicedToArray(_useState5, 2),
-        list = _useState6[0],
-        setList = _useState6[1];
-
-    var _useState7 = (0, _react.useState)([]),
-        _useState8 = _slicedToArray(_useState7, 2),
-        send = _useState8[0],
-        setSend = _useState8[1];
+        send = _useState6[0],
+        setSend = _useState6[1];
 
     function handleChange(event) {
         setValue(event.target.value);
@@ -314,9 +310,7 @@ function QnAMail(props) {
                             title: "Image Crop Success",
                             message: "이미지 확인을 하고 싶으면 클릭하세요",
                             wait: true
-                        });
-                        notifier.on('click', function (object, options, event) {
-                            console.log('test');
+                        }, function (err, response) {
                             _electron.shell.openItem(PATH);
                         });
                         setCrop(true);

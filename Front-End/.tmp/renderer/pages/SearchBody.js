@@ -136,17 +136,16 @@ _settingdata2.default.searchSetting.map(function (value) {
 });
 var check = false;
 function SearchBefore() {
+    // console.log('body rendering......');
     var classes = useStyles();
 
     var _useState = (0, _react.useState)([]),
         _useState2 = _slicedToArray(_useState, 2),
         rows = _useState2[0],
         setRow = _useState2[1];
-    //console.log('body rendering.....');
-
 
     (0, _react.useEffect)(function () {
-        ipcRenderer.once('RESULT_DICTIONARY', async function (event, result) {
+        ipcRenderer.on('RESULT_DICTIONARY', async function (event, result) {
             setRow([].concat(_toConsumableArray(rows), [createData(rows.length, result.fileName, result.classification, result.detectList, result.detectCount, result.formLevel, result.filePath, result.fitness)]));
             //console.log(rows);
             await delay(30);
@@ -154,6 +153,7 @@ function SearchBefore() {
         return function () {
             //console.log('closed : ' ,rows);
             ipcRenderer.send('TEST1', rows);
+            ipcRenderer.removeAllListeners('RESULT_DICTIONARY');
         };
     });
     ///////////////////// 검색결과 //////////////////////////

@@ -52,7 +52,7 @@ var useStyles = (0, _styles.makeStyles)(function (theme) {
         }
     };
 });
-var currentPath = void 0;
+var currentPath = '';
 function SearchHeader() {
     var classes = useStyles();
 
@@ -67,9 +67,12 @@ function SearchHeader() {
         setPath = _React$useState4[1];
 
     (0, _react.useEffect)(function () {
-        _electron.ipcRenderer.once('SEARCH_START', function (event, result) {
+        _electron.ipcRenderer.on('SEARCH_START', function (event, result) {
             setPath(result); //경로 바꿈
         });
+        return function () {
+            _electron.ipcRenderer.removeAllListeners('SEARCH_START');
+        };
     });
     return _react2.default.createElement(
         _Grid2.default,

@@ -18,7 +18,7 @@ let isStop = false; //일시 정지 버튼 클릭 여부
 let isDoing = false; //반복문이 동작하는지 여부
 let isDone = false; //검색 중지
 let check = true; //통신 여부
-let de = delay(250000); //일시 중지
+let de = delay(250000); //Todo 일시정지 시간 조정
 let tmpList = [];
 app.on('ready', () => {
     let splash = new BrowserWindow({
@@ -39,13 +39,12 @@ app.on('ready', () => {
         win.window.show();
         win.window.webContents.openDevTools();
     });
-    ipcMain.on('RESULT1', (event, result) => { //결과 이미지 전송 및 반환
+    ipcMain.on('RESULT1', (event, result) => { //QnA 페이지에 결과 이미지 전송 및 반환
         data = result;
         ipcMain.on('QNA_READY', () => {
             win.window.webContents.send('RESULT2', data);
         })
     });
-
     ipcMain.on('START_SEARCH',async (event,result)=>{ //검색 시작
         isDoing = true;
         isDone = false;
@@ -53,10 +52,6 @@ app.on('ready', () => {
         isStop = false;
         await regRead(result); //정규 표현식 파일 읽음
         let tmp = await Exec(`C:\\Users\\FASOO_499\\Desktop\\FrameTest`, ['.jpg', '.png', '.tif']); //함수 실행
-        notifier.notify({
-            title: "Search Completed",
-            message : "검색이 완료되었습니다."
-        })
     });
     ipcMain.on('STOP_SEARCH',(event,result)=>{
         isDone = result; //검사 종료
@@ -66,8 +61,7 @@ app.on('ready', () => {
                 let json = JSON.stringify(tmpList);
                 fs.writeFileSync('resultfile.json', json, 'utf8'); //Todo 경로 위치 바꿔야 됨
                 console.log('file created');
-                UploadLog(tmpList);
-                tmpList = [];
+               // UploadLog(tmpList);
             }
         });
         if(isStop && isPlaying){
@@ -83,6 +77,12 @@ app.on('ready', () => {
         de.clear(); //다시 시작
         isStop = false;
         isPlaying = true;
+    });
+    ipcMain.on('RESULT_PAGE',(event,result)=>{ //Result 페이지에 결과 배열 전송
+        if(result) {
+            win.window.webContents.send('RESULT_LIST', tmpList);
+            tmpList= [];
+        }
     });
 });
 

@@ -25,15 +25,18 @@ const useStyles = makeStyles(theme => ({
         flex: '1 1 auto',
     },
 }));
-let currentPath;
+let currentPath = '';
 export default function SearchHeader() {
     const classes = useStyles();
     const [puase, setPuase] = React.useState(0);
     const [path, setPath] = React.useState('');
     useEffect(() => {
-        ipcRenderer.once('SEARCH_START', (event, result) => {
-            setPath(result); //경로 바꿈
-        })
+        ipcRenderer.on('SEARCH_START', (event, result) => {
+          setPath(result); //경로 바꿈
+        });
+        return ()=>{
+            ipcRenderer.removeAllListeners('SEARCH_START');
+        }
     });
     return (
         <Grid container direction="row" justify="flex-start" alignItems="center" spacing={2}>

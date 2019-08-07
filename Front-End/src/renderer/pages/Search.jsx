@@ -78,8 +78,6 @@ setting_data.searchSetting.map(value => {
     }
 })
 
-let testvalue = 0;
-
 export default function Search() {
     const classes = useStyles();
     const [value, setValue] = React.useState(0);

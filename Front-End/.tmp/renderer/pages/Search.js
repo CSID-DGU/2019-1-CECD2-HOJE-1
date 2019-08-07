@@ -161,8 +161,6 @@ _settingdata2.default.searchSetting.map(function (value) {
     }
 });
 
-var testvalue = 0;
-
 function Search() {
     var classes = useStyles();
 

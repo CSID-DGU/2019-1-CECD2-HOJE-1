@@ -69,11 +69,11 @@ setting_data.searchSetting.map(value => {
 });
 let check = false;
 export default function SearchBefore() {
+   // console.log('body rendering......');
     const classes = useStyles();
     const [rows ,setRow] = useState([]);
-    //console.log('body rendering.....');
     useEffect( ()=>{
-        ipcRenderer.once('RESULT_DICTIONARY',async (event,result)=>{
+        ipcRenderer.on('RESULT_DICTIONARY',async (event,result)=>{
             setRow([...rows,createData(rows.length, result.fileName,result.classification,result.detectList,result.detectCount,result.formLevel,result.filePath,result.fitness)]);
             //console.log(rows);
             await delay(30);
@@ -81,6 +81,7 @@ export default function SearchBefore() {
         return ()=>{
             //console.log('closed : ' ,rows);
             ipcRenderer.send('TEST1',rows);
+            ipcRenderer.removeAllListeners('RESULT_DICTIONARY');
         }
     },);
     ///////////////////// 검색결과 //////////////////////////
