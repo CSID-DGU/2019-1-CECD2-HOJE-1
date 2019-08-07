@@ -5,28 +5,49 @@ cd ~/mytraining
 export PATH=/usr/local/bin:$PATH
 
 image_file=$1
-box_file=$2
-language=$3
+language=$2
+new_language=$3
 psm=$4
-new_language=$5
-max_iterations=$6
+max_iterations=$5
+old_traineddata=$6
+
+if [ $# -ne 6 ] 
+then
+	echo "Warning: `basename $0` 의 매겨변수의 개수가 올바르지 않습니다."
+	exit $WRONG_ARGS
+fi
+
+imgae_file_nopath=`basename $image_file`
+image_name="${imgae_file_nopath%.*}"
+image_file_extension="${imgae_file_nopath##*.}"
+
+# box file 여부 확인 후 없으면 종료
+box_file=${image_file/%.${image_file_extension}/.box}
+if [ -f $box_file ]
+then
+	echo "box file exist"
+else
+	echo "box file not exist"
+	exit 0
+fi
 
 cp $image_file ~/mytraining/single_train/
 cp $box_file ~/mytraining/single_train/
 
 mkdir -p single_train/${language}
 
-# create lstmf file
-combine_tessdata -u ./tesseract/tessdata/${language}.traineddata  ./single_train/${language}/${language}
+# 이전 traineddata에서 정보 추출
+combine_tessdata -u ${old_traineddata} ./single_train/${language}/${language}
+# all-boxes파일에서 unicharset 추출
 unicharset_extractor --output_unicharset "./single_train/my.unicharset" --norm_mode 2 "${box_file}"
+# 추출한 unicharset과 이전 traineddata의 unicharset 병합
 merge_unicharsets ./single_train/${language}/${language}.lstm-unicharset ./single_train/my.unicharset  ./single_train/${new_language}.unicharset
 
-# 일단 png파일만 해봄 이미지 파일 경로에서 변경하도록 변경
+# create lstmf file
+tesseract $image_file ${image_file%.*} --psm ${psm} lstm.train
 
-tesseract $image_file ${image_file/.png/""} --psm ${psm} lstm.train
-
-mv ${image_file/.png/.lstmf} ~/mytraining/single_train/
-
+# lstmf file 위치를 list로 만들기
+mv ${image_file/%.${image_file_extension}/.lstmf} ~/mytraining/single_train/
 find ~/mytraining/single_train/ -name '*.lstmf' -exec echo {} \; | sort -R -o ./single_train/all-lstmf
 
 # make starter traineddata
@@ -39,13 +60,14 @@ combine_lang_model \
 	--output_dir ./single_train \
 	--lang ${new_language}
 
+# kor은 필수
 combine_tessdata -o ./single_train/${new_language}/${new_language}.traineddata \
 	./single_train/${language}/${language}.config
 
 # training
 lstmtraining \
 	--traineddata ./single_train/${new_language}/${new_language}.traineddata \
-    --old_traineddata ./tesseract/tessdata/${language}.traineddata \
+    --old_traineddata ${old_traineddata} \
 	--net_spec "[1,36,0,1 Ct3,3,16 Mp3,3 Lfys48 Lfx96 Lrx96 Lfx256 O1c`head -n1 ./single_train/${new_language}/${new_language}.unicharset`]" \
 	--model_output ./single_train/result \
 	--continue_from ./single_train/${language}/${language}.lstm \
@@ -59,24 +81,7 @@ lstmtraining \
 	--traineddata ./single_train/${new_language}/${new_language}.traineddata \
 	--model_output ./single_train/${new_language}.traineddata
 	
+cp -v ./single_train/${new_language}.traineddata ./tesseract/tessdata/
+
 echo "종료"
 exit 0
-
-lstmtraining \
-	--traineddata ./single_train/my_kor/my_kor.traineddata \
-    --old_traineddata ./tesseract/tessdata/kor.traineddata \
-	--net_spec "[1,36,0,1 Ct3,3,16 Mp3,3 Lfys48 Lfx96 Lrx96 Lfx256 O1c`head -n1 ./single_train/my_kor/my_kor.unicharset`]" \
-	--model_output ./single_train/result \
-	--continue_from ./single_train/kor/kor.lstm \
-	--train_listfile all-lstmf \
-	--debug_interval 0 \
-	--max_iterations 400
-
-
-lstmtraining \
-	--stop_training \
-	--convert_to_int \
-	--continue_from ./single_train/result_checkpoint \
-	--old_traineddata ./tesseract/tessdata/kor.traineddata \
-	--traineddata ./single_train/my_kor/my_kor.traineddata \
-	--model_output ./single_train/my_kor.traineddata
