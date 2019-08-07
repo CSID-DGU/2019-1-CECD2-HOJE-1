@@ -6,6 +6,12 @@
 			"width" : 310,
 			"x_pos" : 244,
 			"y_pos" : 111
+		},
+		{
+			"height" : 80,
+			"width" : 377,
+			"x_pos" : 256,
+			"y_pos" : 36
 		}
 	],
 	"roiBox" : 

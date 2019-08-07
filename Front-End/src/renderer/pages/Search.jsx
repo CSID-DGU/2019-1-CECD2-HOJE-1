@@ -19,7 +19,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
 
-import setting_data from './settingdata.json';
+import setting_data from '../../../reg/reg';
 
 import Typography from '@material-ui/core/Typography';
 
@@ -72,9 +72,9 @@ TabPanel.propTypes = {
 };
 
 let test = [];
-setting_data.searchSetting.map(value => {
+setting_data.reg.map(value => {
     if (value.checked === true) {
-        test.push(value.name);
+        test.push(value.key);
     }
 })
 
@@ -139,7 +139,7 @@ export default function Search() {
         if (ReRender) {
             setTimeout(forceUpdate, 1000);
         }
-    })
+    });
 
     const onToggle = (currentNode) => {
         let tmp_path_data = path_data;
@@ -222,21 +222,21 @@ export default function Search() {
                             <Fade {...TransitionProps} timeout={350}>
                                 <Paper>
                                     <List className={classes.root}>
-                                        {setting_data.searchSetting.map(value => {
+                                        {setting_data.reg.map(value => {
                                             const labelId = `op-${value.id}`;
                                             return (
                                                 <ListItem disabled={value.disable} key={value.id} role={undefined} dense
-                                                          button onClick={handleToggle(value.name)}>
+                                                          button onClick={handleToggle(value.key)}>
                                                     <ListItemIcon>
                                                         <Checkbox
                                                             edge="start"
-                                                            checked={checked.indexOf(value.name) !== -1}
+                                                            checked={checked.indexOf(value.key) !== -1}
                                                             tabIndex={-1}
                                                             disableRipple
                                                             inputProps={{'aria-labelledby': labelId}}
                                                         />
                                                     </ListItemIcon>
-                                                    <ListItemText id={labelId} primary={`${value.name}`}/>
+                                                    <ListItemText id={labelId} primary={`${value.key}`}/>
                                                 </ListItem>
                                             );
                                         })}

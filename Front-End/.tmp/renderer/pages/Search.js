@@ -82,9 +82,9 @@ var _Checkbox = require('@material-ui/core/Checkbox');
 
 var _Checkbox2 = _interopRequireDefault(_Checkbox);
 
-var _settingdata = require('./settingdata.json');
+var _reg = require('../../../reg/reg');
 
-var _settingdata2 = _interopRequireDefault(_settingdata);
+var _reg2 = _interopRequireDefault(_reg);
 
 var _Typography = require('@material-ui/core/Typography');
 
@@ -155,9 +155,9 @@ TabPanel.propTypes = {
 };
 
 var test = [];
-_settingdata2.default.searchSetting.map(function (value) {
+_reg2.default.reg.map(function (value) {
     if (value.checked === true) {
-        test.push(value.name);
+        test.push(value.key);
     }
 });
 
@@ -369,24 +369,24 @@ function Search() {
                                 _react2.default.createElement(
                                     _List2.default,
                                     { className: classes.root },
-                                    _settingdata2.default.searchSetting.map(function (value) {
+                                    _reg2.default.reg.map(function (value) {
                                         var labelId = 'op-' + value.id;
                                         return _react2.default.createElement(
                                             _ListItem2.default,
                                             { disabled: value.disable, key: value.id, role: undefined, dense: true,
-                                                button: true, onClick: handleToggle(value.name) },
+                                                button: true, onClick: handleToggle(value.key) },
                                             _react2.default.createElement(
                                                 _ListItemIcon2.default,
                                                 null,
                                                 _react2.default.createElement(_Checkbox2.default, {
                                                     edge: 'start',
-                                                    checked: checked.indexOf(value.name) !== -1,
+                                                    checked: checked.indexOf(value.key) !== -1,
                                                     tabIndex: -1,
                                                     disableRipple: true,
                                                     inputProps: { 'aria-labelledby': labelId }
                                                 })
                                             ),
-                                            _react2.default.createElement(_ListItemText2.default, { id: labelId, primary: '' + value.name })
+                                            _react2.default.createElement(_ListItemText2.default, { id: labelId, primary: '' + value.key })
                                         );
                                     })
                                 )

@@ -7,7 +7,6 @@ import { red, yellow, green, blue } from '@material-ui/core/colors';
 
 import Paper from '@material-ui/core/Paper';
 
-import setting_data from './settingdata.json';
 
 import Typography from '@material-ui/core/Typography';
 
@@ -20,6 +19,7 @@ import DangerIcon from '@material-ui/icons/Warning';
 import UploadLog from "../../main/FrameTest/UploadLog";
 const {ipcRenderer} = require('electron');
 const delay = require('delay');
+
 const useStyles = makeStyles(theme => ({
     root: {
         flexGrow: 1,
@@ -61,13 +61,6 @@ TabPanel.propTypes = {
     value: PropTypes.any.isRequired,
 };
 
-let test = [];
-setting_data.searchSetting.map(value => {
-    if(value.checked === true){
-        test.push(value.name);
-    }
-});
-let check = false;
 export default function SearchBefore() {
    // console.log('body rendering......');
     const classes = useStyles();

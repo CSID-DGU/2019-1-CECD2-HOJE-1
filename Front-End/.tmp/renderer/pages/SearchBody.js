@@ -32,10 +32,6 @@ var _Paper = require('@material-ui/core/Paper');
 
 var _Paper2 = _interopRequireDefault(_Paper);
 
-var _settingdata = require('./settingdata.json');
-
-var _settingdata2 = _interopRequireDefault(_settingdata);
-
 var _Typography = require('@material-ui/core/Typography');
 
 var _Typography2 = _interopRequireDefault(_Typography);
@@ -82,6 +78,7 @@ var _require = require('electron'),
     ipcRenderer = _require.ipcRenderer;
 
 var delay = require('delay');
+
 var useStyles = (0, _styles.makeStyles)(function (theme) {
     return {
         root: {
@@ -128,13 +125,6 @@ TabPanel.propTypes = {
     value: _propTypes2.default.any.isRequired
 };
 
-var test = [];
-_settingdata2.default.searchSetting.map(function (value) {
-    if (value.checked === true) {
-        test.push(value.name);
-    }
-});
-var check = false;
 function SearchBefore() {
     // console.log('body rendering......');
     var classes = useStyles();

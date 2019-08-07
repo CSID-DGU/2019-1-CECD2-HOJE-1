@@ -76,4 +76,4 @@ module.exports ={
     regRead : regRead,
     regReset : regReset,
     TessNreg : TessNreg
-}
+};
