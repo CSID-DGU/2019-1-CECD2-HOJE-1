@@ -18,12 +18,12 @@ function createWindow () {
   //win.loadFile('index.html')
   
   // electron에서 react 접근??
-  // const startUrl = process.env.ELECTRON_START_URL || url.format({
-  //   pathname: path.join(__dirname, 'public', 'index.html'),
-  //   protocol: 'file:',
-  //   slashes: true
-  // });
-  win.loadURL('file://'+__dirname+'/public/index.html');
+  const startUrl = process.env.ELECTRON_START_URL || url.format({
+    pathname: path.join(__dirname, '/../build/index.html'),
+    protocol: 'file:',
+    slashes: true
+  });
+  win.loadURL(startUrl);
 
   // 개발자 도구를 엽니다.
   win.webContents.openDevTools()

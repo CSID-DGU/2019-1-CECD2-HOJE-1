@@ -8,7 +8,7 @@ import Fab from '@material-ui/core/Fab';
 import TextField from '@material-ui/core/TextField';
 import Popper from '@material-ui/core/Popper';
 import Fade from '@material-ui/core/Fade';
-import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
 import Paper from '@material-ui/core/Paper';
 import SettingIcon from '@material-ui/icons/Settings';
 
@@ -22,11 +22,13 @@ import setting_data from './settingdata.json';
 
 import Typography from '@material-ui/core/Typography';
 
-import DropdownTreeSelect from "react-dropdown-tree-select";
-import "./tree.css";
-//import MuiTreeView from 'material-ui-treeview';
+import Tree from '../components/Tree';
 
-import * as fs from 'fs';
+import SearchHeader from './SearchHeader';
+import SearchBody from './SearchBody';
+
+const fs = require('fs');
+
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -41,6 +43,9 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
     overflow: 'auto',
     maxHeight: 360,
+  },
+  spacer: {
+    flex: '1 1 auto',
   },
 })); 
 
@@ -69,29 +74,18 @@ TabPanel.propTypes = {
 let test = [];
 setting_data.searchSetting.map(value => {
   if(value.checked === true){
-    test.push(value.id);
+    test.push(value.name);
   }
 })
-
-function getDir(dir){
-  fs.readdir(dir, function(error, filelist){
-    let testarray = [];
-    filelist.map(value => {
-      if(value.match('\\.') === null)
-        testarray.push(value);
-    })
-    console.log(testarray);
-  });
-}
 
 export default function Search() {
   const classes = useStyles(); 
   const [value, setValue] = React.useState(0);
-  const [puase, setPuase] = React.useState(0);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [open, setOpen] = React.useState(false);
   const [placement, setPlacement] = React.useState(); 
-  const [select, setSelect] = React.useState([]);
+  const [selectedFile, setSelectedFile] = React.useState([]);
+  const [ReRender, setReRender] = React.useState(false);
 
   const handleClick = newPlacement => event => {
     setAnchorEl(event.currentTarget);
@@ -113,7 +107,6 @@ export default function Search() {
     setChecked(newChecked);
   };
 
-
   ////// 경로 출력
   const assignObjectPaths = (obj, stack) => {
     Object.keys(obj).forEach(k => {
@@ -124,73 +117,70 @@ export default function Search() {
       }
     });
   };
+
+  // 기본 경로( Windows 기준 )
+  const [path_data, setPathData] = React.useState({
+    'C:/': {
+      path: 'C:/',
+      type: 'folder',
+      checked: false,
+      isRoot: true,
+      children: [],
+    },
+  });
+
+  // Forced ReRendering
+  const [,updateState] = React.useState();
+  const forceUpdate = React.useCallback(() => {updateState({}); setReRender(false)}, []);
+  React.useEffect(() => {
+    if(ReRender) {setTimeout(forceUpdate, 1000);}
+  })
   
-
-  // 기본 경로
-  const path = {
-    label: '0',
-    value: '0',
-    children: [
-      {
-        label: '1',
-        value: '1',
-        children: [
-          {
-            label: '2',
-            value: '2'
+  const onToggle = (currentNode) => {
+    let tmp_path_data = path_data;
+    if(currentNode.isOpen){
+      //console.log(currentNode);
+      fs.readdir(currentNode.path, function(error, dir){
+        dir.map(value => {
+          if(value.match('\\.') === null){
+            const path = currentNode.path + '/' + value;
+            if(tmp_path_data[currentNode.path].children.indexOf(path) === -1)
+            {
+              //console.log(path);
+              tmp_path_data[currentNode.path].children.push(path);
+              tmp_path_data[path] = {
+                path: `${path}`,
+                type: 'folder',
+                checked: false,
+                children: [],
+              }
+            }
           }
-        ]
-      },
-      {
-        label: '11',
-        value: '11',
-        children: [
-          {
-            label: '22',
-            value: '22'
-          }
-        ]
-      },
-      {
-        label: '111',
-        value: '111',
-        children: [
-          {
-            label: '222',
-            value: '222'
-          }
-        ]
-      }
-    ]
-  };
-
-  // 현재 목록
-  let path_data = path;
-  // 검색에 사용된 경로 목록
-  let select_data = [];
-  // checked 변경시
-  const onChange = (currentNode, selectedNodes) => {
-    select_data = selectedNodes;
-    console.log(JSON.stringify(select_data));
-  };
-
-  const onClick = () => {
-    console.log(JSON.stringify(select_data));
+        });
+      });
+      setPathData(tmp_path_data);
+      //console.log(path_data);
+    }
+    setReRender(true);
   }
 
-  const onNodeToggle = (currentNode) => {
-    console.log(getDir('C:/Users'));
-  }
+  // 체크 목록 넣기
+  const onChecked  = (value) => {
+    const currentIndex = selectedFile.indexOf(value.path);
+    const newSelectFile = [...selectedFile];
 
-  
-  // 초기 셋팅
-  assignObjectPaths(path_data);
-
+    if (currentIndex === -1) {
+      newSelectFile.push(value.path);
+    } else {
+      newSelectFile.splice(currentIndex, 1);
+    }
+    setSelectedFile(newSelectFile);
+  };
   
   return (
     <div className={classes.root}>
-      <TabPanel value={value} index={0}>{/* 검색 시작 화면 */ }
-        <Grid container direction="row" justify="flex-start" alignItems="center" spacing={2}>
+      <TabPanel value={value} index={0}>{ /* 검색 시작 화면 */ }
+        <Grid container direction="row" justify="flex-start" alignItems="center" spacing={2}>{/* 검색화면 헤더 */}
           <Grid item xs={12} sm={8}>{/* 최근 검사 일자 */ }
             <TextField
               id="outlined-read-only-input"
@@ -203,21 +193,21 @@ export default function Search() {
               variant="outlined"
             >검사내역</TextField>
           </Grid>
-          <Grid item xs={12} sm={3}>{/* 검색 시작 버튼 */ }
+          <div className={classes.spacer}/>
+          {/* 검색 시작 버튼 */ }
             <Fab
               variant="extended"
               color="primary"
               aria-label="Add"
               className={classes.margin}
-              onClick={()=>{setValue(1); setSelect(select_data);}}
+              onClick={()=>{ if(open === true) setOpen(false); setReRender(false); setValue(1);}}
             >
               검사 시작
             </Fab>
-          </Grid>
-          <Grid item xs={12} sm={1}>{/* 검색 설정 */ }
-            <Button onClick={handleClick('bottom-end')}>
+          {/* 검색 설정 */ }
+            <IconButton onClick={handleClick('bottom-end')}>
               <SettingIcon/>
-            </Button>
+            </IconButton>
             <Popper open={open} anchorEl={anchorEl} placement={placement} transition >
             {({ TransitionProps }) => (
               <Fade {...TransitionProps} timeout={350}>
@@ -226,11 +216,11 @@ export default function Search() {
                     {setting_data.searchSetting.map(value => {
                       const labelId = `op-${value.id}`;
                       return (
-                        <ListItem disabled={value.disable} key={value.id} role={undefined} dense button onClick={handleToggle(value.id)}>
+                        <ListItem disabled={value.disable} key={value.id} role={undefined} dense button onClick={handleToggle(value.name)}>
                           <ListItemIcon>
                             <Checkbox
                               edge="start"
-                              checked={checked.indexOf(value.id) !== -1}
+                              checked={checked.indexOf(value.name) !== -1}
                               tabIndex={-1}
                               disableRipple
                               inputProps={{ 'aria-labelledby': labelId }}
@@ -245,76 +235,16 @@ export default function Search() {
               </Fade>
             )}
             </Popper>
-          </Grid>
         </Grid>
         <Grid container justify="center" alignItems="center" spacing={5}>{/* 검색 경로 설정 */ }
           <Grid item xs>
-            <DropdownTreeSelect 
-            data={path_data}
-            onChange={onChange}
-            onNodeToggle={onNodeToggle}
-            className="mdl-demo"
-            showDropdown="always"/>
+            <Tree onChecked={onChecked} onToggle={onToggle} data={path_data}/>
           </Grid>
         </Grid>
       </TabPanel>
       <TabPanel value={value} index={1}>{/* 검색중 페이지 */ }
-        <Grid container direction="row" justify="flex-start" alignItems="center" spacing={2}>
-          <Grid item xs={12} sm={8}>
-            <TextField
-            id="outlined-read-only-input"
-            label="검사중 파일"
-            margin="normal"
-            InputProps={{
-              readOnly: true,
-            }}
-            variant="outlined"
-            value="검사내역"
-            />
-          </Grid>
-          {/* 일시 중지 및 다시 시작 버튼 */}
-          <Grid item xs={12} sm>
-            {/* 일시 중지 버튼 */}
-            <div hidden={puase%2 === 0 ? false : true}>
-              <Fab
-                variant="extended"
-                color="primary"
-                aria-label="Add"
-                className={classes.margin}
-                onClick={()=>setPuase(1)}
-              >
-                일시 중지
-              </Fab>
-            </div>
-            {/* 다시 시작 버튼 */}
-            <div hidden={puase%2 === 1 ? false : true}>
-              <Fab
-                variant="extended"
-                color="primary"
-                aria-label="Add"
-                className={classes.margin}
-                onClick={()=>setPuase(0)}
-              >
-                다시 시작
-              </Fab>
-            </div>
-          </Grid>
-          {/* 검사 중지 버튼 */}
-          <Grid item xs={12} sm>
-            <Fab
-              variant="extended"
-              color="primary"
-              aria-label="Add"
-              className={classes.margin}
-              onClick={()=>setValue(0)}
-            >
-              검사 중지
-            </Fab>
-          </Grid>
-        </Grid>
-        <Grid container justify="center" alignItems="center" spacing={5}>
-          {JSON.stringify(select)}
-        </Grid>
+        <SearchHeader currentPath={value}/>
+        <SearchBody resultList={[]}/>
       </TabPanel>
     </div>
   );
