@@ -56,7 +56,6 @@ export default function Test(){
           <h3>made by HOJE(maetdol type developer team)</h3>
         </Grid>
         <Grid>
-        <CircularProgress />
         </Grid>
       </Grid>
     </div>

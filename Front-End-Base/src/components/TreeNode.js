@@ -46,10 +46,7 @@ const TreeNode = (props) => {
           { node.type === 'folder' && !node.isOpen && <FaFolder /> }
         </NodeIcon>
         
-
-        <span role="button" onClick={() => onNodeSelect(node)}>
-          { getNodeLabel(node) }
-        </span>
+        { getNodeLabel(node) }
       </StyledTreeNode>
 
       { node.isOpen && getChildNodes(node).map(childNode => (

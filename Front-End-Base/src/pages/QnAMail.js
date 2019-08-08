@@ -2,10 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import { Paper, FormControl, InputLabel, Select, MenuItem, Fab, Grid, TextField } from '@material-ui/core';
-import { List, Divider, Button, Input, InputAdornment } from '@material-ui/core';
+import { Paper, FormControl, InputLabel, Select, MenuItem, Fab, Grid, TextField, Popover } from '@material-ui/core';
+import { List, Divider, CardActionArea, CardMedia, CardContent } from '@material-ui/core';
 import testimage from './text.jpg';
-import testimage2 from './Pattern.png';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -60,6 +59,12 @@ const mylistStyles = makeStyles(theme => ({
   item: {
     padding: 10,
   },
+  media: {
+    height: 300,
+  },
+  content: {
+    padding: theme.spacing(2),
+  },
 }));
 
 function TabPanel(props) {
@@ -92,6 +97,7 @@ export default function QnAMail(props){
   const [file, ] = React.useState(['Pattern.png','Bookmark.png','Find.png','Identification.png','SearchIcon.png']);
   const [send, setSend] = React.useState([])
   const [init, setInit] = React.useState(true);
+  // 
   function handleChange(event) {
     setValue(event.target.value);
   }
@@ -114,7 +120,17 @@ export default function QnAMail(props){
     }
     setInit(false);
   }
-  
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  function handleClick(event) {
+    setAnchorEl(event.currentTarget);
+  }
+
+  function handleClose() {
+    setAnchorEl(null);
+  }
+
+  const open = Boolean(anchorEl);
 
   return (
     <div className={classes.root}>
@@ -166,13 +182,25 @@ export default function QnAMail(props){
         구분을 선택해 주세요.
       </TabPanel>
       <TabPanel value={value} index={1}>{ /* 분류구분 추가신청 화면 */ }
-        <Grid container className={classes2.item} alignItems="center">
-          <Grid item xs={6}><img style={{marginTop: 12, marginBottom: 12}} maxHeight="303" maxWidth="352" height="100%" width="100%" src={testimage}/></Grid>
-          <Grid item xs={6}>
-            <TextField id={`classification-require`} label="이미지 분류를 위한 문서종류를 적으세요" multiline
-            rows="14" fullWidth margin="normal" variant="filled"/>
-          </Grid>
+        <Grid item alignItems="center" justify="center">
+          <Grid xs={12} item><CardActionArea onClick={handleClick}><CardContent>해당되는 이미지에 대한 설명을 적으려면 이미지를 클릭하세요</CardContent><CardMedia className={classes2.media} image={testimage}/></CardActionArea></Grid>
         </Grid>
+        <Popover 
+          open={open}
+          anchorEl={anchorEl}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'left',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'left',
+          }}
+        >
+          <TextField className={classes2.content} label="이미지 설명을 적어주세요" multiline 
+          rows="6" fullWidth margin="normal" variant="outlined"/>
+        </Popover>
       </TabPanel>
       <TabPanel value={value} index={2}>{ /* 오탐지 수정요청 화면 */ }
           <List className={classes2.root} >
@@ -182,8 +210,8 @@ export default function QnAMail(props){
               <Grid container zeroMinWidth className={classes2.item}>
                 <Grid xs={6} item><img style={{marginTop: 12, marginBottom: 12}} maxHeight="303" maxWidth="343" height="98%" width="100%" src={testimage}/></Grid>
                 <Grid xs={6} item>
-                  <TextField id={item} label="이미지 내의 텍스트를 적어주세요" multiline
-                  rows="3" fullWidth margin="normal" variant="filled" onChange={txtChange(item)}/>
+                  <TextField className={classes2.item} id={item} label="이미지 내의 텍스트를 적어주세요" multiline 
+                   fullWidth margin="normal" variant="outlined" onChange={txtChange(item)}/>
                 </Grid>
               </Grid>
               <Divider/>
