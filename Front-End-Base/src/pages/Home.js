@@ -6,6 +6,12 @@ import Box from '@material-ui/core/Box';
 import CardMedia from'@material-ui/core/CardMedia';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import { Link } from 'react-router-dom';
+import CardContent from '@material-ui/core/CardContent';
+import Typography from '@material-ui/core/Typography';
+import imageA from './image/Bookmark-110.png';
+import imageB from './image/Find-110.png';
+import imageC from './image/Identification-110.png';
+import imageD from './image/Pattern-110.png'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -13,9 +19,22 @@ const useStyles = makeStyles(theme => ({
   },
   paper: {
     textAlign: 'center',
+    alignItems: 'center',
+    borderRadius: 20, 
+    fontSize: 20,
     color: theme.palette.text.secondary,
-    height: 220,
+    height: 160,
+    backgroundColor: '#d1c4e9',
   },
+  image: {
+    height: 120,
+  },
+  imagecontent: {
+    textAlign: 'center',
+  },
+  item: {
+    padding: 5,
+  }
 }));
 
 const test = [
@@ -85,10 +104,10 @@ function cal_result(index) {
     Result = 
       <Grid container justify="center" alignItems="center"
       direction="row" spacing={3} >
-        <Grid item xs={3}><Box border={1} className={classes.paper}>대외비 : {no1.length}</Box></Grid>
-        <Grid item xs={3}><Box border={1} className={classes.paper}>사내한 : {no2.length}</Box></Grid>
-        <Grid item xs={3}><Box border={1} className={classes.paper}>공개 : {no3.length}</Box></Grid>
-        <Grid item xs={3}><Box border={1} className={classes.paper}>미분류 : {no4.length}</Box></Grid>
+        <Grid item xs={3}><Box paddingTop={4} className={classes.paper}>대외비<br/><h2>{no1.length}</h2></Box></Grid>
+        <Grid item xs={3}><Box paddingTop={4} className={classes.paper}>사내한<br/><h2>{no2.length}</h2></Box></Grid>
+        <Grid item xs={3}><Box paddingTop={4} className={classes.paper}>공개<br/><h2>{no3.length}</h2></Box></Grid>
+        <Grid item xs={3}><Box paddingTop={4} className={classes.paper}>미분류<br/><h2>{no4.length}</h2></Box></Grid>
       </Grid>;
   }
   // 검출된 파일 (고유식별 검출, 사내한 분류, 공개 분류)??? 필요할까??
@@ -103,10 +122,10 @@ function cal_result(index) {
     Result = 
       <Grid container justify="center" alignItems="center"
       direction="row" spacing={3} >
-        <Grid item xs={3}><Box border={1} className={classes.paper}>고유식별정보 검출 : {no1.length}</Box></Grid>
-        <Grid item xs={3}><Box border={1} className={classes.paper}>사내한 분류 : {no2.length}</Box></Grid>
-        <Grid item xs={3}><Box border={1} className={classes.paper}>공개 : {no3.length}</Box></Grid>
-        <Grid item xs={3}><Box border={1} className={classes.paper}></Box></Grid>
+        <Grid item xs={3}><Box paddingTop={4} className={classes.paper}>식별정보검출<br/><h2>{no1.length}</h2></Box></Grid>
+        <Grid item xs={3}><Box paddingTop={4} className={classes.paper}>사내한<br/><h2>{no2.length}</h2></Box></Grid>
+        <Grid item xs={3}><Box paddingTop={4} className={classes.paper}>공개<br/><h2>{no3.length}</h2></Box></Grid>
+        <Grid item xs={3}><Box paddingTop={4} className={classes.paper}></Box></Grid>
       </Grid>;
   }
   // 패턴포함 파일 (주민등록번호, 여권번호, 통장번호)
@@ -121,10 +140,10 @@ function cal_result(index) {
     Result = 
       <Grid container justify="center" alignItems="center"
       direction="row" spacing={3} >
-        <Grid item xs={3}><Box border={1} className={classes.paper}>주민등록번호 : {no1.length}</Box></Grid>
-        <Grid item xs={3}><Box border={1} className={classes.paper}>여권번호 : {no2.length}</Box></Grid>
-        <Grid item xs={3}><Box border={1} className={classes.paper}>계좌번호 : {no3.length}</Box></Grid>
-        <Grid item xs={3}><Box border={1} className={classes.paper}></Box></Grid>
+        <Grid item xs={3}><Box paddingTop={4} className={classes.paper}>주민등록번호<br/><h2>{no1.length}</h2></Box></Grid>
+        <Grid item xs={3}><Box paddingTop={4} className={classes.paper}>여권번호<br/><h2>{no2.length}</h2></Box></Grid>
+        <Grid item xs={3}><Box paddingTop={4} className={classes.paper}>계좌번호<br/><h2>{no3.length}</h2></Box></Grid>
+        <Grid item xs={3}><Box paddingTop={4} className={classes.paper}></Box></Grid>
       </Grid>;
   }
   // 형식식별 파일 (JPG, PNG, TIF)
@@ -139,10 +158,10 @@ function cal_result(index) {
     Result = 
       <Grid container justify="center" alignItems="center"
       direction="row" spacing={3} >
-        <Grid item xs={3}><Box border={1} className={classes.paper}>JPG : {no1.length}</Box></Grid>
-        <Grid item xs={3}><Box border={1} className={classes.paper}>PNG : {no2.length}</Box></Grid>
-        <Grid item xs={3}><Box border={1} className={classes.paper}>TIF : {no3.length}</Box></Grid>
-        <Grid item xs={3}><Box border={1} className={classes.paper}></Box></Grid>
+        <Grid item xs={3}><Box paddingTop={4} className={classes.paper}>JPG<br/><h2>{no1.length}</h2></Box></Grid>
+        <Grid item xs={3}><Box paddingTop={4} className={classes.paper}>PNG<br/><h2>{no2.length}</h2></Box></Grid>
+        <Grid item xs={3}><Box paddingTop={4} className={classes.paper}>TIF<br/><h2>{no3.length}</h2></Box></Grid>
+        <Grid item xs={3}><Box paddingTop={4} className={classes.paper}></Box></Grid>
       </Grid>;
   }
   else Result = <div></div>
@@ -175,25 +194,45 @@ export default function Home() {
       justify="center"
       alignItems="center"
       direction="row"
-      spacing={3} >
-        <Grid item xs={3}>
+      spacing={3}>
+        <Grid paddingTop={5} item xs={3}>
           <CardActionArea>
-            <CardMedia className={classes.paper} image='./Bookmark.png' title="1" onClick={() => {setValue(0)}}/>
+            <CardMedia className={classes.image} image={imageA} title="1" onClick={() => {setValue(0)}}/>
+            <CardContent>
+            <Typography className={classes.imagecontent} gutterBottom variant="h5" component="h2">
+              Classify
+            </Typography>
+            </CardContent>
+          </CardActionArea>
+        </Grid>
+        <Grid item xs={3} className={classes.item}>
+          <CardActionArea>
+            <CardMedia className={classes.image} image={imageB} title="2" onClick={() => {setValue(1)}}/>
+            <CardContent>
+            <Typography className={classes.imagecontent} gutterBottom variant="h5" component="h2">
+              Detect
+            </Typography>
+            </CardContent>
           </CardActionArea>
         </Grid>
         <Grid item xs={3}>
           <CardActionArea>
-            <CardMedia className={classes.paper} image='Find.png' title="2" onClick={() => {setValue(1)}}/>
+            <CardMedia className={classes.image} image={imageC} title="3" onClick={() => {setValue(2)}}/>
+            <CardContent>
+            <Typography className={classes.imagecontent} gutterBottom variant="h5" component="h2">
+              Pattern
+            </Typography>
+            </CardContent>
           </CardActionArea>
         </Grid>
         <Grid item xs={3}>
           <CardActionArea>
-            <CardMedia className={classes.paper} image='Identification.png' title="3" onClick={() => {setValue(2)}}/>
-          </CardActionArea>
-        </Grid>
-        <Grid item xs={3}>
-          <CardActionArea>
-            <CardMedia className={classes.paper} image='Pattern.png' title="4" onClick={() => {setValue(3)}}/>
+            <CardMedia className={classes.image} image={imageD} title="4" onClick={() => {setValue(3)}}/>
+            <CardContent>
+            <Typography className={classes.imagecontent} gutterBottom variant="h5" component="h2">
+              Format
+            </Typography>
+            </CardContent>
           </CardActionArea>
         </Grid>
         </Grid>

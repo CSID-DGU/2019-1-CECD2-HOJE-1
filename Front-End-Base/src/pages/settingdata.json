@@ -17,6 +17,24 @@
     "name": "카드번호",
     "checked": true,
     "disable": false
+  },
+  {
+    "id": 3,
+    "name": "카드번호",
+    "checked": true,
+    "disable": false
+  },
+  {
+    "id": 4,
+    "name": "카드번호",
+    "checked": true,
+    "disable": false
+  },
+  {
+    "id": 5,
+    "name": "카드번호",
+    "checked": true,
+    "disable": false
   }
 ]
 }
