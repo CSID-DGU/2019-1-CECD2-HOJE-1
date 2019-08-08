@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Link} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {makeStyles} from '@material-ui/core/styles';
@@ -29,7 +29,7 @@ import SearchHeader from './SearchHeader';
 import SearchBody from './SearchBody';
 
 const fs = require('fs');
-
+const tree =require('electron-tree-view');
 const useStyles = makeStyles(theme => ({
     root: {
         flexGrow: 1,
@@ -48,7 +48,7 @@ const useStyles = makeStyles(theme => ({
         flex: '1 1 auto',
     },
 }));
-
+const moment = require('moment');
 function TabPanel(props) {
     const {children, value, index} = props;
 
@@ -76,7 +76,7 @@ setting_data.reg.map(value => {
     if (value.checked === true) {
         test.push(value.key);
     }
-})
+});
 
 export default function Search() {
     const classes = useStyles();
@@ -86,13 +86,22 @@ export default function Search() {
     const [placement, setPlacement] = React.useState();
     const [selectedFile, setSelectedFile] = React.useState([]);
     const [ReRender, setReRender] = React.useState(false);
-
+    const [birth,setBirth] = React.useState('이전 검사일을 알 수 없음');
     const handleClick = newPlacement => event => {
         setAnchorEl(event.currentTarget);
         setOpen(prev => placement !== newPlacement || !prev);
         setPlacement(newPlacement);
     };
-
+    useEffect(()=>{
+        fs.exists(`${__dirname}/../../../resultfile.json`,(exists)=>{
+            if(exists){
+                fs.stat(`${__dirname}/../../../resultfile.json`,(err,stat)=>{
+                    let data = moment(stat.birthtime).format('YYYY년 MM월 DD일');
+                    setBirth(data);
+                })
+            }
+        })
+    });
     const [checked, setChecked] = React.useState(test);
 
     const handleToggle = value => () => {
@@ -137,7 +146,7 @@ export default function Search() {
     }, []);
     React.useEffect(() => {
         if (ReRender) {
-            setTimeout(forceUpdate, 1000);
+            setTimeout(forceUpdate, 100);
         }
     });
 
@@ -166,7 +175,7 @@ export default function Search() {
             //console.log(path_data);
         }
         setReRender(true);
-    }
+    };
 
     // 체크 목록 넣기
     const onChecked = (value) => {
@@ -193,7 +202,7 @@ export default function Search() {
                             InputProps={{
                                 readOnly: true,
                             }}
-                            defaultValue="이전 검사일을 알 수 없음"
+                            value={birth}
                             variant="outlined"
                         >검사내역</TextField>
                     </Grid>
@@ -248,7 +257,7 @@ export default function Search() {
                 </Grid>
                 <Grid container justify="center" alignItems="center" spacing={5}>{/* 검색 경로 설정 */}
                     <Grid item xs>
-                        <Tree onChecked={onChecked} onToggle={onToggle} data={path_data}/>
+                        {/*<Tree onChecked={onChecked} onToggle={onToggle} data={path_data}/>*/}
                     </Grid>
                 </Grid>
             </TabPanel>

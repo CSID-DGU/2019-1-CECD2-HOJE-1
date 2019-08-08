@@ -1,78 +1,65 @@
-'use strict';
+"use strict";
+
+var _interopRequireWildcard = require("@babel/runtime/helpers/interopRequireWildcard");
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
+exports["default"] = SearchBefore;
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
 
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
 
-exports.default = SearchBefore;
+var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/createClass"));
 
-var _react = require('react');
+var _possibleConstructorReturn2 = _interopRequireDefault(require("@babel/runtime/helpers/possibleConstructorReturn"));
 
-var _react2 = _interopRequireDefault(_react);
+var _getPrototypeOf2 = _interopRequireDefault(require("@babel/runtime/helpers/getPrototypeOf"));
 
-var _reactRouterDom = require('react-router-dom');
+var _assertThisInitialized2 = _interopRequireDefault(require("@babel/runtime/helpers/assertThisInitialized"));
 
-var _propTypes = require('prop-types');
+var _inherits2 = _interopRequireDefault(require("@babel/runtime/helpers/inherits"));
 
-var _propTypes2 = _interopRequireDefault(_propTypes);
+var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
-var _clsx3 = require('clsx');
+var _toConsumableArray2 = _interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));
 
-var _clsx4 = _interopRequireDefault(_clsx3);
+var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
 
-var _styles = require('@material-ui/core/styles');
+var _slicedToArray2 = _interopRequireDefault(require("@babel/runtime/helpers/slicedToArray"));
 
-var _colors = require('@material-ui/core/colors');
+var _react = _interopRequireWildcard(require("react"));
 
-var _Paper = require('@material-ui/core/Paper');
+var _reactRouterDom = require("react-router-dom");
 
-var _Paper2 = _interopRequireDefault(_Paper);
+var _propTypes = _interopRequireDefault(require("prop-types"));
 
-var _Typography = require('@material-ui/core/Typography');
+var _clsx3 = _interopRequireDefault(require("clsx"));
 
-var _Typography2 = _interopRequireDefault(_Typography);
+var _styles = require("@material-ui/core/styles");
 
-var _TableCell = require('@material-ui/core/TableCell');
+var _colors = require("@material-ui/core/colors");
 
-var _TableCell2 = _interopRequireDefault(_TableCell);
+var _Paper = _interopRequireDefault(require("@material-ui/core/Paper"));
 
-var _reactVirtualized = require('react-virtualized');
+var _Typography = _interopRequireDefault(require("@material-ui/core/Typography"));
 
-var _Tooltip = require('@material-ui/core/Tooltip');
+var _TableCell = _interopRequireDefault(require("@material-ui/core/TableCell"));
 
-var _Tooltip2 = _interopRequireDefault(_Tooltip);
+var _reactVirtualized = require("react-virtualized");
 
-var _FiberManualRecord = require('@material-ui/icons/FiberManualRecord');
+var _Tooltip = _interopRequireDefault(require("@material-ui/core/Tooltip"));
 
-var _FiberManualRecord2 = _interopRequireDefault(_FiberManualRecord);
+var _FiberManualRecord = _interopRequireDefault(require("@material-ui/icons/FiberManualRecord"));
 
-var _Error = require('@material-ui/icons/Error');
+var _Error = _interopRequireDefault(require("@material-ui/icons/Error"));
 
-var _Error2 = _interopRequireDefault(_Error);
+var _Warning = _interopRequireDefault(require("@material-ui/icons/Warning"));
 
-var _Warning = require('@material-ui/icons/Warning');
-
-var _Warning2 = _interopRequireDefault(_Warning);
-
-var _UploadLog = require('../../main/FrameTest/UploadLog');
-
-var _UploadLog2 = _interopRequireDefault(_UploadLog);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+var _UploadLog = _interopRequireDefault(require("../../main/FrameTest/UploadLog"));
 
 var _require = require('electron'),
     ipcRenderer = _require.ipcRenderer;
@@ -80,340 +67,351 @@ var _require = require('electron'),
 var delay = require('delay');
 
 var useStyles = (0, _styles.makeStyles)(function (theme) {
-    return {
-        root: {
-            flexGrow: 1
-        },
-        formControl: {
-            margin: theme.spacing(3)
-        },
-        list: {
-            width: '100%',
-            backgroundColor: theme.palette.background.paper,
-            position: 'relative',
-            overflow: 'auto',
-            maxHeight: 360
-        },
-        spacer: {
-            flex: '1 1 auto'
-        }
-    };
+  return {
+    root: {
+      flexGrow: 1
+    },
+    formControl: {
+      margin: theme.spacing(3)
+    },
+    list: {
+      width: '100%',
+      backgroundColor: theme.palette.background.paper,
+      position: 'relative',
+      overflow: 'auto',
+      maxHeight: 360
+    },
+    spacer: {
+      flex: '1 1 auto'
+    }
+  };
 });
 
 function TabPanel(props) {
-    var children = props.children,
-        value = props.value,
-        index = props.index;
-
-
-    return _react2.default.createElement(
-        _Typography2.default,
-        {
-            component: 'div',
-            role: 'tabpanel',
-            hidden: value !== index,
-            id: 'simple-tabpanel-' + index,
-            'aria-labelledby': 'simple-tab-' + index
-        },
-        children
-    );
+  var children = props.children,
+      value = props.value,
+      index = props.index;
+  return _react["default"].createElement(_Typography["default"], {
+    component: "div",
+    role: "tabpanel",
+    hidden: value !== index,
+    id: "simple-tabpanel-".concat(index),
+    "aria-labelledby": "simple-tab-".concat(index)
+  }, children);
 }
 
 TabPanel.propTypes = {
-    children: _propTypes2.default.node,
-    index: _propTypes2.default.any.isRequired,
-    value: _propTypes2.default.any.isRequired
+  children: _propTypes["default"].node,
+  index: _propTypes["default"].any.isRequired,
+  value: _propTypes["default"].any.isRequired
 };
 
 function SearchBefore() {
-    // console.log('body rendering......');
-    var classes = useStyles();
+  // console.log('body rendering......');
+  var classes = useStyles();
 
-    var _useState = (0, _react.useState)([]),
-        _useState2 = _slicedToArray(_useState, 2),
-        rows = _useState2[0],
-        setRow = _useState2[1];
+  var _useState = (0, _react.useState)([]),
+      _useState2 = (0, _slicedToArray2["default"])(_useState, 2),
+      rows = _useState2[0],
+      setRow = _useState2[1];
 
-    (0, _react.useEffect)(function () {
-        ipcRenderer.on('RESULT_DICTIONARY', async function (event, result) {
-            setRow([].concat(_toConsumableArray(rows), [createData(rows.length, result.fileName, result.classification, result.detectList, result.detectCount, result.formLevel, result.filePath, result.fitness)]));
-            //console.log(rows);
-            await delay(30);
-        });
-        return function () {
-            //console.log('closed : ' ,rows);
-            ipcRenderer.send('TEST1', rows);
-            ipcRenderer.removeAllListeners('RESULT_DICTIONARY');
-        };
-    });
-    ///////////////////// 검색결과 //////////////////////////
+  (0, _react.useEffect)(function () {
+    ipcRenderer.on('RESULT_DICTIONARY',
+    /*#__PURE__*/
+    function () {
+      var _ref = (0, _asyncToGenerator2["default"])(
+      /*#__PURE__*/
+      _regenerator["default"].mark(function _callee(event, result) {
+        return _regenerator["default"].wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                setRow([].concat((0, _toConsumableArray2["default"])(rows), [createData(rows.length, result.fileName, result.classification, result.detectList, result.detectCount, result.formLevel, result.filePath, result.fitness)])); //console.log(rows);
 
-    var styles = function styles(theme) {
-        return {
-            flexContainer: {
-                display: 'flex',
-                alignItems: 'center',
-                boxSizing: 'border-box'
-            },
-            tableRow: {
-                cursor: 'pointer'
-            },
-            tableRowHover: {
-                '&:hover': {
-                    backgroundColor: theme.palette.grey[200]
-                }
-            },
-            tableCell: {
-                flex: 1
-            },
-            noClick: {
-                cursor: 'initial'
+                _context.next = 3;
+                return delay(30);
+
+              case 3:
+              case "end":
+                return _context.stop();
             }
-        };
-    };
+          }
+        }, _callee);
+      }));
 
-    var theme = (0, _styles.createMuiTheme)({
-        palette: {
-            primary: { main: _colors.green[500] },
-            secondary: { main: _colors.yellow[500] },
-            error: { main: _colors.red[500] },
-            default: { main: _colors.blue[500] }
+      return function (_x, _x2) {
+        return _ref.apply(this, arguments);
+      };
+    }());
+    return function () {
+      //console.log('closed : ' ,rows);
+      ipcRenderer.send('TEST1', rows);
+      ipcRenderer.removeAllListeners('RESULT_DICTIONARY');
+    };
+  }); ///////////////////// 검색결과 //////////////////////////
+
+  var styles = function styles(theme) {
+    return {
+      flexContainer: {
+        display: 'flex',
+        alignItems: 'center',
+        boxSizing: 'border-box'
+      },
+      tableRow: {
+        cursor: 'pointer'
+      },
+      tableRowHover: {
+        '&:hover': {
+          backgroundColor: theme.palette.grey[200]
         }
-    });
-
-    var iconDisplay = function iconDisplay(input) {
-        if (input === 'GREEN') return _react2.default.createElement(
-            _styles.MuiThemeProvider,
-            { theme: theme },
-            _react2.default.createElement(
-                _Tooltip2.default,
-                { title: '\uC815\uC0C1', placement: 'top' },
-                _react2.default.createElement(_FiberManualRecord2.default, { color: 'primary' })
-            )
-        );else if (input === 'YELLOW') return _react2.default.createElement(
-            _styles.MuiThemeProvider,
-            { theme: theme },
-            _react2.default.createElement(
-                _Tooltip2.default,
-                { title: '\uBBF8\uB4F1\uB85D', placement: 'top' },
-                _react2.default.createElement(_Error2.default, { color: 'secondary' })
-            )
-        );else if (input === 'RED') return _react2.default.createElement(
-            _styles.MuiThemeProvider,
-            { theme: theme },
-            _react2.default.createElement(
-                _Tooltip2.default,
-                { title: '\uC704\uD5D8', placement: 'top' },
-                _react2.default.createElement(_Warning2.default, { color: 'error' })
-            )
-        );
-        return _react2.default.createElement(
-            _Tooltip2.default,
-            { title: '\uBD84\uB958\uC2E4\uD328', placement: 'top' },
-            _react2.default.createElement(_FiberManualRecord2.default, { color: 'disabled' })
-        );
+      },
+      tableCell: {
+        flex: 1
+      },
+      noClick: {
+        cursor: 'initial'
+      }
     };
+  };
 
-    var cellDisplay = function cellDisplay(input) {
-        var tmp = [];
-        for (var i = 0; i < input.length; i++) {
-            tmp.push(input[i]);
-            if (i < input.length - 1) tmp.push('/');
-        }
-        return tmp;
-    };
+  var theme = (0, _styles.createMuiTheme)({
+    palette: {
+      primary: {
+        main: _colors.green[500]
+      },
+      secondary: {
+        main: _colors.yellow[500]
+      },
+      error: {
+        main: _colors.red[500]
+      },
+      "default": {
+        main: _colors.blue[500]
+      }
+    }
+  });
 
-    var MuiVirtualizedTable = function (_React$PureComponent) {
-        _inherits(MuiVirtualizedTable, _React$PureComponent);
+  var iconDisplay = function iconDisplay(input) {
+    if (input === 'GREEN') return _react["default"].createElement(_styles.MuiThemeProvider, {
+      theme: theme
+    }, _react["default"].createElement(_Tooltip["default"], {
+      title: "\uC815\uC0C1",
+      placement: "top"
+    }, _react["default"].createElement(_FiberManualRecord["default"], {
+      color: "primary"
+    })));else if (input === 'YELLOW') return _react["default"].createElement(_styles.MuiThemeProvider, {
+      theme: theme
+    }, _react["default"].createElement(_Tooltip["default"], {
+      title: "\uBBF8\uB4F1\uB85D",
+      placement: "top"
+    }, _react["default"].createElement(_Error["default"], {
+      color: "secondary"
+    })));else if (input === 'RED') return _react["default"].createElement(_styles.MuiThemeProvider, {
+      theme: theme
+    }, _react["default"].createElement(_Tooltip["default"], {
+      title: "\uC704\uD5D8",
+      placement: "top"
+    }, _react["default"].createElement(_Warning["default"], {
+      color: "error"
+    })));
+    return _react["default"].createElement(_Tooltip["default"], {
+      title: "\uBD84\uB958\uC2E4\uD328",
+      placement: "top"
+    }, _react["default"].createElement(_FiberManualRecord["default"], {
+      color: "disabled"
+    }));
+  };
 
-        function MuiVirtualizedTable(props) {
-            _classCallCheck(this, MuiVirtualizedTable);
+  var cellDisplay = function cellDisplay(input) {
+    var tmp = [];
 
-            var _this = _possibleConstructorReturn(this, (MuiVirtualizedTable.__proto__ || Object.getPrototypeOf(MuiVirtualizedTable)).call(this, props));
-
-            _this.getRowClassName = _this.getRowClassName.bind(_this);
-            _this.cellRenderer = _this.cellRenderer.bind(_this);
-            _this.headerRenderer = _this.headerRenderer.bind(_this);
-            return _this;
-        }
-
-        _createClass(MuiVirtualizedTable, [{
-            key: 'getRowClassName',
-            value: function getRowClassName(_ref) {
-                var index = _ref.index;
-                var _props = this.props,
-                    classes = _props.classes,
-                    onRowClick = _props.onRowClick;
-
-
-                return (0, _clsx4.default)(classes.tableRow, classes.flexContainer, _defineProperty({}, classes.tableRowHover, index !== -1 && onRowClick != null));
-            }
-        }, {
-            key: 'cellRenderer',
-            value: function cellRenderer(_ref2) {
-                var cellData = _ref2.cellData,
-                    columnIndex = _ref2.columnIndex;
-                var _props2 = this.props,
-                    columns = _props2.columns,
-                    classes = _props2.classes,
-                    rowHeight = _props2.rowHeight,
-                    onRowClick = _props2.onRowClick;
-
-                return _react2.default.createElement(
-                    _TableCell2.default,
-                    {
-                        component: 'div',
-                        className: (0, _clsx4.default)(classes.tableCell, classes.flexContainer, _defineProperty({}, classes.noClick, onRowClick == null)),
-                        variant: 'body',
-                        style: { height: rowHeight },
-                        align: columnIndex != null && columns[columnIndex].numeric || false ? 'right' : 'left'
-                    },
-                    columnIndex === 2 ? cellDisplay(cellData) : columnIndex === 4 ? iconDisplay(cellData) : cellData
-                );
-            }
-        }, {
-            key: 'headerRenderer',
-            value: function headerRenderer(_ref3) {
-                var label = _ref3.label,
-                    columnIndex = _ref3.columnIndex;
-                var _props3 = this.props,
-                    headerHeight = _props3.headerHeight,
-                    columns = _props3.columns,
-                    classes = _props3.classes;
-
-                return _react2.default.createElement(
-                    _TableCell2.default,
-                    {
-                        component: 'div',
-                        className: (0, _clsx4.default)(classes.tableCell, classes.flexContainer, classes.noClick),
-                        variant: 'head',
-                        style: { height: headerHeight },
-                        align: columns[columnIndex].numeric || false ? 'right' : 'left'
-                    },
-                    _react2.default.createElement(
-                        'span',
-                        null,
-                        label
-                    )
-                );
-            }
-        }, {
-            key: 'render',
-            value: function render() {
-                var _this2 = this;
-
-                var _props4 = this.props,
-                    classes = _props4.classes,
-                    columns = _props4.columns,
-                    rowHeight = _props4.rowHeight,
-                    headerHeight = _props4.headerHeight,
-                    rowCount = _props4.rowCount,
-                    rowGetter = _props4.rowGetter;
-
-                return _react2.default.createElement(
-                    _reactVirtualized.AutoSizer,
-                    null,
-                    function (_ref4) {
-                        var height = _ref4.height,
-                            width = _ref4.width;
-                        return _react2.default.createElement(
-                            _reactVirtualized.Table,
-                            {
-                                height: height,
-                                width: width,
-                                rowHeight: rowHeight,
-                                headerHeight: headerHeight,
-                                rowCount: rowCount,
-                                rowGetter: rowGetter,
-                                rowClassName: _this2.getRowClassName
-                            },
-                            columns.map(function (_ref5, index) {
-                                var dataKey = _ref5.dataKey,
-                                    width = _ref5.width,
-                                    label = _ref5.label,
-                                    numeric = _ref5.numeric;
-
-                                return _react2.default.createElement(_reactVirtualized.Column, {
-                                    key: dataKey,
-                                    headerRenderer: function headerRenderer() {
-                                        return _this2.headerRenderer({
-                                            label: label,
-                                            columnIndex: index
-                                        });
-                                    },
-                                    className: classes.flexContainer,
-                                    cellRenderer: _this2.cellRenderer,
-                                    dataKey: dataKey,
-                                    width: width,
-                                    label: label,
-                                    numeric: numeric
-                                });
-                            })
-                        );
-                    }
-                );
-            }
-        }]);
-
-        return MuiVirtualizedTable;
-    }(_react2.default.PureComponent);
-
-    MuiVirtualizedTable.defaultProps = {
-        headerHeight: 48,
-        rowHeight: 40
-    };
-    MuiVirtualizedTable.propTypes = {
-        classes: _propTypes2.default.object.isRequired,
-        columns: _propTypes2.default.arrayOf(_propTypes2.default.shape({
-            dataKey: _propTypes2.default.string.isRequired,
-            label: _propTypes2.default.string.isRequired,
-            numeric: _propTypes2.default.bool,
-            width: _propTypes2.default.number.isRequired
-        })).isRequired,
-        headerHeight: _propTypes2.default.number,
-        onRowClick: _propTypes2.default.func,
-        rowHeight: _propTypes2.default.number
-    };
-
-    var VirtualizedTable = (0, _styles.withStyles)(styles)(MuiVirtualizedTable);
-
-    function createData(id, fileName, classification, detectList, detectCount, formLevel, filePath, fitness) {
-        return { id: id, fileName: fileName, classification: classification, detectList: detectList, detectCount: detectCount, formLevel: formLevel, filePath: filePath, fitness: fitness };
+    for (var i = 0; i < input.length; i++) {
+      tmp.push(input[i]);
+      if (i < input.length - 1) tmp.push('/');
     }
 
-    // console.log('body end........');
-    return _react2.default.createElement(
-        _Paper2.default,
-        { style: { height: 400, width: '100%' } },
-        _react2.default.createElement(VirtualizedTable, {
-            rowCount: rows.length,
-            rowGetter: function rowGetter(_ref6) {
-                var index = _ref6.index;
-                return rows[index];
-            },
-            columns: [{
-                width: 200,
-                label: '파일명',
-                dataKey: 'fileName'
-            }, {
-                width: 120,
-                label: '분류',
-                dataKey: 'classification'
-            }, {
-                width: 120,
-                label: '검출 내역',
-                dataKey: 'detectList'
-            }, {
-                width: 120,
-                label: '검출 개수',
-                dataKey: 'detectCount',
-                numeric: true
-            }, {
-                width: 120,
-                label: '문서등급',
-                dataKey: 'fitness',
-                numeric: true
-            }]
-        })
-    );
+    return tmp;
+  };
+
+  var MuiVirtualizedTable =
+  /*#__PURE__*/
+  function (_React$PureComponent) {
+    (0, _inherits2["default"])(MuiVirtualizedTable, _React$PureComponent);
+
+    function MuiVirtualizedTable(props) {
+      var _this;
+
+      (0, _classCallCheck2["default"])(this, MuiVirtualizedTable);
+      _this = (0, _possibleConstructorReturn2["default"])(this, (0, _getPrototypeOf2["default"])(MuiVirtualizedTable).call(this, props));
+      _this.getRowClassName = _this.getRowClassName.bind((0, _assertThisInitialized2["default"])(_this));
+      _this.cellRenderer = _this.cellRenderer.bind((0, _assertThisInitialized2["default"])(_this));
+      _this.headerRenderer = _this.headerRenderer.bind((0, _assertThisInitialized2["default"])(_this));
+      return _this;
+    }
+
+    (0, _createClass2["default"])(MuiVirtualizedTable, [{
+      key: "getRowClassName",
+      value: function getRowClassName(_ref2) {
+        var index = _ref2.index;
+        var _this$props = this.props,
+            classes = _this$props.classes,
+            onRowClick = _this$props.onRowClick;
+        return (0, _clsx3["default"])(classes.tableRow, classes.flexContainer, (0, _defineProperty2["default"])({}, classes.tableRowHover, index !== -1 && onRowClick != null));
+      }
+    }, {
+      key: "cellRenderer",
+      value: function cellRenderer(_ref3) {
+        var cellData = _ref3.cellData,
+            columnIndex = _ref3.columnIndex;
+        var _this$props2 = this.props,
+            columns = _this$props2.columns,
+            classes = _this$props2.classes,
+            rowHeight = _this$props2.rowHeight,
+            onRowClick = _this$props2.onRowClick;
+        return _react["default"].createElement(_TableCell["default"], {
+          component: "div",
+          className: (0, _clsx3["default"])(classes.tableCell, classes.flexContainer, (0, _defineProperty2["default"])({}, classes.noClick, onRowClick == null)),
+          variant: "body",
+          style: {
+            height: rowHeight
+          },
+          align: columnIndex != null && columns[columnIndex].numeric || false ? 'right' : 'left'
+        }, columnIndex === 2 ? cellDisplay(cellData) : columnIndex === 4 ? iconDisplay(cellData) : cellData);
+      }
+    }, {
+      key: "headerRenderer",
+      value: function headerRenderer(_ref4) {
+        var label = _ref4.label,
+            columnIndex = _ref4.columnIndex;
+        var _this$props3 = this.props,
+            headerHeight = _this$props3.headerHeight,
+            columns = _this$props3.columns,
+            classes = _this$props3.classes;
+        return _react["default"].createElement(_TableCell["default"], {
+          component: "div",
+          className: (0, _clsx3["default"])(classes.tableCell, classes.flexContainer, classes.noClick),
+          variant: "head",
+          style: {
+            height: headerHeight
+          },
+          align: columns[columnIndex].numeric || false ? 'right' : 'left'
+        }, _react["default"].createElement("span", null, label));
+      }
+    }, {
+      key: "render",
+      value: function render() {
+        var _this2 = this;
+
+        var _this$props4 = this.props,
+            classes = _this$props4.classes,
+            columns = _this$props4.columns,
+            rowHeight = _this$props4.rowHeight,
+            headerHeight = _this$props4.headerHeight,
+            rowCount = _this$props4.rowCount,
+            rowGetter = _this$props4.rowGetter;
+        return _react["default"].createElement(_reactVirtualized.AutoSizer, null, function (_ref5) {
+          var height = _ref5.height,
+              width = _ref5.width;
+          return _react["default"].createElement(_reactVirtualized.Table, {
+            height: height,
+            width: width,
+            rowHeight: rowHeight,
+            headerHeight: headerHeight,
+            rowCount: rowCount,
+            rowGetter: rowGetter,
+            rowClassName: _this2.getRowClassName
+          }, columns.map(function (_ref6, index) {
+            var dataKey = _ref6.dataKey,
+                width = _ref6.width,
+                label = _ref6.label,
+                numeric = _ref6.numeric;
+            return _react["default"].createElement(_reactVirtualized.Column, {
+              key: dataKey,
+              headerRenderer: function headerRenderer() {
+                return _this2.headerRenderer({
+                  label: label,
+                  columnIndex: index
+                });
+              },
+              className: classes.flexContainer,
+              cellRenderer: _this2.cellRenderer,
+              dataKey: dataKey,
+              width: width,
+              label: label,
+              numeric: numeric
+            });
+          }));
+        });
+      }
+    }]);
+    return MuiVirtualizedTable;
+  }(_react["default"].PureComponent);
+
+  MuiVirtualizedTable.defaultProps = {
+    headerHeight: 48,
+    rowHeight: 40
+  };
+  MuiVirtualizedTable.propTypes = {
+    classes: _propTypes["default"].object.isRequired,
+    columns: _propTypes["default"].arrayOf(_propTypes["default"].shape({
+      dataKey: _propTypes["default"].string.isRequired,
+      label: _propTypes["default"].string.isRequired,
+      numeric: _propTypes["default"].bool,
+      width: _propTypes["default"].number.isRequired
+    })).isRequired,
+    headerHeight: _propTypes["default"].number,
+    onRowClick: _propTypes["default"].func,
+    rowHeight: _propTypes["default"].number
+  };
+  var VirtualizedTable = (0, _styles.withStyles)(styles)(MuiVirtualizedTable);
+
+  function createData(id, fileName, classification, detectList, detectCount, formLevel, filePath, fitness) {
+    return {
+      id: id,
+      fileName: fileName,
+      classification: classification,
+      detectList: detectList,
+      detectCount: detectCount,
+      formLevel: formLevel,
+      filePath: filePath,
+      fitness: fitness
+    };
+  } // console.log('body end........');
+
+
+  return _react["default"].createElement(_Paper["default"], {
+    style: {
+      height: 400,
+      width: '100%'
+    }
+  }, _react["default"].createElement(VirtualizedTable, {
+    rowCount: rows.length,
+    rowGetter: function rowGetter(_ref7) {
+      var index = _ref7.index;
+      return rows[index];
+    },
+    columns: [{
+      width: 200,
+      label: '파일명',
+      dataKey: 'fileName'
+    }, {
+      width: 120,
+      label: '분류',
+      dataKey: 'classification'
+    }, {
+      width: 120,
+      label: '검출 내역',
+      dataKey: 'detectList'
+    }, {
+      width: 120,
+      label: '검출 개수',
+      dataKey: 'detectCount',
+      numeric: true
+    }, {
+      width: 120,
+      label: '문서등급',
+      dataKey: 'fitness',
+      numeric: true
+    }]
+  }));
 }

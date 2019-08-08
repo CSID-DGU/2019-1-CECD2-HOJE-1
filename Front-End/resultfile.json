@@ -1,1 +1,124 @@
-[{"classification":"미등록","detectCount":0,"detectList":[],"fileName":"text.jpg","filePath":"C:\\Users\\FASOO_499\\Desktop\\FrameTest\\image\\OCRimage\\text.jpg","fitness":"YELLOW","formLevel":"NONE","id":0},{"classification":"미등록","detectCount":0,"detectList":[],"fileName":"lamp.mask.png","filePath":"C:\\Users\\FASOO_499\\Desktop\\FrameTest\\DhashModule\\tk\\images\\lamp.mask.png","fitness":"YELLOW","formLevel":"NONE","id":1},{"classification":"미등록","detectCount":0,"detectList":[],"fileName":"text-out.jpg","filePath":"C:\\Users\\FASOO_499\\Desktop\\FrameTest\\image\\OCRimage\\text-out.jpg","fitness":"YELLOW","formLevel":"NONE","id":2},{"classification":"주민등록증","detectCount":1,"detectList":["주민번호"],"fileName":"registCard(3).jpg","filePath":"C:\\Users\\FASOO_499\\Desktop\\FrameTest\\image\\registCard(3).jpg","fitness":"GREEN","formLevel":"CONFIDENTIALITY","id":3},{"classification":"주민등록증","detectCount":0,"detectList":[],"fileName":"registCard(3)-backup.mask.jpg","filePath":"C:\\Users\\FASOO_499\\Desktop\\FrameTest\\image\\RexTestImage\\registCard(3)-backup.mask.jpg","fitness":"GREEN","formLevel":"CONFIDENTIALITY","id":4},{"classification":"미등록","detectCount":0,"detectList":[],"fileName":"test4.jpg","filePath":"C:\\Users\\FASOO_499\\Desktop\\FrameTest\\image\\RexTestImage\\test4.jpg","fitness":"YELLOW","formLevel":"NONE","id":5},{"classification":"미등록","detectCount":0,"detectList":[],"fileName":"text.jpg","filePath":"C:\\Users\\FASOO_499\\Desktop\\FrameTest\\image\\RexTestImage\\text.jpg","fitness":"YELLOW","formLevel":"NONE","id":6},{"classification":"미등록","detectCount":0,"detectList":[],"fileName":"card4(test).jpg","filePath":"C:\\Users\\FASOO_499\\Desktop\\FrameTest\\image\\testData\\card4(test).jpg","fitness":"YELLOW","formLevel":"NONE","id":7},{"classification":"이력서B","detectCount":0,"detectList":[],"fileName":"test.jpg","filePath":"C:\\Users\\FASOO_499\\Desktop\\FrameTest\\image\\test.jpg","fitness":"GREEN","formLevel":"COMPANY_ONLY","id":8},{"classification":"주민등록증","detectCount":0,"detectList":[],"fileName":"card3(test).mask.jpg","filePath":"C:\\Users\\FASOO_499\\Desktop\\FrameTest\\image\\testData\\card3(test).mask.jpg","fitness":"GREEN","formLevel":"CONFIDENTIALITY","id":9},{"classification":"이력서A","detectCount":0,"detectList":[],"fileName":"table1(test).jpg","filePath":"C:\\Users\\FASOO_499\\Desktop\\FrameTest\\image\\testData\\table1(test).jpg","fitness":"GREEN","formLevel":"COMPANY_ONLY","id":10},{"classification":"이력서A","detectCount":0,"detectList":[],"fileName":"table1(test2).jpg","filePath":"C:\\Users\\FASOO_499\\Desktop\\FrameTest\\image\\testData\\table1(test2).jpg","fitness":"GREEN","formLevel":"COMPANY_ONLY","id":11}]
+[
+  {
+    "classification": "미등록",
+    "detectCount": 0,
+    "detectList": [],
+    "fileName": "text.jpg",
+    "filePath": "C:\\Users\\FASOO_499\\Desktop\\FrameTest\\image\\OCRimage\\text.jpg",
+    "fitness": "YELLOW",
+    "formLevel": "NONE",
+    "id": 0
+  },
+  {
+    "classification": "미등록",
+    "detectCount": 0,
+    "detectList": [],
+    "fileName": "lamp.mask.png",
+    "filePath": "C:\\Users\\FASOO_499\\Desktop\\FrameTest\\DhashModule\\tk\\images\\lamp.mask.png",
+    "fitness": "YELLOW",
+    "formLevel": "NONE",
+    "id": 1
+  },
+  {
+    "classification": "미등록",
+    "detectCount": 0,
+    "detectList": [],
+    "fileName": "text-out.jpg",
+    "filePath": "C:\\Users\\FASOO_499\\Desktop\\FrameTest\\image\\OCRimage\\text-out.jpg",
+    "fitness": "YELLOW",
+    "formLevel": "NONE",
+    "id": 2
+  },
+  {
+    "classification": "주민등록증",
+    "detectCount": 1,
+    "detectList": [
+      "주민번호"
+    ],
+    "fileName": "registCard(3).jpg",
+    "filePath": "C:\\Users\\FASOO_499\\Desktop\\FrameTest\\image\\registCard(3).jpg",
+    "fitness": "GREEN",
+    "formLevel": "CONFIDENTIALITY",
+    "id": 3
+  },
+  {
+    "classification": "주민등록증",
+    "detectCount": 0,
+    "detectList": [],
+    "fileName": "registCard(3)-backup.mask.jpg",
+    "filePath": "C:\\Users\\FASOO_499\\Desktop\\FrameTest\\image\\RexTestImage\\registCard(3)-backup.mask.jpg",
+    "fitness": "GREEN",
+    "formLevel": "CONFIDENTIALITY",
+    "id": 4
+  },
+  {
+    "classification": "미등록",
+    "detectCount": 0,
+    "detectList": [],
+    "fileName": "test4.jpg",
+    "filePath": "C:\\Users\\FASOO_499\\Desktop\\FrameTest\\image\\RexTestImage\\test4.jpg",
+    "fitness": "YELLOW",
+    "formLevel": "NONE",
+    "id": 5
+  },
+  {
+    "classification": "미등록",
+    "detectCount": 0,
+    "detectList": [],
+    "fileName": "text.jpg",
+    "filePath": "C:\\Users\\FASOO_499\\Desktop\\FrameTest\\image\\RexTestImage\\text.jpg",
+    "fitness": "YELLOW",
+    "formLevel": "NONE",
+    "id": 6
+  },
+  {
+    "classification": "미등록",
+    "detectCount": 0,
+    "detectList": [],
+    "fileName": "card4(test).jpg",
+    "filePath": "C:\\Users\\FASOO_499\\Desktop\\FrameTest\\image\\testData\\card4(test).jpg",
+    "fitness": "YELLOW",
+    "formLevel": "NONE",
+    "id": 7
+  },
+  {
+    "classification": "이력서B",
+    "detectCount": 0,
+    "detectList": [],
+    "fileName": "test.jpg",
+    "filePath": "C:\\Users\\FASOO_499\\Desktop\\FrameTest\\image\\test.jpg",
+    "fitness": "GREEN",
+    "formLevel": "COMPANY_ONLY",
+    "id": 8
+  },
+  {
+    "classification": "주민등록증",
+    "detectCount": 0,
+    "detectList": [],
+    "fileName": "card3(test).mask.jpg",
+    "filePath": "C:\\Users\\FASOO_499\\Desktop\\FrameTest\\image\\testData\\card3(test).mask.jpg",
+    "fitness": "GREEN",
+    "formLevel": "CONFIDENTIALITY",
+    "id": 9
+  },
+  {
+    "classification": "이력서A",
+    "detectCount": 0,
+    "detectList": [],
+    "fileName": "table1(test).jpg",
+    "filePath": "C:\\Users\\FASOO_499\\Desktop\\FrameTest\\image\\testData\\table1(test).jpg",
+    "fitness": "GREEN",
+    "formLevel": "COMPANY_ONLY",
+    "id": 10
+  },
+  {
+    "classification": "이력서A",
+    "detectCount": 0,
+    "detectList": [],
+    "fileName": "table1(test2).jpg",
+    "filePath": "C:\\Users\\FASOO_499\\Desktop\\FrameTest\\image\\testData\\table1(test2).jpg",
+    "fitness": "GREEN",
+    "formLevel": "COMPANY_ONLY",
+    "id": 11
+  }
+]

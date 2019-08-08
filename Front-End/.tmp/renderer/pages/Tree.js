@@ -1,128 +1,119 @@
-'use strict';
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
+exports["default"] = void 0;
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
 
-var _react = require('react');
+var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/createClass"));
 
-var _react2 = _interopRequireDefault(_react);
+var _possibleConstructorReturn2 = _interopRequireDefault(require("@babel/runtime/helpers/possibleConstructorReturn"));
 
-var _values = require('lodash/values');
+var _getPrototypeOf2 = _interopRequireDefault(require("@babel/runtime/helpers/getPrototypeOf"));
 
-var _values2 = _interopRequireDefault(_values);
+var _assertThisInitialized2 = _interopRequireDefault(require("@babel/runtime/helpers/assertThisInitialized"));
 
-var _propTypes = require('prop-types');
+var _inherits2 = _interopRequireDefault(require("@babel/runtime/helpers/inherits"));
 
-var _propTypes2 = _interopRequireDefault(_propTypes);
+var _react = _interopRequireDefault(require("react"));
 
-var _TreeNode = require('./TreeNode');
+var _values = _interopRequireDefault(require("lodash/values"));
 
-var _TreeNode2 = _interopRequireDefault(_TreeNode);
+var _propTypes = _interopRequireDefault(require("prop-types"));
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _TreeNode = _interopRequireDefault(require("./TreeNode"));
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+var Tree =
+/*#__PURE__*/
+function (_React$Component) {
+  (0, _inherits2["default"])(Tree, _React$Component);
 
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+  function Tree(props) {
+    var _this;
 
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+    (0, _classCallCheck2["default"])(this, Tree);
+    _this = (0, _possibleConstructorReturn2["default"])(this, (0, _getPrototypeOf2["default"])(Tree).call(this, props));
+    _this.state = {
+      nodes: props.data
+    };
+    _this.getRootNodes = _this.getRootNodes.bind((0, _assertThisInitialized2["default"])(_this));
+    _this.getChildNodes = _this.getChildNodes.bind((0, _assertThisInitialized2["default"])(_this));
+    _this.onToggle = _this.onToggle.bind((0, _assertThisInitialized2["default"])(_this));
+    _this.onNodeSelect = _this.onNodeSelect.bind((0, _assertThisInitialized2["default"])(_this));
+    _this.onChecked = _this.onChecked.bind((0, _assertThisInitialized2["default"])(_this));
+    return _this;
+  }
 
-var Tree = function (_React$Component) {
-    _inherits(Tree, _React$Component);
-
-    function Tree(props) {
-        _classCallCheck(this, Tree);
-
-        var _this = _possibleConstructorReturn(this, (Tree.__proto__ || Object.getPrototypeOf(Tree)).call(this, props));
-
-        _this.state = {
-            nodes: props.data
-        };
-        _this.getRootNodes = _this.getRootNodes.bind(_this);
-        _this.getChildNodes = _this.getChildNodes.bind(_this);
-        _this.onToggle = _this.onToggle.bind(_this);
-        _this.onNodeSelect = _this.onNodeSelect.bind(_this);
-        _this.onChecked = _this.onChecked.bind(_this);
-        return _this;
+  (0, _createClass2["default"])(Tree, [{
+    key: "getRootNodes",
+    value: function getRootNodes() {
+      var nodes = this.state.nodes;
+      return (0, _values["default"])(nodes).filter(function (node) {
+        return node.isRoot === true;
+      });
     }
+  }, {
+    key: "getChildNodes",
+    value: function getChildNodes(node) {
+      var nodes = this.state.nodes;
+      if (!node.children) return [];
+      return node.children.map(function (path) {
+        return nodes[path];
+      });
+    }
+  }, {
+    key: "onToggle",
+    value: function onToggle(node) {
+      var nodes = this.state.nodes;
+      var onToggle = this.props.onToggle;
+      nodes[node.path].isOpen = !node.isOpen;
+      this.setState({
+        nodes: nodes
+      });
+      onToggle(node);
+    }
+  }, {
+    key: "onNodeSelect",
+    value: function onNodeSelect(node) {
+      var onSelect = this.props.onSelect;
+      onSelect(node);
+    }
+  }, {
+    key: "onChecked",
+    value: function onChecked(node) {
+      var nodes = this.state.nodes;
+      var onChecked = this.props.onChecked;
+      nodes[node.path].checked = !node.checked;
+      this.setState({
+        nodes: nodes
+      });
+      onChecked(node);
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _this2 = this;
 
-    _createClass(Tree, [{
-        key: 'getRootNodes',
-        value: function getRootNodes() {
-            var nodes = this.state.nodes;
+      var rootNodes = this.getRootNodes();
+      return _react["default"].createElement("div", null, rootNodes.map(function (node) {
+        return _react["default"].createElement(_TreeNode["default"], {
+          node: node,
+          getChildNodes: _this2.getChildNodes,
+          onToggle: _this2.onToggle,
+          onNodeSelect: _this2.onNodeSelect,
+          onChecked: _this2.onChecked
+        });
+      }));
+    }
+  }]);
+  return Tree;
+}(_react["default"].Component);
 
-            return (0, _values2.default)(nodes).filter(function (node) {
-                return node.isRoot === true;
-            });
-        }
-    }, {
-        key: 'getChildNodes',
-        value: function getChildNodes(node) {
-            var nodes = this.state.nodes;
-
-            if (!node.children) return [];
-            return node.children.map(function (path) {
-                return nodes[path];
-            });
-        }
-    }, {
-        key: 'onToggle',
-        value: function onToggle(node) {
-            var nodes = this.state.nodes;
-            var onToggle = this.props.onToggle;
-
-            nodes[node.path].isOpen = !node.isOpen;
-            this.setState({ nodes: nodes });
-            onToggle(node);
-        }
-    }, {
-        key: 'onNodeSelect',
-        value: function onNodeSelect(node) {
-            var onSelect = this.props.onSelect;
-
-            onSelect(node);
-        }
-    }, {
-        key: 'onChecked',
-        value: function onChecked(node) {
-            var nodes = this.state.nodes;
-            var onChecked = this.props.onChecked;
-
-            nodes[node.path].checked = !node.checked;
-            this.setState({ nodes: nodes });
-            onChecked(node);
-        }
-    }, {
-        key: 'render',
-        value: function render() {
-            var _this2 = this;
-
-            var rootNodes = this.getRootNodes();
-            return _react2.default.createElement(
-                'div',
-                null,
-                rootNodes.map(function (node) {
-                    return _react2.default.createElement(_TreeNode2.default, {
-                        node: node,
-                        getChildNodes: _this2.getChildNodes,
-                        onToggle: _this2.onToggle,
-                        onNodeSelect: _this2.onNodeSelect,
-                        onChecked: _this2.onChecked
-                    });
-                })
-            );
-        }
-    }]);
-
-    return Tree;
-}(_react2.default.Component);
-
-exports.default = Tree;
-
-
+exports["default"] = Tree;
 Tree.propTypes = {
-    onSelect: _propTypes2.default.func.isRequired
+  onSelect: _propTypes["default"].func.isRequired
 };

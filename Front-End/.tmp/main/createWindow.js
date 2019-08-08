@@ -1,33 +1,34 @@
 "use strict";
 
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
-exports.default = createWindow;
+exports["default"] = createWindow;
+
+var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
 
 var _electron = require("electron");
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var MainWindow = function MainWindow() {
-    var _this = this;
+  var _this = this;
 
-    _classCallCheck(this, MainWindow);
-
-    this.window = new _electron.BrowserWindow({
-        width: 1500,
-        height: 700,
-        show: false,
-        webPreferences: {
-            nodeIntegration: true
-        }
-    });
-    this.window.loadURL("file://" + __dirname + "/../../index.html");
-    this.window.on("closed", function () {
-        _this.window = null;
-    });
+  (0, _classCallCheck2["default"])(this, MainWindow);
+  this.window = new _electron.BrowserWindow({
+    width: 1500,
+    height: 700,
+    show: false,
+    webPreferences: {
+      nodeIntegration: true
+    }
+  });
+  this.window.loadURL("file://".concat(__dirname, "/../../index.html"));
+  this.window.on("closed", function () {
+    _this.window = null;
+  });
 };
 
 function createWindow() {
-    return new MainWindow();
+  return new MainWindow();
 }
