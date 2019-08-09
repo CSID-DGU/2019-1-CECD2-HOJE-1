@@ -115,7 +115,7 @@ int main(int argc, char** argv)
 
 	//Detect
 	std::vector<cv::Rect> letterBBoxes1 = detectLetters(roiImg);
-	scaleBoundingBoxSize(letterBBoxes1, roiImg.cols, roiImg.rows);
+	scaleBoundingBoxSize(letterBBoxes1, roiImg.cols, roiImg.rows, img.cols, img.rows);
 
 	vector<Mat> subImage;
 	for (int i = 0; i < letterBBoxes1.size(); i++) {
