@@ -11,6 +11,7 @@ import Fade from '@material-ui/core/Fade';
 import IconButton from '@material-ui/core/IconButton';
 import Paper from '@material-ui/core/Paper';
 import SettingIcon from '@material-ui/icons/Settings';
+import Button from '@material-ui/core/Button';
 
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -78,7 +79,9 @@ setting_data.searchSetting.map(value => {
   }
 })
 
-export default function Search() {
+let testvalue = 0;
+
+export default function Searching() {
   const classes = useStyles(); 
   const [value, setValue] = React.useState(0);
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -179,73 +182,18 @@ export default function Search() {
   
   return (
     <div className={classes.root}>
-      <TabPanel value={value} index={0}>{ /* 검색 시작 화면 */ }
-        <Grid container direction="row" justify="flex-start" alignItems="center" spacing={2}>{/* 검색화면 헤더 */}
-          <Grid item xs={12} sm={8}>{/* 최근 검사 일자 */ }
-            <TextField
-              id="outlined-read-only-input"
-              label="최근 검사"
-              margin="normal"
-              InputProps={{
-                readOnly: true,
-              }}
-              defaultValue="이전 검사일을 알 수 없음"
-              variant="outlined"
-            >검사내역</TextField>
-          </Grid>
-          <div className={classes.spacer}/>
-          {/* 검색 시작 버튼 */ }
-            <Fab
-              variant="extended"
-              color="primary"
-              aria-label="Add"
-              className={classes.margin}
-              onClick={()=>{ if(open === true) setOpen(false); setReRender(false); setValue(1);}}
-            >
-              검사 시작
-            </Fab>
-          {/* 검색 설정 */ }
-            <IconButton onClick={handleClick('bottom-end')}>
-              <SettingIcon/>
-            </IconButton>
-            <Popper open={open} anchorEl={anchorEl} placement={placement} transition >
-            {({ TransitionProps }) => (
-              <Fade {...TransitionProps} timeout={350}>
-                <Paper>
-                  <List className={classes.root}>
-                    {setting_data.searchSetting.map(value => {
-                      const labelId = `op-${value.id}`;
-                      return (
-                        <ListItem disabled={value.disable} key={value.id} role={undefined} dense button onClick={handleToggle(value.name)}>
-                          <ListItemIcon>
-                            <Checkbox
-                              edge="start"
-                              checked={checked.indexOf(value.name) !== -1}
-                              tabIndex={-1}
-                              disableRipple
-                              inputProps={{ 'aria-labelledby': labelId }}
-                            />
-                          </ListItemIcon>
-                          <ListItemText id={labelId} primary={`${value.name}`} />
-                        </ListItem>
-                      );
-                    })}
-                  </List>
-                </Paper>
-              </Fade>
-            )}
-            </Popper>
-        </Grid>
-        <Grid container justify="center" alignItems="center" spacing={5}>{/* 검색 경로 설정 */ }
-          <Grid item xs>
-            <Tree onChecked={onChecked} onToggle={onToggle} data={path_data}/>
-          </Grid>
-        </Grid>
-      </TabPanel>
-      <TabPanel value={value} index={1}>{/* 검색중 페이지 */ }
-        <SearchHeader currentPath={value}/>
-        <SearchBody resultList={[]}/>
-      </TabPanel>
+        <SearchHeader currentPath={testvalue}/>
+        <SearchBody resultList={[
+          ['card2[1].jpg', 'card2', ['카드번호'], 1, '경고'],
+          ['card2[2].jpg', 'card2', ['카드번호'], 1, '경고'],
+          ['card3.jpg', 'card3', ['카드번호'], 1, '정상'],
+          ['text-out.jpg', 'Unregistered', [], 0, 'None'],
+          ['sample.jpg', 'registCard', ['주소', '주민등록번호'], 2, '정상'],
+          ['sample2.jpg', 'registCard', ['주소', '주민등록번호'], 2, '정상'],
+          ['sample3.jpg', 'registCard', ['주소', '주민등록번호'], 2, '정상'],
+          ['sample2.jpg', 'registCard', ['주소', '주민등록번호'], 2, '정상'],
+          ['good.jpg', 'Unregistered', [], 0, 'None'],
+        ]}/>
     </div>
   );
 }

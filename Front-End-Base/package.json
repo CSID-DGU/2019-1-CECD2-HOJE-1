@@ -17,9 +17,9 @@
   },
   "scripts": {
     "electron": "electron .",
-    "react-start": "react-scripts start",
-    "react-build": "react-scripts build",
-    "react-eject": "react-scripts eject",
+    "react-start": "rescripts start",
+    "react-build": "rescripts build",
+    "react-eject": "rescripts eject",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nf start",
     "dist": " yarn react-build && build -w"
@@ -29,11 +29,15 @@
   "dependencies": {
     "@material-ui/core": "^4.2.1",
     "@material-ui/icons": "^4.2.1",
-    "react-dropdown-tree-select": "^2.0.3"
+    "@material-ui/styles": "^4.3.0",
+    "react-dropdown-tree-select": "^2.0.3",
+    "react-virtualized": "^9.21.1"
   },
   "devDependencies": {
+    "@rescripts/cli": "^0.0.11",
+    "@rescripts/rescript-env": "^0.0.10",
+    "concurrently": "^4.1.1",
     "cross-env": "^5.2.0",
-    "electron": "^5.0.7",
     "electron-packager": "^14.0.1",
     "electron-prebuilt": "^1.4.13",
     "electron-winstaller": "^3.0.4",
@@ -41,9 +45,11 @@
     "foreman": "^3.0.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
+    "react-icons": "^3.7.0",
     "react-router": "^5.0.1",
     "react-router-dom": "^5.0.1",
-    "react-scripts": "^3.0.1"
+    "react-scripts": "^3.0.1",
+    "styled-components": "^4.3.2"
   },
   "browserslist": {
     "production": [

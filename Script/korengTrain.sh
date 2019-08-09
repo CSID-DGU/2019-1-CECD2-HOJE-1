@@ -3,6 +3,12 @@
 training_text=$1
 max_iter=$2
 
+if [ $# -ne 2 ] 
+then
+	echo "Warning: `basename $0` 의 매겨변수의 개수가 올바르지 않습니다."
+	exit $WRONG_ARGS
+fi
+
 export PATH=/usr/local/bin:$PATH
 
 cd ~/mytraining
@@ -57,7 +63,8 @@ lstmtraining \
   	--continue_from ./layer_output/result_checkpoint \
   	--traineddata ./kor_eng_train/kor/kor.traineddata \
   	--model_output ./layer_output/kor_eng.traineddata
-cp ./layer_output/kor_eng.traineddata ./tesseract/tessdata/
+
+cp -v ./layer_output/kor_eng.traineddata ./tesseract/tessdata/
 
 #학습 종료
 exit 0
