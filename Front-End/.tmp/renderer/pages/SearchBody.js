@@ -59,7 +59,7 @@ var _Error = _interopRequireDefault(require("@material-ui/icons/Error"));
 
 var _Warning = _interopRequireDefault(require("@material-ui/icons/Warning"));
 
-var _UploadLog = _interopRequireDefault(require("../../main/FrameTest/UploadLog"));
+var _uploadLog = _interopRequireDefault(require("../../main/FrameTest/uploadLog"));
 
 var _require = require('electron'),
     ipcRenderer = _require.ipcRenderer;
@@ -409,7 +409,7 @@ function SearchBefore() {
       numeric: true
     }, {
       width: 120,
-      label: '문서등급',
+      label: '적합도',
       dataKey: 'fitness',
       numeric: true
     }]

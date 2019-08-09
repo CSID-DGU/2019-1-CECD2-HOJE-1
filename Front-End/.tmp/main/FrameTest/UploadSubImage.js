@@ -45,7 +45,6 @@ function UploadSubImage(textList, fileName, depart) {
     }
   }
 
-  console.log('mediaList : ', mediaList.length, ' textList : ', textList.length);
   var options = {
     method: "POST",
     url: "http://192.168.40.206:8080/multipleFileUpload",

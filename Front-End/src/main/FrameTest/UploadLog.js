@@ -6,7 +6,7 @@ const request = require('request');
 export default function UploadLog(data) {
     let date = moment().format('YYYY-MM-DD HH:mm:ss');
     let ip = detectIpAddress(); //ip 주소
-    let jsonArray = new Array();
+    let jsonArray = [];
     let json1= {};
     let json = {};
     for (const t of data) {

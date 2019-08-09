@@ -28,7 +28,7 @@ import Search from '../pages/Search';
 import Setting from '../../renderer/pages/Setting';
 import QnAMail from '../../renderer/pages/QnAMail';
 import Result from '../../renderer/pages/Result';
-import DownloadFile from '../../main/FrameTest/DownloadFile';
+import DownloadFile from '../../main/FrameTest/downloadFile';
 const drawerWidth = 180;
 
 const useStyles = makeStyles(theme => ({

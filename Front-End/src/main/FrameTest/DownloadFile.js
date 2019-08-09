@@ -1,7 +1,7 @@
 var request = require('request');
 var fs = require('fs');
 const notifier = require('node-notifier'); //notification 을 사용하기 위한 모듈
-
+const path = require('path');
 let check1 = false, check2 = false;
 
 function DownloadTrainedFile() {
@@ -25,7 +25,7 @@ function DownloadTrainedFile() {
     });
 }
 
-function DownloadRex() {
+function DownloadRex() { //C:\vcpkg\installed\x64-windows\tools\tesseract\tessdata
     var req = request("http://192.168.40.206:8080/downloadRexFile", {timeout: 4000}, (err) => {
         if (err) {
             notifier.notify({

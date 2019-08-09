@@ -155,7 +155,7 @@ function Search() {
       ReRender = _React$useState12[0],
       setReRender = _React$useState12[1];
 
-  var _React$useState13 = _react["default"].useState('이전 검사일을 알 수 없음'),
+  var _React$useState13 = _react["default"].useState(''),
       _React$useState14 = (0, _slicedToArray2["default"])(_React$useState13, 2),
       birth = _React$useState14[0],
       setBirth = _React$useState14[1];
@@ -174,10 +174,11 @@ function Search() {
     fs.exists("".concat(__dirname, "/../../../resultfile.json"), function (exists) {
       if (exists) {
         fs.stat("".concat(__dirname, "/../../../resultfile.json"), function (err, stat) {
-          var data = moment(stat.birthtime).format('YYYY년 MM월 DD일');
+          var data = moment(stat.atime).format('YYYY년 MM월 DD일');
+          console.log('date : ', data);
           setBirth(data);
         });
-      }
+      } else setBirth('이전 검사일을 알 수 없음');
     });
   });
 
@@ -236,12 +237,14 @@ function Search() {
     updateState({});
     setReRender(false);
   }, []);
-
-  _react["default"].useEffect(function () {
-    if (ReRender) {
-      setTimeout(forceUpdate, 100);
-    }
+  /*
+  React.useEffect(() => {
+      if (ReRender) {
+          setTimeout(forceUpdate, 100);
+      }
   });
+  */
+
 
   var onToggle = function onToggle(currentNode) {
     var tmp_path_data = path_data;

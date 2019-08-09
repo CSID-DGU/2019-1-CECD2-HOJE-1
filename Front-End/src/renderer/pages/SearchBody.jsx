@@ -16,7 +16,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import NormalIcon from '@material-ui/icons/FiberManualRecord'
 import WarningIcon from '@material-ui/icons/Error';
 import DangerIcon from '@material-ui/icons/Warning';
-import UploadLog from "../../main/FrameTest/UploadLog";
+import UploadLog from "../../main/FrameTest/uploadLog";
 const {ipcRenderer} = require('electron');
 const delay = require('delay');
 
@@ -275,7 +275,7 @@ export default function SearchBefore() {
                     },
                     {
                         width: 120,
-                        label: '문서등급',
+                        label: '적합도',
                         dataKey: 'fitness',
                         numeric: true,
                     },

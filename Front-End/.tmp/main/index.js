@@ -18,7 +18,7 @@ var _hashExec = _interopRequireDefault(require("./FrameTest/hashExec"));
 
 var _makeDictionary = _interopRequireDefault(require("./FrameTest/makeDictionary"));
 
-var _UploadLog = _interopRequireDefault(require("./FrameTest/UploadLog"));
+var _uploadLog = _interopRequireDefault(require("./FrameTest/uploadLog"));
 
 var fs = require('fs');
 
@@ -127,7 +127,8 @@ _electron.app.on('ready', function () {
         var json = JSON.stringify(tmpList);
         fs.writeFileSync('resultfile.json', json, 'utf8'); //Todo 경로 위치 바꿔야 됨
 
-        console.log('file created'); // UploadLog(tmpList);
+        console.log('file created');
+        (0, _uploadLog["default"])(tmpList); //서버에 최근 검사한 내역 전송
       }
     });
 

@@ -17,7 +17,7 @@ function UploadLog(data) {
   var date = moment().format('YYYY-MM-DD HH:mm:ss');
   var ip = detectIpAddress(); //ip 주소
 
-  var jsonArray = new Array();
+  var jsonArray = [];
   var json1 = {};
   var json = {};
   var _iteratorNormalCompletion = true;

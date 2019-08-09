@@ -5,66 +5,36 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports["default"] = void 0;
-
-var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
-
-var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/createClass"));
-
-var _possibleConstructorReturn2 = _interopRequireDefault(require("@babel/runtime/helpers/possibleConstructorReturn"));
-
-var _getPrototypeOf2 = _interopRequireDefault(require("@babel/runtime/helpers/getPrototypeOf"));
-
-var _inherits2 = _interopRequireDefault(require("@babel/runtime/helpers/inherits"));
+exports["default"] = Test;
 
 var _react = _interopRequireDefault(require("react"));
 
-var _reactHierarchyTreeGraph = _interopRequireDefault(require("react-hierarchy-tree-graph"));
+var _reactDropdownTreeSelect = _interopRequireDefault(require("react-dropdown-tree-select"));
 
-var myTreeData = [{
-  name: 'Top Level',
-  attributes: {
-    keyA: 'val A',
-    keyB: 'val B',
-    keyC: 'val C'
-  },
-  children: [{
-    name: 'Level 2: A',
-    attributes: {
-      keyA: 'val A',
-      keyB: 'val B',
-      keyC: 'val C'
-    }
-  }, {
-    name: 'Level 2: B'
+var _reactPowerTree = _interopRequireDefault(require("react-power-tree"));
+
+//import TreeCheckbox from 'react-styled-tree-checkbox'
+var nodes = [{
+  "name": "search me",
+  "value": "searchme",
+  "children": [{
+    "name": "search me too",
+    "value": "searchmetoo",
+    "children": [{
+      "name": "No one can get me",
+      "value": "anonymous"
+    }]
   }]
 }];
 
-var MyComponent =
-/*#__PURE__*/
-function (_React$Component) {
-  (0, _inherits2["default"])(MyComponent, _React$Component);
-
-  function MyComponent() {
-    (0, _classCallCheck2["default"])(this, MyComponent);
-    return (0, _possibleConstructorReturn2["default"])(this, (0, _getPrototypeOf2["default"])(MyComponent).apply(this, arguments));
-  }
-
-  (0, _createClass2["default"])(MyComponent, [{
-    key: "render",
-    value: function render() {
-      return _react["default"].createElement("div", {
-        id: "treeWrapper",
-        style: {
-          width: '50em',
-          height: '20em'
-        }
-      }, _react["default"].createElement(_reactHierarchyTreeGraph["default"], {
-        data: myTreeData
-      }));
+function Test() {
+  return _react["default"].createElement(_reactPowerTree["default"], {
+    data: nodes,
+    onNodeSelect: function onNodeSelect(nodeData) {
+      console.log('Select : ', nodeData);
+    },
+    onNodeExpand: function onNodeExpand(nodeData, operations) {
+      console.log('expand');
     }
-  }]);
-  return MyComponent;
-}(_react["default"].Component);
-
-exports["default"] = MyComponent;
+  });
+}

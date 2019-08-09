@@ -1,38 +1,34 @@
-import React from 'react';
-import Tree from 'react-hierarchy-tree-graph';
+import React from 'react'
+//import TreeCheckbox from 'react-styled-tree-checkbox'
+import DropdownTreeSelect from 'react-dropdown-tree-select'
+import PowerTree from 'react-power-tree';
+const nodes = [{
+    "name": "search me",
+    "value": "searchme",
+    "children": [
+        {
+            "name": "search me too",
+            "value": "searchmetoo",
+            "children": [
+                {
+                    "name": "No one can get me",
+                    "value": "anonymous"
+                }
+            ]
+        }
+    ]
+}]
+export default function Test() {
+    return (
+        <PowerTree
+            data={nodes}
+            onNodeSelect={(nodeData) => {
+                console.log('Select : ' , nodeData);
+            }}
+            onNodeExpand={(nodeData,operations)=>{
+                console.log('expand');
+            }}
+        />
+    )
 
-const myTreeData = [
-    {
-        name: 'Top Level',
-        attributes: {
-            keyA: 'val A',
-            keyB: 'val B',
-            keyC: 'val C',
-        },
-        children: [
-            {
-                name: 'Level 2: A',
-                attributes: {
-                    keyA: 'val A',
-                    keyB: 'val B',
-                    keyC: 'val C',
-                },
-            },
-            {
-                name: 'Level 2: B',
-            },
-        ],
-    },
-];
-
-export default class MyComponent extends React.Component {
-    render() {
-        return (
-        <div id="treeWrapper" style={{width: '50em', height: '20em'}}>
-
-            <Tree data={myTreeData} />
-
-        </div>
-    );
-    }
 }

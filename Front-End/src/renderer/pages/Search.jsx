@@ -86,7 +86,7 @@ export default function Search() {
     const [placement, setPlacement] = React.useState();
     const [selectedFile, setSelectedFile] = React.useState([]);
     const [ReRender, setReRender] = React.useState(false);
-    const [birth,setBirth] = React.useState('이전 검사일을 알 수 없음');
+    const [birth,setBirth] = React.useState('');
     const handleClick = newPlacement => event => {
         setAnchorEl(event.currentTarget);
         setOpen(prev => placement !== newPlacement || !prev);
@@ -96,10 +96,12 @@ export default function Search() {
         fs.exists(`${__dirname}/../../../resultfile.json`,(exists)=>{
             if(exists){
                 fs.stat(`${__dirname}/../../../resultfile.json`,(err,stat)=>{
-                    let data = moment(stat.birthtime).format('YYYY년 MM월 DD일');
+                    let data = moment(stat.atime).format('YYYY년 MM월 DD일');
+                    console.log('date : ' , data);
                     setBirth(data);
                 })
-            }
+            }else
+                setBirth('이전 검사일을 알 수 없음');
         })
     });
     const [checked, setChecked] = React.useState(test);
@@ -144,12 +146,13 @@ export default function Search() {
         updateState({});
         setReRender(false)
     }, []);
+    /*
     React.useEffect(() => {
         if (ReRender) {
             setTimeout(forceUpdate, 100);
         }
     });
-
+*/
     const onToggle = (currentNode) => {
         let tmp_path_data = path_data;
         if (currentNode.isOpen) {

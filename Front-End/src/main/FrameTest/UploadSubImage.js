@@ -14,7 +14,6 @@ export default function UploadSubImage(textList,fileName,depart){
         mediaList.push(fs.createReadStream(tmpPath));
     }
 
-    console.log('mediaList : ' , mediaList.length , ' textList : ' , textList.length);
     const options = {
         method: "POST",
         url : "http://192.168.40.206:8080/multipleFileUpload",

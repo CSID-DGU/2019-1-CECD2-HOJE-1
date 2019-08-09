@@ -2,14 +2,15 @@ import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import {makeStyles} from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import {Paper, FormControl, InputLabel, Select, MenuItem, Fab, Grid, TextField} from '@material-ui/core';
-import {List, Divider, CardMedia} from '@material-ui/core';
+import {Paper, FormControl, InputLabel, Select, MenuItem, Fab, Grid, TextField, Popover} from '@material-ui/core';
+import {List, Divider, CardActionArea, CardMedia, CardContent} from '@material-ui/core';
 import {ipcRenderer, shell} from 'electron';
 import cropImage from '../../main/FrameTest/cropImage';
 const PATH = 'C:\\Users\\FASOO_499\\Desktop\\image';
 const path = require('path');
 const fs = require('fs');
-import UploadSubImage from '../../main/FrameTest/UploadSubImage';
+import UploadSubImage from '../../main/FrameTest/uploadSubImage';
+import UploadImage from '../../main/FrameTest/uploadImage';
 const nativeImage = require('electron').nativeImage;
 let findImage = nativeImage.createFromPath('');
 const useStyles = makeStyles(theme => ({
@@ -52,15 +53,28 @@ const mylistStyles = makeStyles(theme => ({
     image: {
         height: 40,
     },
+    card: {
+        maxHeight: 343.5,
+    },
     fullimage: {
-        height: 300,
         width: '100%',
+        height: 100,
     },
     textfiled: {
         maxWidth: 300,
     },
     item: {
         padding: 10,
+    },
+    media: {
+        maxHeight: 330,
+        maxWidth: 600,
+        height: '100%',
+        width: '100%',
+    },
+    content: {
+        padding: theme.spacing(2),
+        width: 330,
     },
 }));
 const notifier = require('node-notifier');
@@ -97,6 +111,7 @@ export default function QnAMail(props) {
     const [crop, setCrop] = useState(false);
     const [list,setList] = useState([]);
     const [send,setSend] = useState([]);
+    const [sendContent, ] = React.useState(['']);
     function handleChange(event) {
         setValue(event.target.value);
     };
@@ -117,9 +132,24 @@ export default function QnAMail(props) {
     });
 
     const txtChange = prop => event => {
-        const index = listImage.indexOf(prop);
+        const index = list.indexOf(prop);
         send[index] = event.target.value;
     };
+
+    const txtContent = () => event => {
+        sendContent[0] = event.target.value;
+    }
+    const [anchorEl, setAnchorEl] = React.useState(null);
+
+    function handleClick(event) {
+        setAnchorEl(event.currentTarget);
+    }
+
+    function handleClose() {
+        setAnchorEl(null);
+    }
+
+    const open = Boolean(anchorEl);
 
     return (
         <div className={classes.root}>
@@ -151,8 +181,15 @@ export default function QnAMail(props) {
                 <Fab variant="extended" className={classes.fab}
                      disabled={value === 2? (crop? false: true) : false}
                 onClick={()=>{
-                    UploadSubImage(send,data,"HR");
-                    forceUpdate();
+                    if(value== 1){
+                        UploadImage(sendContent.pop(),data,"HR");
+                    }else if(value ==2) {
+                        UploadSubImage(send, data, "HR");
+                        setSend([]);
+                        setList([]);
+                        console.log('test')
+                    }
+                   // forceUpdate();
                 }}>전 송</Fab>
                 {/* 두번째 줄 */}
                 <Grid item xs={9}>
@@ -190,8 +227,11 @@ export default function QnAMail(props) {
                              title : "Image Crop Success",
                              message : "이미지 확인을 하고 싶으면 클릭하세요",
                              wait : true,
+                             timeout : 2
                          },function(err,response){
-                             shell.openItem(PATH);
+                             console.log('response  :' , response);
+                             if(response.match('clicked'))
+                                 shell.openItem(PATH);
                          });
                          setCrop(true);
                      }}>이미지
@@ -202,15 +242,30 @@ export default function QnAMail(props) {
                     구분을 선택해 주세요.
                 </TabPanel>
                 <TabPanel value={value} index={1}>{ /* 분류구분 추가신청 화면 */}
-                    <Grid container zeroMinWidth className={classes2.item}>
-                        <Grid xs={6} item><img style={{marginTop: 12, marginBottom: 12}} maxHeight="303" maxWidth="352"
-                                               height="100%" width="100%"
-                                               src={iimage} alt={""}/></Grid>
-                        <Grid xs={6} item>
-                            <TextField id={`classification-require`} label="이미지 분류를 위한 문서종류를 적으세요" multiline
-                                       rows="14" fullWidth margin="normal" variant="filled"/>
+                    <Grid item alignItems="center" justify="center">
+                        <Grid xs={12} item>
+                            <CardActionArea onClick={handleClick}>
+                                <CardContent>해당되는 이미지에 대한 설명을 적으려면 이미지를 클릭하세요</CardContent>
+                                <img height="100%" width="100%" src={iimage} alt={""}/>
+                            </CardActionArea>
                         </Grid>
                     </Grid>
+                    <Popover
+                        open={open}
+                        anchorEl={anchorEl}
+                        onClose={handleClose}
+                        anchorOrigin={{
+                            vertical: 'top',
+                            horizontal: 'left',
+                        }}
+                        transformOrigin={{
+                            vertical: 'top',
+                            horizontal: 'left',
+                        }}
+                    >
+                        <TextField className={classes2.content} label="이미지 설명을 적어주세요" multiline
+                                   rows="6" fullWidth margin="normal" variant="outlined" value={sendContent} onChange={txtContent()}/>
+                    </Popover>
                 </TabPanel>
                 <TabPanel value={value} index={2}>{ /* 오탐지 수정요청 화면 */}
                     <List className={classes2.root}>

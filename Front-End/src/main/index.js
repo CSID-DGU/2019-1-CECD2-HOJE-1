@@ -4,7 +4,7 @@ import {useState} from "react";
 import delay from 'delay';
 import hashExec from "./FrameTest/hashExec";
 import makeDictionary from "./FrameTest/makeDictionary";
-import UploadLog from "./FrameTest/UploadLog";
+import UploadLog from "./FrameTest/uploadLog";
 const fs = require('fs');
 const PATH = require('path');
 const notifier = require('node-notifier');
@@ -61,7 +61,7 @@ app.on('ready', () => {
                 let json = JSON.stringify(tmpList);
                 fs.writeFileSync('resultfile.json', json, 'utf8'); //Todo 경로 위치 바꿔야 됨
                 console.log('file created');
-               // UploadLog(tmpList);
+                UploadLog(tmpList); //서버에 최근 검사한 내역 전송
             }
         });
         if(isStop && isPlaying){

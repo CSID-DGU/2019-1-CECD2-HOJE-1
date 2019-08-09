@@ -67,7 +67,7 @@ var _QnAMail = _interopRequireDefault(require("../../renderer/pages/QnAMail"));
 
 var _Result = _interopRequireDefault(require("../../renderer/pages/Result"));
 
-var _DownloadFile = _interopRequireDefault(require("../../main/FrameTest/DownloadFile"));
+var _downloadFile = _interopRequireDefault(require("../../main/FrameTest/downloadFile"));
 
 var drawerWidth = 180;
 var useStyles = (0, _styles.makeStyles)(function (theme) {
@@ -144,7 +144,7 @@ function ResponsiveDrawer(props) {
   }, "HOJE-OCR")), _react["default"].createElement(_Grid["default"], null, _react["default"].createElement(_IconButton["default"], {
     onClick: function onClick() {
       console.log('Download...');
-      (0, _DownloadFile["default"])();
+      (0, _downloadFile["default"])();
       forceUpdate();
     }
   }, _react["default"].createElement(_Update["default"], null))))); // 왼쪽 메뉴 부분

@@ -123,11 +123,6 @@ var headRows = [{
   disablePadding: true,
   label: '파일명'
 }, {
-  id: 'filePath',
-  numeric: false,
-  disablePadding: false,
-  label: '파일 경로'
-}, {
   id: 'detectList',
   numeric: false,
   disablePadding: false,
@@ -813,14 +808,12 @@ function Result() {
       id: labelId,
       scope: "row",
       padding: "none"
+    }, _react["default"].createElement(_Tooltip["default"], {
+      title: row.filePath,
+      placement: "top"
     }, _react["default"].createElement(_Typography["default"], {
       noWrap: true
-    }, row.fileName)), _react["default"].createElement(_TableCell["default"], {
-      align: "right"
-    }, _react["default"].createElement(_Typography["default"], {
-      className: classes.filepath,
-      noWrap: true
-    }, row.filePath)), _react["default"].createElement(_TableCell["default"], {
+    }, row.fileName))), _react["default"].createElement(_TableCell["default"], {
       className: classes.detectlist,
       wrap: "nowrap",
       align: "right"

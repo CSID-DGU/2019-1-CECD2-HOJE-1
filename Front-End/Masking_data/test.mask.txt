@@ -2,16 +2,16 @@
 	"boxFile" : 
 	[
 		{
-			"height" : 235,
-			"width" : 310,
-			"x_pos" : 244,
-			"y_pos" : 111
+			"height" : 31,
+			"width" : 230,
+			"x_pos" : 243,
+			"y_pos" : 149
 		},
 		{
-			"height" : 80,
-			"width" : 377,
-			"x_pos" : 256,
-			"y_pos" : 36
+			"height" : 41,
+			"width" : 339,
+			"x_pos" : 248,
+			"y_pos" : 69
 		}
 	],
 	"roiBox" : 

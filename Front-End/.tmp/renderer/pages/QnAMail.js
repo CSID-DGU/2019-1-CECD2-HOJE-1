@@ -29,7 +29,9 @@ var _electron = require("electron");
 
 var _cropImage = _interopRequireDefault(require("../../main/FrameTest/cropImage"));
 
-var _UploadSubImage = _interopRequireDefault(require("../../main/FrameTest/UploadSubImage"));
+var _uploadSubImage = _interopRequireDefault(require("../../main/FrameTest/uploadSubImage"));
+
+var _uploadImage = _interopRequireDefault(require("../../main/FrameTest/uploadImage"));
 
 var PATH = "C:\\Users\\FASOO_499\\Desktop\\image";
 
@@ -83,15 +85,28 @@ var mylistStyles = (0, _styles.makeStyles)(function (theme) {
     image: {
       height: 40
     },
+    card: {
+      maxHeight: 343.5
+    },
     fullimage: {
-      height: 300,
-      width: '100%'
+      width: '100%',
+      height: 100
     },
     textfiled: {
       maxWidth: 300
     },
     item: {
       padding: 10
+    },
+    media: {
+      maxHeight: 330,
+      maxWidth: 600,
+      height: '100%',
+      width: '100%'
+    },
+    content: {
+      padding: theme.spacing(2),
+      width: 330
     }
   };
 });
@@ -153,21 +168,25 @@ function QnAMail(props) {
       send = _useState6[0],
       setSend = _useState6[1];
 
+  var _React$useState5 = _react["default"].useState(['']),
+      _React$useState6 = (0, _slicedToArray2["default"])(_React$useState5, 1),
+      sendContent = _React$useState6[0];
+
   function handleChange(event) {
     setValue(event.target.value);
   }
 
   ;
 
-  var _React$useState5 = _react["default"].useState(''),
-      _React$useState6 = (0, _slicedToArray2["default"])(_React$useState5, 2),
-      imagePath = _React$useState6[0],
-      setImagePath = _React$useState6[1];
-
-  var _React$useState7 = _react["default"].useState(nativeImage.createFromPath('').toDataURL()),
+  var _React$useState7 = _react["default"].useState(''),
       _React$useState8 = (0, _slicedToArray2["default"])(_React$useState7, 2),
-      iimage = _React$useState8[0],
-      setImage = _React$useState8[1];
+      imagePath = _React$useState8[0],
+      setImagePath = _React$useState8[1];
+
+  var _React$useState9 = _react["default"].useState(nativeImage.createFromPath('').toDataURL()),
+      _React$useState10 = (0, _slicedToArray2["default"])(_React$useState9, 2),
+      iimage = _React$useState10[0],
+      setImage = _React$useState10[1];
 
   (0, _react.useEffect)(function () {
     _electron.ipcRenderer.send('QNA_READY', 'ready'); //페이지 로딩이 완료되면
@@ -186,11 +205,31 @@ function QnAMail(props) {
 
   var txtChange = function txtChange(prop) {
     return function (event) {
-      var index = listImage.indexOf(prop);
+      var index = list.indexOf(prop);
       send[index] = event.target.value;
     };
   };
 
+  var txtContent = function txtContent() {
+    return function (event) {
+      sendContent[0] = event.target.value;
+    };
+  };
+
+  var _React$useState11 = _react["default"].useState(null),
+      _React$useState12 = (0, _slicedToArray2["default"])(_React$useState11, 2),
+      anchorEl = _React$useState12[0],
+      setAnchorEl = _React$useState12[1];
+
+  function handleClick(event) {
+    setAnchorEl(event.currentTarget);
+  }
+
+  function handleClose() {
+    setAnchorEl(null);
+  }
+
+  var open = Boolean(anchorEl);
   return _react["default"].createElement("div", {
     className: classes.root
   }, sendingImagePath, _react["default"].createElement(_core.Grid, {
@@ -223,8 +262,15 @@ function QnAMail(props) {
     className: classes.fab,
     disabled: value === 2 ? crop ? false : true : false,
     onClick: function onClick() {
-      (0, _UploadSubImage["default"])(send, data, "HR");
-      forceUpdate();
+      if (value == 1) {
+        (0, _uploadImage["default"])(sendContent.pop(), data, "HR");
+      } else if (value == 2) {
+        (0, _uploadSubImage["default"])(send, data, "HR");
+        setSend([]);
+        setList([]);
+        console.log('test');
+      } // forceUpdate();
+
     }
   }, "\uC804 \uC1A1"), _react["default"].createElement(_core.Grid, {
     item: true,
@@ -322,9 +368,11 @@ function QnAMail(props) {
               notifier.notify({
                 title: "Image Crop Success",
                 message: "이미지 확인을 하고 싶으면 클릭하세요",
-                wait: true
+                wait: true,
+                timeout: 2
               }, function (err, response) {
-                _electron.shell.openItem(PATH);
+                console.log('response  :', response);
+                if (response.match('clicked')) _electron.shell.openItem(PATH);
               });
               setCrop(true);
 
@@ -344,35 +392,42 @@ function QnAMail(props) {
     value: value,
     index: 1
   }, _react["default"].createElement(_core.Grid, {
-    container: true,
-    zeroMinWidth: true,
-    className: classes2.item
+    item: true,
+    alignItems: "center",
+    justify: "center"
   }, _react["default"].createElement(_core.Grid, {
-    xs: 6,
+    xs: 12,
     item: true
-  }, _react["default"].createElement("img", {
-    style: {
-      marginTop: 12,
-      marginBottom: 12
-    },
-    maxHeight: "303",
-    maxWidth: "352",
+  }, _react["default"].createElement(_core.CardActionArea, {
+    onClick: handleClick
+  }, _react["default"].createElement(_core.CardContent, null, "\uD574\uB2F9\uB418\uB294 \uC774\uBBF8\uC9C0\uC5D0 \uB300\uD55C \uC124\uBA85\uC744 \uC801\uC73C\uB824\uBA74 \uC774\uBBF8\uC9C0\uB97C \uD074\uB9AD\uD558\uC138\uC694"), _react["default"].createElement("img", {
     height: "100%",
     width: "100%",
     src: iimage,
     alt: ""
-  })), _react["default"].createElement(_core.Grid, {
-    xs: 6,
-    item: true
+  })))), _react["default"].createElement(_core.Popover, {
+    open: open,
+    anchorEl: anchorEl,
+    onClose: handleClose,
+    anchorOrigin: {
+      vertical: 'top',
+      horizontal: 'left'
+    },
+    transformOrigin: {
+      vertical: 'top',
+      horizontal: 'left'
+    }
   }, _react["default"].createElement(_core.TextField, {
-    id: "classification-require",
-    label: "\uC774\uBBF8\uC9C0 \uBD84\uB958\uB97C \uC704\uD55C \uBB38\uC11C\uC885\uB958\uB97C \uC801\uC73C\uC138\uC694",
+    className: classes2.content,
+    label: "\uC774\uBBF8\uC9C0 \uC124\uBA85\uC744 \uC801\uC5B4\uC8FC\uC138\uC694",
     multiline: true,
-    rows: "14",
+    rows: "6",
     fullWidth: true,
     margin: "normal",
-    variant: "filled"
-  })))), _react["default"].createElement(TabPanel, {
+    variant: "outlined",
+    value: sendContent,
+    onChange: txtContent()
+  }))), _react["default"].createElement(TabPanel, {
     value: value,
     index: 2
   }, _react["default"].createElement(_core.List, {
