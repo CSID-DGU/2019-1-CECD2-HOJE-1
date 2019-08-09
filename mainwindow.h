@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "httprequestworker.h"
+#include "trainworker.h"
 
 namespace Ui {
 class MainWindow;

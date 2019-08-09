@@ -25,11 +25,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+        httprequestworker.cpp \
         main.cpp \
-        mainwindow.cpp
+        mainwindow.cpp \
+        trainworker.cpp
 
 HEADERS += \
-        mainwindow.h
+        httprequestworker.h \
+        mainwindow.h \
+        trainworker.h
 
 FORMS += \
         mainwindow.ui
