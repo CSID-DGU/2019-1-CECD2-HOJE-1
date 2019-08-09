@@ -1,23 +1,41 @@
 import React from 'react'
+const fs = require('fs');
+const path = require('path');
 //import TreeCheckbox from 'react-styled-tree-checkbox'
 import DropdownTreeSelect from 'react-dropdown-tree-select'
-import PowerTree from 'react-power-tree';
+
+import PowerTree from './powerTree';
 const nodes = [{
-    "name": "search me",
-    "value": "searchme",
-    "children": [
-        {
-            "name": "search me too",
-            "value": "searchmetoo",
-            "children": [
-                {
-                    "name": "No one can get me",
-                    "value": "anonymous"
-                }
-            ]
+    "name": "c:",
+    "value": "c:\\",
+    "children":[],
+    "dir" : true,
+    "check" : false
+}];
+
+function directory (ppath){
+    let files = fs.readdirSync(ppath,{withFileTypes: true});
+    console.log(nodes);
+    let jsonList = [];
+    for(const tmp of files){
+        let tmpPath = path.join(ppath,tmp.name);
+        //let data = fs.statSync(tmpPath);
+        try {
+            fs.accessSync(tmpPath, fs.R_OK);
+            let json = {
+                "name": tmp.name,
+                "value": tmpPath,
+            };
+            if (tmp.isDirectory()) {
+                json["dir"] = true
+            }
+            jsonList.push(json);
+        }catch(exception){
+            continue;
         }
-    ]
-}]
+    }
+    return jsonList;
+}
 export default function Test() {
     return (
         <PowerTree
@@ -27,8 +45,11 @@ export default function Test() {
             }}
             onNodeExpand={(nodeData,operations)=>{
                 console.log('expand');
+                const {addChildren} = operations;
+                let tmp = directory(nodeData.value);
+                const childNodes = [...tmp];
+                addChildren(childNodes);
             }}
         />
     )
-
 }

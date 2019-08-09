@@ -29,6 +29,7 @@ import SearchHeader from './SearchHeader';
 import SearchBody from './SearchBody';
 
 const fs = require('fs');
+const PATH = require('path');
 const tree =require('electron-tree-view');
 const useStyles = makeStyles(theme => ({
     root: {
@@ -131,8 +132,8 @@ export default function Search() {
 
     // 기본 경로( Windows 기준 )
     const [path_data, setPathData] = React.useState({
-        'C:/': {
-            path: 'C:/',
+        'C:\\': {
+            path: 'C:\\',
             type: 'folder',
             checked: false,
             isRoot: true,
@@ -153,26 +154,35 @@ export default function Search() {
         }
     });
 */
+
     const onToggle = (currentNode) => {
         let tmp_path_data = path_data;
         if (currentNode.isOpen) {
+            const tmp = fs.readdirSync(currentNode.path, {withFileTypes: true})
             //console.log(currentNode);
-            fs.readdir(currentNode.path, function (error, dir) {
-                dir.map(value => {
-                    if (value.match('\\.') === null) {
-                        const path = currentNode.path + '/' + value;
-                        if (tmp_path_data[currentNode.path].children.indexOf(path) === -1) {
-                            //console.log(path);
-                            tmp_path_data[currentNode.path].children.push(path);
+            tmp.map(value => {
+                    const path = currentNode.path + '/' + value.name;
+
+                    if (tmp_path_data[currentNode.path].children.indexOf(path) === -1) {
+                        //console.log(path);
+                        tmp_path_data[currentNode.path].children.push(path);
+                        if(value.isDirectory()) {
                             tmp_path_data[path] = {
                                 path: `${path}`,
                                 type: 'folder',
                                 checked: false,
                                 children: [],
                             }
+                        }else{
+                            tmp_path_data[path] = {
+                                path: `${path}`,
+                                type: 'file',
+                                content: '',
+                                checked: false,
+                            }
                         }
                     }
-                });
+
             });
             setPathData(tmp_path_data);
             //console.log(path_data);
@@ -260,7 +270,7 @@ export default function Search() {
                 </Grid>
                 <Grid container justify="center" alignItems="center" spacing={5}>{/* 검색 경로 설정 */}
                     <Grid item xs>
-                        {/*<Tree onChecked={onChecked} onToggle={onToggle} data={path_data}/>*/}
+                        {<Tree onChecked={onChecked} onToggle={onToggle} data={path_data}/>}
                     </Grid>
                 </Grid>
             </TabPanel>

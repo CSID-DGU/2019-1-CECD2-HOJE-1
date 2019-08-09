@@ -98,7 +98,7 @@ _electron.app.on('ready', function () {
 
             case 6:
               _context.next = 8;
-              return Exec("C:\\Users\\FASOO_499\\Desktop\\FrameTest", ['.jpg', '.png', '.tif']);
+              return Exec("C:\\Users\\FASOO_499\\Desktop\\imageTest", ['.jpg', '.png', '.tif']);
 
             case 8:
               tmp = _context.sent;

@@ -71,6 +71,8 @@ var _SearchBody = _interopRequireDefault(require("./SearchBody"));
 
 var fs = require('fs');
 
+var PATH = require('path');
+
 var tree = require('electron-tree-view');
 
 var useStyles = (0, _styles.makeStyles)(function (theme) {
@@ -216,8 +218,8 @@ function Search() {
 
 
   var _React$useState17 = _react["default"].useState({
-    'C:/': {
-      path: 'C:/',
+    'C:\\': {
+      path: 'C:\\',
       type: 'folder',
       checked: false,
       isRoot: true,
@@ -250,24 +252,33 @@ function Search() {
     var tmp_path_data = path_data;
 
     if (currentNode.isOpen) {
-      //console.log(currentNode);
-      fs.readdir(currentNode.path, function (error, dir) {
-        dir.map(function (value) {
-          if (value.match('\\.') === null) {
-            var path = currentNode.path + '/' + value;
+      var tmp = fs.readdirSync(currentNode.path, {
+        withFileTypes: true
+      }); //console.log(currentNode);
 
-            if (tmp_path_data[currentNode.path].children.indexOf(path) === -1) {
-              //console.log(path);
-              tmp_path_data[currentNode.path].children.push(path);
-              tmp_path_data[path] = {
-                path: "".concat(path),
-                type: 'folder',
-                checked: false,
-                children: []
-              };
-            }
+      tmp.map(function (value) {
+        var path = currentNode.path + '/' + value.name;
+
+        if (tmp_path_data[currentNode.path].children.indexOf(path) === -1) {
+          //console.log(path);
+          tmp_path_data[currentNode.path].children.push(path);
+
+          if (value.isDirectory()) {
+            tmp_path_data[path] = {
+              path: "".concat(path),
+              type: 'folder',
+              checked: false,
+              children: []
+            };
+          } else {
+            tmp_path_data[path] = {
+              path: "".concat(path),
+              type: 'file',
+              content: '',
+              checked: false
+            };
           }
-        });
+        }
       });
       setPathData(tmp_path_data); //console.log(path_data);
     }
@@ -385,7 +396,11 @@ function Search() {
   }, _react["default"].createElement(_Grid["default"], {
     item: true,
     xs: true
-  }))), _react["default"].createElement(TabPanel, {
+  }, _react["default"].createElement(_Tree["default"], {
+    onChecked: onChecked,
+    onToggle: onToggle,
+    data: path_data
+  })))), _react["default"].createElement(TabPanel, {
     value: value,
     index: 1
   }, _react["default"].createElement(_SearchHeader["default"], null), _react["default"].createElement(_SearchBody["default"], null)));

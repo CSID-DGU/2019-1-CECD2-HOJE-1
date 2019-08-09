@@ -51,7 +51,7 @@ app.on('ready', () => {
         isPlaying = true;
         isStop = false;
         await regRead(result); //정규 표현식 파일 읽음
-        let tmp = await Exec(`C:\\Users\\FASOO_499\\Desktop\\FrameTest`, ['.jpg', '.png', '.tif']); //함수 실행
+        let tmp = await Exec(`C:\\Users\\FASOO_499\\Desktop\\imageTest`, ['.jpg', '.png', '.tif']); //함수 실행
     });
     ipcMain.on('STOP_SEARCH',(event,result)=>{
         isDone = result; //검사 종료
