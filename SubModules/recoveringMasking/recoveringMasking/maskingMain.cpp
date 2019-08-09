@@ -140,7 +140,7 @@ int main(int argc, char** argv)
 
 		//Detect
 		std::vector<cv::Rect> letterBBoxes1 = detectLetters(roiImg);
-		scaleBoundingBoxSize(letterBBoxes1, roiImg.cols, roiImg.rows);
+		scaleBoundingBoxSize(letterBBoxes1, roiImg.cols, roiImg.rows, img.cols, img.rows);
 
 
 		vector<Mat> subImage;
@@ -297,10 +297,7 @@ int main(int argc, char** argv)
 		}
 
 		Mat reverseWarped = four_point_transform_reverse(img, warped, roiBox);
-
-		//cv::imshow("reverseWarped", reverseWarped);
-		//cv::waitKey(0);
-		
+	
 		cv::Rect rect(Point(5, 5), Point(img.cols - 5, img.rows - 5));
 		cv::imwrite(input_name + ".mask"+ext, reverseWarped(rect));
 		makeBoxToJsonFile(subImageRectList, roiBox, pureInput_name);
@@ -442,8 +439,9 @@ int main(int argc, char** argv)
 			cout << "errorCode5: Error deleting file" << endl;
 		}
 
-		cout << "code2: Success De-Masking";
+		cout << "code2: Success De-Masking" << endl;
 	}
 
+	//system("pause");
 	return 0;
 }

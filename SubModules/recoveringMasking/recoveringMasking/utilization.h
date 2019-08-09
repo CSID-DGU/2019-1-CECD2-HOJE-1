@@ -10,39 +10,55 @@
 #include <iterator>
 #include "json/json.h"
 
+bool isRectangleOverlap(cv::Rect &rect1, cv::Rect &rect2) {
+	if ((rect1 & rect2).area() > 0)
+		return true;
+	else
+		return false;
+}
+
 std::vector<cv::Rect> detectLetters(cv::Mat img)
 {
 	std::vector<cv::Rect> boundRect;
+	cv::Mat img_clone = img.clone();
 	cv::Mat img_sobel, img_threshold, element;
 	const int standard_width = 400;
 	const int standard_height = 250;
+
 	// 기준 width, cols : 400 ,  height,rows : 250
-	float scale_size = 1.0f;
+	//float scale_size = 1.0f;
 
 	int inputImage_width = img.cols;
 	int inputImage_height = img.rows;
 
-	if (inputImage_width > inputImage_height) {
-		scale_size = (float)inputImage_width / (float)standard_width;
-	}
-	else {
-		scale_size = (float)inputImage_height / (float)standard_height;
-	}
 
-	cv::Sobel(img, img_sobel, CV_8U, 1, 0, 3, 1, 0, cv::BORDER_DEFAULT);
-	cv::threshold(img_sobel, img_threshold, 0, 255, cv::THRESH_OTSU + cv::THRESH_BINARY);
-	element = getStructuringElement(cv::MORPH_RECT, cv::Size(17 * scale_size, 9 * scale_size)); //size(15,15) -> size(15, 4) -> 현재 size(17,8) * scale_size 조금씩 조절 (17,9)
+	float width_scale_size = (float)inputImage_width / (float)standard_width;
+	float height_scale_size = (float)inputImage_height / (float)standard_height;
+
+	height_scale_size = height_scale_size < 1 ? 1 : height_scale_size;
+
+
+	cv::Mat rect_kernel = cv::getStructuringElement(cv::MORPH_CROSS, cv::Size(2 + (inputImage_height / 500), 1));
+
+	cv::dilate(img_clone, img_clone, rect_kernel);
+
+	cv::threshold(img_clone, img_threshold, 0, 255, cv::THRESH_OTSU | cv::THRESH_BINARY_INV);
+	rect_kernel = cv::getStructuringElement(cv::MORPH_CROSS, cv::Size(2, 2));
+	cv::dilate(img_threshold, img_threshold, rect_kernel);
+
+	element = getStructuringElement(cv::MORPH_RECT, cv::Size_<float>(18 * width_scale_size, 2.0)); //이미지에서 최대한 한 라인만 읽을 수 있게 처리함.													
 	cv::morphologyEx(img_threshold, img_threshold, cv::MORPH_CLOSE, element); //Does the trick
+
 	std::vector< std::vector< cv::Point> > contours;
-	cv::findContours(img_threshold, contours, 0, 1);
-	std::vector<std::vector<cv::Point> > contours_poly(contours.size());
+	cv::findContours(img_threshold, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_NONE);
+	std::vector<std::vector<cv::Point>> contours_poly(contours.size());
 
 	for (int i = 0; i < contours.size(); i++)
 		if (contours[i].size() > 100)
 		{
 			cv::approxPolyDP(cv::Mat(contours[i]), contours_poly[i], 3, true);
 			cv::Rect appRect(boundingRect(cv::Mat(contours_poly[i])));
-			if (appRect.width > appRect.height)
+			if (appRect.width > appRect.height && appRect.height > 10)
 				boundRect.push_back(appRect);
 		}
 
@@ -50,9 +66,31 @@ std::vector<cv::Rect> detectLetters(cv::Mat img)
 }
 
 
-void scaleBoundingBoxSize(std::vector<cv::Rect> &letterBBoxes1, int cols, int rows) {
-	const int x_margin = 10;
-	const int y_margin = 10;
+void scaleBoundingBoxSize(std::vector<cv::Rect> &letterBBoxes1, int cols, int rows, int input_width, int input_height) {
+	const int standard_width = 400;
+	const int standard_height = 250;
+	int inputImage_width = input_width;
+	int inputImage_height = input_height;
+
+
+	////
+	int min_distance_between_rectangle = inputImage_height;
+	for (int i = 0; i < letterBBoxes1.size(); i++) {
+		for (int j = i + 1; j < letterBBoxes1.size(); j++) {
+			//
+			if ((letterBBoxes1[i].x <= letterBBoxes1[j].x) && (letterBBoxes1[j].x <= (letterBBoxes1[i].x + letterBBoxes1[i].width))
+				&& !isRectangleOverlap(letterBBoxes1[i], letterBBoxes1[j])
+				&& ((letterBBoxes1[i].y - (letterBBoxes1[j].y + letterBBoxes1[j].height)) < min_distance_between_rectangle)) {
+				min_distance_between_rectangle = letterBBoxes1[i].y - (letterBBoxes1[j].y + letterBBoxes1[j].height);
+				//std::cout << i<<":" << letterBBoxes1[i] << " " << j << ":" << letterBBoxes1[j] << ":" << min_distance_between_rectangle << std::endl;
+				break;//이미 bbox는 정렬되어 있는 형태이므로 이때가 가장 letterBBoxes1[i]와 가까운 사각형
+			}
+		}
+	}
+
+	int x_margin = 10 * (inputImage_width / standard_width);
+	int y_margin = min_distance_between_rectangle + 2;
+
 
 	for (int i = 0; i < letterBBoxes1.size(); i++) {
 		if (letterBBoxes1[i].x - x_margin < 0 && letterBBoxes1[i].y - y_margin < 0) {
@@ -357,14 +395,8 @@ bool makeBoxToJsonFile(std::vector<cv::Rect>& rectList, cv::Mat& roiBox, std::st
 		root["boxFile"].append(attribute);
 	}
 
-	//std::cout << root << std::endl;
-	//system("pause");
-
-	//std::cout << root << std::endl;
 	Json::StyledStreamWriter writer;
 	
-	//std::string str = writer.write(root);
-	//std::cout << str << std::endl;
 	std::ofstream file_id;
 	file_id.open(".\\Masking_data\\" + fileName + ".mask" + ".txt");
 
