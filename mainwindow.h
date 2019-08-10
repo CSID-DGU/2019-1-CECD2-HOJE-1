@@ -2,6 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QTextEdit>
+#include <QMessageBox>
+
 #include "httprequestworker.h"
 #include "trainworker.h"
 
@@ -19,6 +22,23 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    TrainWorker *trainworker;
+    QTextEdit *edit;
+    QMessageBox* waitMessage;
+    QMessageBox* finishMessage;
+
+private slots:
+
+    void what_train(TrainWorker*, QString);
+
+    void start_message();
+    void finish_message();
+    void print_message();
+
+    void trasmit_traineddata();
+    void check_version();
+    void handle_result(HttpRequestWorker *worker);
+
 };
 
 #endif // MAINWINDOW_H
