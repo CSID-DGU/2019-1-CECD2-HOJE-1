@@ -18,6 +18,7 @@ TrainWorker::TrainWorker(QObject *parent) : QObject(parent)
     connect(process, SIGNAL(readyReadStandardOutput()),this, SLOT(manager_print()));
     connect(process, SIGNAL(readyReadStandardError()),this, SLOT(manager_print()));
 
+    projectPath = PROJECT_PATH;
 }
 
 void TrainWorker::manager_func(QString str)
@@ -112,7 +113,7 @@ void TrainWorker::train_images()
                                                            tr("Open traineddata"), homeLocation + "mytraining/tesseract/tessdata", tr("traineddata Files (*.traineddata)"));
     if(old_traineddata.isEmpty() || old_traineddata.isNull()){return;}
     bool ok = true;
-    QString program = ":/Scripts/image_training.sh";
+    QString program(projectPath + "/Scripts/image_training.sh");
     QString language = QInputDialog::getText(widget, tr("START MODEL"),
                                                    tr("language:"), QLineEdit::Normal,
                                                    "kor", &ok);
@@ -124,7 +125,7 @@ void TrainWorker::train_images()
                                         QLineEdit::Normal, "6", &ok);
     if (!ok){return;}
     QString max_iter = QInputDialog::getText(widget, tr("MAX ITERATIONS"),
-                                                   tr("Input max iterations:"), QLineEdit::Normal, "800", &ok);
+                                                   tr("Input max iterations:"), QLineEdit::Normal, "500", &ok);
     if (!ok){return;}
 
 
@@ -140,7 +141,7 @@ void TrainWorker::train_images()
 }
 void TrainWorker::train_singleImage()
 {
-    QString program = ":/Scripts/single_image.sh";
+    QString program(projectPath + "/Scripts/single_image.sh");
 
     QString image_file = QFileDialog::getOpenFileName(widget,
                                                       tr("Open Image File"), homeLocation, tr("Image Files (*.png)"));
@@ -175,7 +176,7 @@ void TrainWorker::train_singleImage()
 }
 void TrainWorker::train_fonts()
 {
-    QString program = ":/Scripts/fontFinetuning.sh";
+    QString program(projectPath + "/Scripts/fontFinetuning.sh");
 
     // gtk-message warning, not error // need to change start directory.
     QString font_path = QFileDialog::getOpenFileName(widget,
@@ -209,7 +210,7 @@ void TrainWorker::train_fonts()
 }
 void TrainWorker::kor_eng()
 {
-    QString program = ":/Scripts/korengTrain.sh";
+    QString program(projectPath + "/Scripts/korengTrain.sh");
 
     // 현재는 기존 bestdata사용하지만 추후에는 기존파일에 계속 더할 수 있도록 그리고 업데이트의 경우 학습파일만들기 생략시키기 쉘에서
     //QString original_traineddata = "";

@@ -15,6 +15,7 @@ public:
     void manager_func(QString);
 
     QString homeLocation;
+    QString projectPath;
     QString print;
 signals:
     void process_start();
