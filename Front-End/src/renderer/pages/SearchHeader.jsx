@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
         flex: '1 1 auto',
     },
 }));
-let currentPath = '';
+
 export default function SearchHeader() {
     const classes = useStyles();
     const [puase, setPuase] = React.useState(0);

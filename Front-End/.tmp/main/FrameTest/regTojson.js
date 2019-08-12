@@ -25,7 +25,7 @@ function _TessNreg() {
   _TessNreg = (0, _asyncToGenerator2["default"])(
   /*#__PURE__*/
   _regenerator["default"].mark(function _callee(filePath) {
-    var textOriginal, text, result;
+    var textOriginal, result;
     return _regenerator["default"].wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
@@ -35,18 +35,18 @@ function _TessNreg() {
 
           case 2:
             textOriginal = _context.sent;
-            text = textOriginal.replace(/ /gi, ""); //문자열내에 모든 공백을 제거하기 위해서 사용
+            //let text = textOriginal.replace(/ /gi,""); //문자열내에 모든 공백을 제거하기 위해서 사용
+            console.log(textOriginal); //text = text.replace(/:|\.|\,/gi," ");
 
-            text = text.replace(/:|\.|\,/gi, " ");
-            _context.next = 7;
-            return regExe(text);
+            _context.next = 6;
+            return regExe(textOriginal);
 
-          case 7:
+          case 6:
             result = _context.sent;
             result.sentence = textOriginal;
-            return _context.abrupt("return", result);
+            console.log(result);
 
-          case 10:
+          case 9:
           case "end":
             return _context.stop();
         }
@@ -140,7 +140,7 @@ function _regExe() {
   _regExe = (0, _asyncToGenerator2["default"])(
   /*#__PURE__*/
   _regenerator["default"].mark(function _callee3(text) {
-    var promise, result, textArray, _iteratorNormalCompletion3, _didIteratorError3, _iteratorError3, _loop, _iterator3, _step3;
+    var promise, result, textArray, tmpArray, _iteratorNormalCompletion3, _didIteratorError3, _iteratorError3, _loop, _iterator3, _step3;
 
     return _regenerator["default"].wrap(function _callee3$(_context3) {
       while (1) {
@@ -152,12 +152,18 @@ function _regExe() {
               count: 0,
               sentence: ''
             };
-            textArray = text.split(/ |\r|\n|\r\n/); //정규식으로 표현
+            textArray = text.split(/\r|\n|\r\n/); //정규식으로 표현
 
+            tmpArray = textArray.filter(function (element) {
+              //정규식으로 나뉘어진 배열에 '' 요소 제거
+              if (element !== '') {
+                return element;
+              }
+            });
             _iteratorNormalCompletion3 = true;
             _didIteratorError3 = false;
             _iteratorError3 = undefined;
-            _context3.prev = 5;
+            _context3.prev = 6;
             _loop =
             /*#__PURE__*/
             _regenerator["default"].mark(function _callee2() {
@@ -180,66 +186,66 @@ function _regExe() {
                 }
               }, _callee2);
             });
-            _iterator3 = textArray[Symbol.iterator]();
+            _iterator3 = tmpArray[Symbol.iterator]();
 
-          case 8:
+          case 9:
             if (_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done) {
-              _context3.next = 13;
+              _context3.next = 14;
               break;
             }
 
-            return _context3.delegateYield(_loop(), "t0", 10);
+            return _context3.delegateYield(_loop(), "t0", 11);
 
-          case 10:
+          case 11:
             _iteratorNormalCompletion3 = true;
-            _context3.next = 8;
+            _context3.next = 9;
             break;
 
-          case 13:
-            _context3.next = 19;
+          case 14:
+            _context3.next = 20;
             break;
 
-          case 15:
-            _context3.prev = 15;
-            _context3.t1 = _context3["catch"](5);
+          case 16:
+            _context3.prev = 16;
+            _context3.t1 = _context3["catch"](6);
             _didIteratorError3 = true;
             _iteratorError3 = _context3.t1;
 
-          case 19:
-            _context3.prev = 19;
+          case 20:
             _context3.prev = 20;
+            _context3.prev = 21;
 
             if (!_iteratorNormalCompletion3 && _iterator3["return"] != null) {
               _iterator3["return"]();
             }
 
-          case 22:
-            _context3.prev = 22;
+          case 23:
+            _context3.prev = 23;
 
             if (!_didIteratorError3) {
-              _context3.next = 25;
+              _context3.next = 26;
               break;
             }
 
             throw _iteratorError3;
 
-          case 25:
-            return _context3.finish(22);
-
           case 26:
-            return _context3.finish(19);
+            return _context3.finish(23);
 
           case 27:
+            return _context3.finish(20);
+
+          case 28:
             result.key = Array.from(new Set(result.key)); //중복되는 부분 set으로 변환시킨후 다시 Array로 변환
 
             return _context3.abrupt("return", result);
 
-          case 29:
+          case 30:
           case "end":
             return _context3.stop();
         }
       }
-    }, _callee3, null, [[5, 15, 19, 27], [20,, 22, 26]]);
+    }, _callee3, null, [[6, 16, 20, 28], [21,, 23, 27]]);
   }));
   return _regExe.apply(this, arguments);
 }

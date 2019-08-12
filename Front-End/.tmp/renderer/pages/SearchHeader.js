@@ -45,7 +45,6 @@ var useStyles = (0, _styles.makeStyles)(function (theme) {
     }
   };
 });
-var currentPath = '';
 
 function SearchHeader() {
   var classes = useStyles();

@@ -1,4 +1,4 @@
-export default function (classResult,fileName,filePath,result){
+export default function makingDictionary (classResult,fileName,filePath,result){
     var classResultObj = JSON.parse(classResult);
     var classification =
         {

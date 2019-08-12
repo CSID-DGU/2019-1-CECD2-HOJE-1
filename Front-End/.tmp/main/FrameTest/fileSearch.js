@@ -1,10 +1,15 @@
 "use strict";
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = fileSearch;
+
 var fs = require('fs');
 
 var path = require('path');
 
-module.exports = function (startPath, extension) {
+function fileSearch(startPath, extension) {
   var fileList = [];
 
   if (!fs.existsSync(startPath)) {
@@ -27,4 +32,6 @@ module.exports = function (startPath, extension) {
 
   ;
   return fileList;
-};
+}
+
+;

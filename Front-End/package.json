@@ -2,10 +2,11 @@
   "name": "untitled1",
   "version": "1.0.0",
   "description": "",
-  "main": "./.tmp/main/index.js",
+  "main": "./.tmp/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack",
+    "dev": "webpack --mode development",
+    "build": "webpack --mode production",
     "start": "electron .",
     "babel": "npx babel ./src --out-dir .tmp && npm start",
     "watch": "npx babel ./src --out-dir .tmp --watch"
@@ -40,7 +41,6 @@
     "request": "^2.88.0",
     "styled-components": "^4.3.2",
     "tree-view": "^2.2.0",
-    "webpack": "^2.2.0",
     "xmlhttprequest": "^1.8.0"
   },
   "devDependencies": {

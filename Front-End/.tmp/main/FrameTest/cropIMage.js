@@ -5,7 +5,7 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports["default"] = main;
+exports["default"] = cropImage;
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
@@ -13,12 +13,12 @@ var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/
 
 var cropImageCallExec = require('./cropImageCallExec.js');
 
-function main(_x) {
-  return _main.apply(this, arguments);
+function cropImage(_x) {
+  return _cropImage.apply(this, arguments);
 }
 
-function _main() {
-  _main = (0, _asyncToGenerator2["default"])(
+function _cropImage() {
+  _cropImage = (0, _asyncToGenerator2["default"])(
   /*#__PURE__*/
   _regenerator["default"].mark(function _callee(filePath) {
     var modulePath, log;
@@ -42,5 +42,5 @@ function _main() {
       }
     }, _callee);
   }));
-  return _main.apply(this, arguments);
+  return _cropImage.apply(this, arguments);
 }

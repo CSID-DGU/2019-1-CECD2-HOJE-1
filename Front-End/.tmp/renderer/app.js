@@ -20,8 +20,6 @@ var _ResponsiveDrawer = _interopRequireDefault(require("./client/ResponsiveDrawe
 
 var _reactRouterDom = require("react-router-dom");
 
-var _test = _interopRequireDefault(require("./test/test"));
-
 var App =
 /*#__PURE__*/
 function (_React$Component) {
@@ -43,4 +41,4 @@ function (_React$Component) {
   return App;
 }(_react["default"].Component);
 
-(0, _reactDom.render)(_react["default"].createElement(_test["default"], null), document.getElementById("root"));
+(0, _reactDom.render)(_react["default"].createElement(App, null), document.getElementById("root"));
