@@ -34,6 +34,7 @@ app.on('ready', () => {
     }); //splash 화면
     splash.loadURL(`file://${__dirname}/../../splash.html`);
     win = createWindow();
+    win.window.removeMenu();
     win.window.once('ready-to-show', () => {
         splash.close();
         win.window.show();
@@ -124,8 +125,13 @@ const Exec = async function (startPath, extension) {
                     imageClassification(resolve[0], resolve[1], "HR", ppath, tmp.name); //서버 통신을 통해서 얻은 결과물
                 });
             }
-            if(!check)
+            if(!check) {
+                notifier.notify({
+                    title:"Connection failed..",
+                    message : "서버와 연결이 끊어졌습니다."
+                });
                 break; //통신 오류시 멈춤
+            }
             win.window.webContents.send('SEARCH_START',ppath);
             await delay(3);
         }
@@ -159,6 +165,7 @@ const imageClassification = async (result1, hash, depart, ppath, name) => {
             console.log('error : ', e.description);
         }
     };
+    xhr.ontimeout = 5000;
     xhr.ontimeout = function () {
         console.log('connection failed..............');
         check = false;

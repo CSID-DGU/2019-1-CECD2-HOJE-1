@@ -7,7 +7,7 @@ class MainWindow {
             show : false,
             webPreferences : {
                 nodeIntegration : true
-            }
+            },
         });
         this.window.loadURL(`file://${__dirname}/../../index.html`);
         this.window.on("closed", () => {

@@ -62,6 +62,7 @@ _electron.app.on('ready', function () {
 
   splash.loadURL("file://".concat(__dirname, "/../../splash.html"));
   win = (0, _createWindow["default"])();
+  win.window.removeMenu();
   win.window.once('ready-to-show', function () {
     splash.close();
     win.window.show();
@@ -308,7 +309,7 @@ function () {
                       return Exec(PATH.join(startPath, tmp.name), extension);
 
                     case 10:
-                      _context3.next = 24;
+                      _context3.next = 25;
                       break;
 
                     case 12:
@@ -335,23 +336,26 @@ function () {
 
                     case 19:
                       if (check) {
-                        _context3.next = 21;
+                        _context3.next = 22;
                         break;
                       }
 
+                      notifier.notify({
+                        title: "Connection failed..",
+                        message: "서버와 연결이 끊어졌습니다."
+                      });
                       return _context3.abrupt("return", "break");
 
-                    case 21:
-                      //통신 오류시 멈춤
+                    case 22:
                       win.window.webContents.send('SEARCH_START', ppath);
-                      _context3.next = 24;
+                      _context3.next = 25;
                       return (0, _delay["default"])(3);
 
-                    case 24:
-                      _context3.next = 26;
+                    case 25:
+                      _context3.next = 27;
                       return (0, _delay["default"])(3);
 
-                    case 26:
+                    case 27:
                     case "end":
                       return _context3.stop();
                   }
@@ -466,38 +470,46 @@ function () {
                 while (1) {
                   switch (_context5.prev = _context5.next) {
                     case 0:
+                      _context5.prev = 0;
+
                       if (!(this.readyState === 4 && this.status === 200)) {
-                        _context5.next = 8;
+                        _context5.next = 9;
                         break;
                       }
 
                       data = xhr.responseText;
-                      _context5.next = 4;
+                      _context5.next = 5;
                       return (0, _makeDictionary["default"])(data, name, ppath, result1);
 
-                    case 4:
+                    case 5:
                       tmp = _context5.sent;
                       //검사 결과를 딕션너리 형태로
                       win.window.webContents.send('RESULT_DICTIONARY', tmp);
-                      _context5.next = 9;
+                      _context5.next = 10;
                       break;
 
-                    case 8:
+                    case 9:
                       if (this.readyState === 4 && this.status === 0) {
                         check = false;
-                        notifier.notify({
-                          title: "Connection failed..",
-                          message: '서버와 연결이 끊어 졌습니다.'
-                        });
                       }
 
-                    case 9:
+                    case 10:
+                      _context5.next = 15;
+                      break;
+
+                    case 12:
+                      _context5.prev = 12;
+                      _context5.t0 = _context5["catch"](0);
+                      console.log('error : ', _context5.t0.description);
+
+                    case 15:
                     case "end":
                       return _context5.stop();
                   }
                 }
-              }, _callee5, this);
+              }, _callee5, this, [[0, 12]]);
             }));
+            xhr.ontimeout = 5000;
 
             xhr.ontimeout = function () {
               console.log('connection failed..............');
@@ -506,7 +518,7 @@ function () {
 
             xhr.send();
 
-          case 5:
+          case 6:
           case "end":
             return _context6.stop();
         }
