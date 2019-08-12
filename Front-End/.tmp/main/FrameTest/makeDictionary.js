@@ -3,9 +3,9 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports["default"] = makingDictionary;
+exports["default"] = _default;
 
-function makingDictionary(classResult, fileName, filePath, result) {
+function _default(classResult, fileName, filePath, result) {
   var classResultObj = JSON.parse(classResult);
   var classification = {
     fitness: 'None',

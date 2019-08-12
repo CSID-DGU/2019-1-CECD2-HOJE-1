@@ -59,7 +59,7 @@ var _ListItemText = _interopRequireDefault(require("@material-ui/core/ListItemTe
 
 var _Checkbox = _interopRequireDefault(require("@material-ui/core/Checkbox"));
 
-var _reg = _interopRequireDefault(require("../../../reg/reg.json"));
+var _reg = _interopRequireDefault(require("../../../reg/reg"));
 
 var _Typography = _interopRequireDefault(require("@material-ui/core/Typography"));
 
@@ -177,6 +177,7 @@ function Search() {
       if (exists) {
         fs.stat("".concat(__dirname, "/../../../resultfile.json"), function (err, stat) {
           var data = moment(stat.atime).format('YYYY년 MM월 DD일');
+          console.log('date : ', data);
           setBirth(data);
         });
       } else setBirth('이전 검사일을 알 수 없음');
@@ -238,6 +239,14 @@ function Search() {
     updateState({});
     setReRender(false);
   }, []);
+  /*
+  React.useEffect(() => {
+      if (ReRender) {
+          setTimeout(forceUpdate, 100);
+      }
+  });
+  */
+
 
   var onToggle = function onToggle(currentNode) {
     var tmp_path_data = path_data;
@@ -252,28 +261,26 @@ function Search() {
 
         if (tmp_path_data[currentNode.path].children.indexOf(path) === -1) {
           //console.log(path);
-          try {
-            fs.accessSync(path, fs.R_OK && fs.W_OK);
-            tmp_path_data[currentNode.path].children.push(path);
+          tmp_path_data[currentNode.path].children.push(path);
 
-            if (value.isDirectory()) {
-              tmp_path_data[path] = {
-                path: "".concat(path),
-                type: 'folder',
-                checked: false,
-                children: []
-              };
-            } else {
-              tmp_path_data[path] = {
-                path: "".concat(path),
-                type: 'file',
-                checked: false
-              };
-            }
-          } catch (err) {}
+          if (value.isDirectory()) {
+            tmp_path_data[path] = {
+              path: "".concat(path),
+              type: 'folder',
+              checked: false,
+              children: []
+            };
+          } else {
+            tmp_path_data[path] = {
+              path: "".concat(path),
+              type: 'file',
+              content: '',
+              checked: false
+            };
+          }
         }
       });
-      setPathData(tmp_path_data);
+      setPathData(tmp_path_data); //console.log(path_data);
     }
 
     setReRender(true);
@@ -340,8 +347,7 @@ function Search() {
 
               _electron.ipcRenderer.send('START_SEARCH', checked);
 
-              _electron.ipcRenderer.send('PATH', selectedFile); //사용자가 지정한 경로 전송
-
+              _electron.ipcRenderer.send('PATH', selectedFile);
 
             case 5:
             case "end":

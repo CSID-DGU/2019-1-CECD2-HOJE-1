@@ -44,7 +44,7 @@ function directory(ppath) {
       var tmpPath = path.join(ppath, tmp.name); //let data = fs.statSync(tmpPath);
 
       try {
-        fs.accessSync(tmpPath, fs.R_OK && fs.W_OK);
+        fs.accessSync(tmpPath, fs.R_OK);
         var json = {
           "name": tmp.name,
           "value": tmpPath
@@ -55,7 +55,9 @@ function directory(ppath) {
         }
 
         jsonList.push(json);
-      } catch (exception) {}
+      } catch (exception) {
+        continue;
+      }
     }
   } catch (err) {
     _didIteratorError = true;

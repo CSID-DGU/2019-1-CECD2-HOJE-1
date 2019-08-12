@@ -9,11 +9,10 @@ data = JSON.parse(data);
 async function TessNreg(filePath){
     let textOriginal = await callExec('C:\\Users\\FASOO_499\\source\\repos\\textExtract\\x64\\Release\\textExtract.exe',filePath);
     //let text = textOriginal.replace(/ /gi,""); //문자열내에 모든 공백을 제거하기 위해서 사용
-    console.log(textOriginal);
     //text = text.replace(/:|\.|\,/gi," ");
     let result = await regExe(textOriginal);
     result.sentence = textOriginal;
-    console.log(result);
+    return result;
 };
 
 //정규식 표현을 읽어드리는 모듈

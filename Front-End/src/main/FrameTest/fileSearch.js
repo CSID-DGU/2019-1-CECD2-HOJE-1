@@ -1,7 +1,7 @@
 var fs = require('fs');
 var path = require('path');
 
-export default function fileSearch(startPath, extension){
+module.exports = function(startPath, extension){
 
     var fileList = []
     if(!fs.existsSync(startPath)){

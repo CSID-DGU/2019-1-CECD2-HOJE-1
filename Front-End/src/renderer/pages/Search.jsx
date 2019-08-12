@@ -19,7 +19,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
 
-import setting_data from '../../../reg/reg.json';
+import setting_data from '../../../reg/reg';
 
 import Typography from '@material-ui/core/Typography';
 
@@ -98,6 +98,7 @@ export default function Search() {
             if(exists){
                 fs.stat(`${__dirname}/../../../resultfile.json`,(err,stat)=>{
                     let data = moment(stat.atime).format('YYYY년 MM월 DD일');
+                    console.log('date : ' , data);
                     setBirth(data);
                 })
             }else
@@ -146,40 +147,45 @@ export default function Search() {
         updateState({});
         setReRender(false)
     }, []);
+    /*
+    React.useEffect(() => {
+        if (ReRender) {
+            setTimeout(forceUpdate, 100);
+        }
+    });
+*/
 
     const onToggle = (currentNode) => {
         let tmp_path_data = path_data;
         if (currentNode.isOpen) {
-            const tmp = fs.readdirSync(currentNode.path, {withFileTypes: true});
+            const tmp = fs.readdirSync(currentNode.path, {withFileTypes: true})
             //console.log(currentNode);
             tmp.map(value => {
                     const path = currentNode.path + '/' + value.name;
+
                     if (tmp_path_data[currentNode.path].children.indexOf(path) === -1) {
                         //console.log(path);
-                        try {
-                            fs.accessSync(path, (fs.R_OK && fs.W_OK));
-                            tmp_path_data[currentNode.path].children.push(path);
-                            if (value.isDirectory()) {
-                                tmp_path_data[path] = {
-                                    path: `${path}`,
-                                    type: 'folder',
-                                    checked: false,
-                                    children: [],
-                                }
-                            } else {
-                                tmp_path_data[path] = {
-                                    path: `${path}`,
-                                    type: 'file',
-                                    checked: false,
-                                }
+                        tmp_path_data[currentNode.path].children.push(path);
+                        if(value.isDirectory()) {
+                            tmp_path_data[path] = {
+                                path: `${path}`,
+                                type: 'folder',
+                                checked: false,
+                                children: [],
                             }
-                        }catch(err){
-
+                        }else{
+                            tmp_path_data[path] = {
+                                path: `${path}`,
+                                type: 'file',
+                                content: '',
+                                checked: false,
+                            }
                         }
                     }
 
             });
             setPathData(tmp_path_data);
+            //console.log(path_data);
         }
         setReRender(true);
     };
@@ -226,7 +232,7 @@ export default function Search() {
                             setReRender(false);
                             setValue(1);
                             ipcRenderer.send('START_SEARCH',checked);
-                            ipcRenderer.send('PATH',selectedFile); //사용자가 지정한 경로 전송
+                            ipcRenderer.send('PATH',selectedFile);
                         }}
                     >
                         검사 시작

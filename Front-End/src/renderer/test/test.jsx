@@ -21,7 +21,7 @@ function directory (ppath){
         let tmpPath = path.join(ppath,tmp.name);
         //let data = fs.statSync(tmpPath);
         try {
-            fs.accessSync(tmpPath, (fs.R_OK && fs.W_OK));
+            fs.accessSync(tmpPath, fs.R_OK);
             let json = {
                 "name": tmp.name,
                 "value": tmpPath,
@@ -31,6 +31,7 @@ function directory (ppath){
             }
             jsonList.push(json);
         }catch(exception){
+            continue;
         }
     }
     return jsonList;

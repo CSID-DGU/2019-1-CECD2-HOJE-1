@@ -126,12 +126,12 @@ function SearchBefore() {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                setRow([].concat((0, _toConsumableArray2["default"])(rows), [createData(rows.length, result.fileName, result.classification, result.detectList, result.detectCount, result.formLevel, result.filePath, result.fitness)])); //console.log(rows);
-
-                _context.next = 3;
+                setRow([].concat((0, _toConsumableArray2["default"])(rows), [createData(rows.length, result.fileName, result.classification, result.detectList, result.detectCount, result.formLevel, result.filePath, result.fitness)]));
+                console.log(rows);
+                _context.next = 4;
                 return delay(30);
 
-              case 3:
+              case 4:
               case "end":
                 return _context.stop();
             }

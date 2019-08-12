@@ -150,8 +150,11 @@ const recurToGetTree = (props, state, targetNode, depth = 0, onExpandFunc, onSel
                                     }}
                                 >
 
-                                    <Checkbox  onChange={(event,checked)=>{;
+                                    <Checkbox  onChange={(event,checked)=>{
+                                        console.log('length : ' , nodeData.parents.length);
                                         let data = nodeData.parents.pop();
+                                        console.log('checked: ', checked);
+                                        console.log('data check : ' , data.check);
                                     }}/>
                                     <ListItemIcon
                                         fontSize={"large"}

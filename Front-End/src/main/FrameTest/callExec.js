@@ -1,6 +1,6 @@
 const util = require('util')
 
-export default async function callExec(moduleName, filePath){
+module.exports = async function(moduleName, filePath){
     var exec = util.promisify(require('child_process').exec);
     var result = '';
 
@@ -9,6 +9,8 @@ export default async function callExec(moduleName, filePath){
     var sysArgc = filePath
     var config = moduleName + ' ' + sysArgc;
 
+    //console.log(config);
+    
     var { stdout, stderr } = await exec(config);
         
 

@@ -1,6 +1,6 @@
 const util = require('util');
 
-export default async function maskingCallExec(moduleName, filePath, mode){
+module.exports = async function(moduleName, filePath, mode){
     var exec = util.promisify(require('child_process').exec);
     var result = '';
 

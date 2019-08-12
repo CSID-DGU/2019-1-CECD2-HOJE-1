@@ -1,11 +1,6 @@
 "use strict";
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports["default"] = binary2Hex;
-
-function binary2Hex(binaryStr) {
+module.exports = function (binaryStr) {
   var output = '';
 
   for (var i = 0; i < binaryStr.length; i += 4) {
@@ -13,7 +8,9 @@ function binary2Hex(binaryStr) {
     var decimal = parseInt(bytes, 2);
     var hex = decimal.toString(16);
     output += hex;
-  }
+  } //console.log(output);
+  //return new Buffer.alloc(output.length/2, output, 'hex');
+
 
   return output;
-}
+};

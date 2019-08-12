@@ -14,11 +14,11 @@ var _react = require("react");
 
 var _delay = _interopRequireDefault(require("delay"));
 
-var _hashExec = _interopRequireDefault(require("./main/FrameTest/hashExec"));
+var _hashExec = _interopRequireDefault(require("./FrameTest/hashExec"));
 
-var _makeDictionary = _interopRequireDefault(require("./main/FrameTest/makeDictionary"));
+var _makeDictionary = _interopRequireDefault(require("./FrameTest/makeDictionary"));
 
-var _uploadLog = _interopRequireDefault(require("./main/FrameTest/uploadLog"));
+var _uploadLog = _interopRequireDefault(require("./FrameTest/uploadLog"));
 
 var fs = require('fs');
 
@@ -26,7 +26,7 @@ var PATH = require('path');
 
 var notifier = require('node-notifier');
 
-var _require = require('./main/FrameTest/regTojson'),
+var _require = require('./FrameTest/regTojson'),
     regRead = _require.regRead,
     TessNreg = _require.TessNreg,
     regReset = _require.regReset;
@@ -60,7 +60,7 @@ _electron.app.on('ready', function () {
     }
   }); //splash 화면
 
-  splash.loadURL("file://".concat(__dirname, "/../splash.html"));
+  splash.loadURL("file://".concat(__dirname, "/../../splash.html"));
   win = (0, _createWindow["default"])();
   win.window.once('ready-to-show', function () {
     splash.close();
@@ -103,7 +103,7 @@ _electron.app.on('ready', function () {
                 var _ref2 = (0, _asyncToGenerator2["default"])(
                 /*#__PURE__*/
                 _regenerator["default"].mark(function _callee(event, result) {
-                  var _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, tmp, searchResult;
+                  var _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, tmpPath, tmp;
 
                   return _regenerator["default"].wrap(function _callee$(_context) {
                     while (1) {
@@ -121,12 +121,12 @@ _electron.app.on('ready', function () {
                             break;
                           }
 
-                          tmp = _step.value;
+                          tmpPath = _step.value;
                           _context.next = 9;
-                          return Exec(tmp, ['.jpg', '.png', '.tif']);
+                          return Exec(tmpPath, ['.jpg', '.png', '.tif']);
 
                         case 9:
-                          searchResult = _context.sent;
+                          tmp = _context.sent;
 
                         case 10:
                           _iteratorNormalCompletion = true;
@@ -203,8 +203,8 @@ _electron.app.on('ready', function () {
         //배열에 값이 들어 갔을 경우 && 완전히 통신이 완료 됐을 경우
         var json = JSON.stringify(tmpList);
         fs.writeFileSync('resultfile.json', json, 'utf8'); //Todo 경로 위치 바꿔야 됨
-        //console.log('file created');
 
+        console.log('file created');
         (0, _uploadLog["default"])(tmpList); //서버에 최근 검사한 내역 전송
       }
     });
@@ -308,17 +308,16 @@ function () {
                       return Exec(PATH.join(startPath, tmp.name), extension);
 
                     case 10:
-                      _context3.next = 26;
+                      _context3.next = 24;
                       break;
 
                     case 12:
                       //파일 경우
                       ppath = PATH.join(startPath, tmp.name);
-                      extname = PATH.extname(ppath);
-                      console.log('extname : ', extname);
+                      extname = PATH.extname(ppath); //console.log('extname : ' , extname);
 
                       if (!(extname.match(extension[0]) || extname.match(extension[1]) || extname.match(extension[2]))) {
-                        _context3.next = 20;
+                        _context3.next = 19;
                         break;
                       }
 
@@ -328,36 +327,31 @@ function () {
                       result2 = (0, _hashExec["default"])(ppath); //문서 분류
                       //결과값을 프로미스 형태로 받기 때문에 프로미스가 완전히 완료 될 때 까지 await
 
-                      _context3.next = 20;
+                      _context3.next = 19;
                       return Promise.all([result1, result2]).then(function (resolve) {
                         //ToDO 한개씩 보여줄것인지
                         imageClassification(resolve[0], resolve[1], "HR", ppath, tmp.name); //서버 통신을 통해서 얻은 결과물
-
-                        console.log('resolve :', resolve);
                       });
 
-                    case 20:
+                    case 19:
                       if (check) {
-                        _context3.next = 23;
+                        _context3.next = 21;
                         break;
                       }
 
-                      notifier.notify({
-                        title: "Connection failed..",
-                        message: "서버와 연결이 끊어졌습니다."
-                      });
                       return _context3.abrupt("return", "break");
 
-                    case 23:
+                    case 21:
+                      //통신 오류시 멈춤
                       win.window.webContents.send('SEARCH_START', ppath);
+                      _context3.next = 24;
+                      return (0, _delay["default"])(3);
+
+                    case 24:
                       _context3.next = 26;
                       return (0, _delay["default"])(3);
 
                     case 26:
-                      _context3.next = 28;
-                      return (0, _delay["default"])(3);
-
-                    case 28:
                     case "end":
                       return _context3.stop();
                   }
@@ -472,7 +466,7 @@ function () {
                 while (1) {
                   switch (_context5.prev = _context5.next) {
                     case 0:
-                      if (!(xhr.readyState === 4 && this.status === 200)) {
+                      if (!(this.readyState === 4 && this.status === 200)) {
                         _context5.next = 8;
                         break;
                       }
@@ -491,6 +485,10 @@ function () {
                     case 8:
                       if (this.readyState === 4 && this.status === 0) {
                         check = false;
+                        notifier.notify({
+                          title: "Connection failed..",
+                          message: '서버와 연결이 끊어 졌습니다.'
+                        });
                       }
 
                     case 9:

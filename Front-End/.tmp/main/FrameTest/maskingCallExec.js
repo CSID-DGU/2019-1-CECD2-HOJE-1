@@ -2,26 +2,19 @@
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports["default"] = maskingCallExec;
-
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
 var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
 
 var util = require('util');
 
-function maskingCallExec(_x, _x2, _x3) {
-  return _maskingCallExec.apply(this, arguments);
-}
-
-function _maskingCallExec() {
-  _maskingCallExec = (0, _asyncToGenerator2["default"])(
+module.exports =
+/*#__PURE__*/
+function () {
+  var _ref = (0, _asyncToGenerator2["default"])(
   /*#__PURE__*/
   _regenerator["default"].mark(function _callee(moduleName, filePath, mode) {
-    var exec, result, sysArgc, modeArgc, config, _ref, stdout, stderr;
+    var exec, result, sysArgc, modeArgc, config, _ref2, stdout, stderr;
 
     return _regenerator["default"].wrap(function _callee$(_context) {
       while (1) {
@@ -39,9 +32,9 @@ function _maskingCallExec() {
             return exec(config);
 
           case 8:
-            _ref = _context.sent;
-            stdout = _ref.stdout;
-            stderr = _ref.stderr;
+            _ref2 = _context.sent;
+            stdout = _ref2.stdout;
+            stderr = _ref2.stderr;
             return _context.abrupt("return", stdout);
 
           case 12:
@@ -51,7 +44,8 @@ function _maskingCallExec() {
       }
     }, _callee);
   }));
-  return _maskingCallExec.apply(this, arguments);
-}
 
-;
+  return function (_x, _x2, _x3) {
+    return _ref.apply(this, arguments);
+  };
+}();

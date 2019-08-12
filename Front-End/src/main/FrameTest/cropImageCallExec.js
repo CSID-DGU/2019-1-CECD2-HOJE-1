@@ -1,6 +1,6 @@
 const util = require('util');
 
-export default  async function cropImageCallExec(moduleName, filePath){
+module.exports = async function(moduleName, filePath){
     var exec = util.promisify(require('child_process').exec);
     var result = '';
 

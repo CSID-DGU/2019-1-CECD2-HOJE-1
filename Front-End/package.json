@@ -2,11 +2,10 @@
   "name": "untitled1",
   "version": "1.0.0",
   "description": "",
-  "main": "./.tmp/index.js",
+  "main": "./.tmp/main/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "webpack --mode development",
-    "build": "webpack --mode production",
+    "build": "webpack",
     "start": "electron .",
     "babel": "npx babel ./src --out-dir .tmp && npm start",
     "watch": "npx babel ./src --out-dir .tmp --watch"

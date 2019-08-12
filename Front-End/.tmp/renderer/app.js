@@ -20,6 +20,8 @@ var _ResponsiveDrawer = _interopRequireDefault(require("./client/ResponsiveDrawe
 
 var _reactRouterDom = require("react-router-dom");
 
+var _test = _interopRequireDefault(require("./test/test"));
+
 var App =
 /*#__PURE__*/
 function (_React$Component) {

@@ -209,8 +209,10 @@ var recurToGetTree = function recurToGetTree(props, state, targetNode) {
       }
     }, _react["default"].createElement(_core.Checkbox, {
       onChange: function onChange(event, checked) {
-        ;
+        console.log('length : ', nodeData.parents.length);
         var data = nodeData.parents.pop();
+        console.log('checked: ', checked);
+        console.log('data check : ', data.check);
       }
     }), _react["default"].createElement(_ListItemIcon["default"], {
       fontSize: "large",

@@ -2,11 +2,6 @@
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports["default"] = hashExec;
-
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
 var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
@@ -14,12 +9,10 @@ var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/
 var callexec = require('./callExec.js'); //분류 모듈
 
 
-function hashExec(_x) {
-  return _hashExec.apply(this, arguments);
-}
-
-function _hashExec() {
-  _hashExec = (0, _asyncToGenerator2["default"])(
+module.exports =
+/*#__PURE__*/
+function () {
+  var _hashExec = (0, _asyncToGenerator2["default"])(
   /*#__PURE__*/
   _regenerator["default"].mark(function _callee(filePath) {
     var hash;
@@ -42,7 +35,10 @@ function _hashExec() {
       }
     }, _callee);
   }));
-  return _hashExec.apply(this, arguments);
-}
 
-;
+  function hashExec(_x) {
+    return _hashExec.apply(this, arguments);
+  }
+
+  return hashExec;
+}();

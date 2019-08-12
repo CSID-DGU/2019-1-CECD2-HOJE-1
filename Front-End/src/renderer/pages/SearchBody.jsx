@@ -68,7 +68,7 @@ export default function SearchBefore() {
     useEffect( ()=>{
         ipcRenderer.on('RESULT_DICTIONARY',async (event,result)=>{
             setRow([...rows,createData(rows.length, result.fileName,result.classification,result.detectList,result.detectCount,result.formLevel,result.filePath,result.fitness)]);
-            //console.log(rows);
+            console.log(rows);
             await delay(30);
         });
         return ()=>{

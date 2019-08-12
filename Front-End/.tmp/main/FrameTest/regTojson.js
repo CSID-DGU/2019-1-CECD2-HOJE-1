@@ -35,18 +35,15 @@ function _TessNreg() {
 
           case 2:
             textOriginal = _context.sent;
-            //let text = textOriginal.replace(/ /gi,""); //문자열내에 모든 공백을 제거하기 위해서 사용
-            console.log(textOriginal); //text = text.replace(/:|\.|\,/gi," ");
-
-            _context.next = 6;
+            _context.next = 5;
             return regExe(textOriginal);
 
-          case 6:
+          case 5:
             result = _context.sent;
             result.sentence = textOriginal;
-            console.log(result);
+            return _context.abrupt("return", result);
 
-          case 9:
+          case 8:
           case "end":
             return _context.stop();
         }
