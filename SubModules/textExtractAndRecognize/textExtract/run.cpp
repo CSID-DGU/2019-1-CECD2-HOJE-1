@@ -34,19 +34,29 @@ int main(int argc, char** argv)
 	imageProcessing.push_back(edged);
 	cv::copyMakeBorder(img, img, 5, 5, 5, 5, cv::BORDER_CONSTANT, Scalar(0, 0, 0));
 	cv::copyMakeBorder(edged, edged, 5, 5, 5, 5, cv::BORDER_CONSTANT, Scalar(0, 0, 0));
-	imageProcessing.push_back(edged);
-	cv::Canny(edged, edged, 50, 100);
-	//p_tool.GS_closing(edged, MORPH_CROSS, 1); 되는 경우도 생기지만 기존의 것이 안되는 경우도 생기므로 Closing연산을 통한 엣지 연결을 하지 않는 것으로...
-
+	//imageProcessing.push_back(edged);
+	cv::Canny(edged, edged, 30, 50);
+	//imageProcessing.push_back(edged);
+	//cv::Canny(edged, edged, 50, 100); //original
+	
+	cv::Mat rect_kernel = cv::getStructuringElement(cv::MORPH_CROSS, cv::Size(3, 3));
+	cv::dilate(edged, edged, rect_kernel, Point(-1,-1), 1);
+	cv::dilate(edged, edged, rect_kernel, Point(-1, -1), 1);
+	
+	rect_kernel = cv::getStructuringElement(cv::MORPH_CROSS, cv::Size(3, 3));
+	cv::erode(edged, edged, rect_kernel, Point(-1, -1), 1);
+	cv::erode(edged, edged, rect_kernel, Point(-1, -1), 1);
+	
 	imageProcessing.push_back(edged);
 
 	vector<vector<Point>> contours;
 	cv::findContours(edged, contours, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
+	
 	int height = edged.rows;
 	int width = edged.cols;
 
 	const long MAX_COUNTOUR_AREA = (width - 10) * (height - 10);
-	long maxAreaFound = MAX_COUNTOUR_AREA * 0.3;
+	long maxAreaFound = MAX_COUNTOUR_AREA * 0.3;//0.3; orignial
 
 	vector<Mat> rectList;
 
@@ -80,16 +90,23 @@ int main(int argc, char** argv)
 	}
 
 	sort(rectList.begin(), rectList.end(), compareArea);
-
+	
 	Mat roiBox;
+	
+	cout << rectList.size() << endl;
+	
+	for (int i = 0; i < rectList.size(); i++) {
+		cout << rectList[i] << ",";
+	}
+	cout << endl;
 
 	if (rectList.size() == 1)
 		roiBox = rectList[0];
 	else
 		roiBox = rectList[1];
-
+	
 	Mat warped = four_point_transform(img, roiBox);
-
+	
 	imshow("warped result", warped);
 	waitKey(0);
 
@@ -98,10 +115,11 @@ int main(int argc, char** argv)
 	imageProcessing.push_back(roiImg);
 	roiImg = p_tool.GS_topHat(~roiImg, MorphShapes::MORPH_CROSS, 5, 3);
 	imageProcessing.push_back(roiImg);
+
 	roiImg = ~p_tool.GS_threshold(roiImg, 150, THRESH_OTSU);
 	imageProcessing.push_back(roiImg);
 
-	roiImg = p_tool.removeDotNoise(~roiImg);
+	roiImg = p_tool.removeDotNoise(~roiImg, 5);
 	imageProcessing.push_back(roiImg);
 
 	roiImg = p_tool.GS_add_image(roiImg, p_tool.findTable(roiImg, 9));// Erosion, Dilation - 표 선분 제거
@@ -115,6 +133,8 @@ int main(int argc, char** argv)
 
 	//Detect
 	std::vector<cv::Rect> letterBBoxes1 = detectLetters(roiImg);
+	letterBBoxes1 = mergeLettersBox(letterBBoxes1);
+	std::reverse(letterBBoxes1.begin(), letterBBoxes1.end());
 	scaleBoundingBoxSize(letterBBoxes1, roiImg.cols, roiImg.rows, img.cols, img.rows);
 
 	vector<Mat> subImage;
@@ -132,9 +152,11 @@ int main(int argc, char** argv)
 	char lang[] = "kor";
 	tesseract::TessBaseAPI tess;
 	tess.Init(NULL, lang);
-	//tess.SetPageSegMode(tesseract::PSM_SINGLE_COLUMN);
 
+	//tess.SetPageSegMode(tesseract::PSM_SINGLE_COLUMN);
+	tess.SetPageSegMode(tesseract::PSM_SINGLE_LINE);
 	system("chcp 65001");
+	
 	for (int i = 0; i < subImage.size(); i++) {
 		tess.SetImage((uchar*)subImage[i].data, subImage[i].size().width, subImage[i].size().height, subImage[i].channels(), subImage[i].step1());
 		tess.Recognize(0);

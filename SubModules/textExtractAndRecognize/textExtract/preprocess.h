@@ -89,5 +89,5 @@ public:
 	// 침식 연산
 	cv::Mat GS_erode(cv::Mat src_image, int type, int method);
 
-	cv::Mat removeDotNoise(cv::Mat src_image);
+	cv::Mat removeDotNoise(cv::Mat src_image, int removeDotSize);
 };
