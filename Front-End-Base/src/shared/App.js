@@ -15,6 +15,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
+import Tooltip from '@material-ui/core/Tooltip';
 
 import MenuIcon from '@material-ui/icons/Menu';
 import UpdataIcon from '@material-ui/icons/Update';
@@ -32,7 +33,7 @@ import Result from '../pages/Result';
 import Test from '../components/Test';
 //import Menu from '../component/Menu';
 
-const drawerWidth = 180;
+const drawerWidth = 60;
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -46,9 +47,16 @@ const useStyles = makeStyles(theme => ({
   },
   appBar: {
     marginLeft: drawerWidth,
+    backgroundColor: '#aed581',
     [theme.breakpoints.up('sm')]: {
       width: `calc(100% - ${drawerWidth}px)`,
     },
+  },
+  appBarbottom: {
+    height: 10,
+    top: 'auto',
+    bottom: 0,
+    backgroundColor: '#bdbdbd',
   },
   menuButton: {
     marginRight: theme.spacing(2),
@@ -58,14 +66,20 @@ const useStyles = makeStyles(theme => ({
   },
   toolbar: theme.mixins.toolbar,
   drawerPaper: {
+    backgroundColor: '#7cb342',
     width: drawerWidth,
   },
   content: {
     flexGrow: 1,
     padding: theme.spacing(3),
+    height: '100%',
+  },
+  footer: {
+    flexGrow: 1,
+    padding: theme.spacing(3),
   },
   active: {
-    background: '#e0e0e0',
+    background: '#f5f5f5',
   },
 }));
 
@@ -118,8 +132,7 @@ export default function App(props) {
       component={NavLink} exact to="/"
       onClick={()=>setUpdateActive(false)}
 			>
-			<ListItemIcon><HomeIcon /></ListItemIcon>
-			<ListItemText primary="홈" />
+        <Tooltip title='홈' placement="top"><HomeIcon /></Tooltip>
 			</ListItem>
 			<ListItem
       button
@@ -127,8 +140,7 @@ export default function App(props) {
       component={NavLink} exact to="/search"
       onClick={()=>setUpdateActive(true)}
 			>
-			<ListItemIcon><SearchIcon /></ListItemIcon>
-			<ListItemText primary="검사" />
+			<Tooltip title='검사' placement="top"><SearchIcon /></Tooltip>
 			</ListItem>
 			<ListItem
       button
@@ -136,8 +148,7 @@ export default function App(props) {
       component={NavLink} exact to="/result"
       onClick={()=>setUpdateActive(false)}
 			>
-      <ListItemIcon><ResultIcon /></ListItemIcon>
-			<ListItemText primary="검출내역" />
+      <Tooltip title='결과' placement="top"><ResultIcon /></Tooltip>
 			</ListItem>
 			<ListItem
       button
@@ -145,16 +156,14 @@ export default function App(props) {
       component={NavLink} exact to="/setting"
       onClick={()=>setUpdateActive(false)}
 			>
-			<ListItemIcon><SettingIcon /></ListItemIcon>
-			<ListItemText primary="설정" />
+			<Tooltip title='설정' placement="top"><SettingIcon /></Tooltip>
 			</ListItem>
 			<ListItem
       button
       activeClassName={classes.active}
       component={NavLink} exact to="/qna"
 			>
-			<ListItemIcon><MailIcon /></ListItemIcon>
-			<ListItemText primary="문의" />
+			<Tooltip title='문의' placement="top"><MailIcon /></Tooltip>
 			</ListItem>
       <ListItem
       button
@@ -162,8 +171,7 @@ export default function App(props) {
       component={NavLink} exact to="/test"
       onClick={()=>setUpdateActive(false)}
 			>
-			<ListItemIcon><MailIcon /></ListItemIcon>
-			<ListItemText primary="테스트" />
+			<MailIcon />
 			</ListItem>
 		</List>
 		</div>
@@ -214,6 +222,10 @@ export default function App(props) {
         <Route exact path="/result" component={ Result } />
         <Route exact path="/test" component={ Test } />
       </main>
+      <AppBar position="fixed" color="primary" className={classes.appBarbottom}>
+        <Toolbar>
+        </Toolbar>
+      </AppBar>
     </div>
   );
 }

@@ -29,7 +29,6 @@ import SearchBody from './SearchBody';
 
 const fs = require('fs');
 
-
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
@@ -72,7 +71,7 @@ TabPanel.propTypes = {
 };
 
 let test = [];
-setting_data.searchSetting.map(value => {
+setting_data.searchSetting.forEach(value => {
   if(value.checked === true){
     test.push(value.name);
   }
@@ -107,21 +106,10 @@ export default function Search() {
     setChecked(newChecked);
   };
 
-  ////// 경로 출력
-  const assignObjectPaths = (obj, stack) => {
-    Object.keys(obj).forEach(k => {
-      const node = obj[k];
-      if (typeof node === "object") {
-        node.path = stack ? `${stack}.${k}` : k;
-        assignObjectPaths(node, node.path);
-      }
-    });
-  };
-
   // 기본 경로( Windows 기준 )
   const [path_data, setPathData] = React.useState({
-    'C:/': {
-      path: 'C:/',
+    'C:\\': {
+      path: 'C:\\',
       type: 'folder',
       checked: false,
       isRoot: true,
@@ -139,24 +127,21 @@ export default function Search() {
   const onToggle = (currentNode) => {
     let tmp_path_data = path_data;
     if(currentNode.isOpen){
-      //console.log(currentNode);
-      fs.readdir(currentNode.path, function(error, dir){
-        dir.map(value => {
-          if(value.match('\\.') === null){
-            const path = currentNode.path + '/' + value;
-            if(tmp_path_data[currentNode.path].children.indexOf(path) === -1)
-            {
-              //console.log(path);
-              tmp_path_data[currentNode.path].children.push(path);
-              tmp_path_data[path] = {
-                path: `${path}`,
-                type: 'folder',
-                checked: false,
-                children: [],
-              }
-            }
+      const tmp = fs.readdirSync(currentNode.path)
+      
+      tmp.forEach(value => {
+        const path = currentNode.path + '/' + value;
+        if(tmp_path_data[currentNode.path].children.indexOf(path) === -1)
+        {
+          //console.log(path);
+          tmp_path_data[currentNode.path].children.push(path);
+          tmp_path_data[path] = {
+            path: `${path}`,
+            type: 'folder',
+            checked: false,
+            children: [],
           }
-        });
+        }
       });
       setPathData(tmp_path_data);
       //console.log(path_data);
@@ -176,6 +161,18 @@ export default function Search() {
     }
     setSelectedFile(newSelectFile);
   };
+
+  const sample = [
+    ['card2[1].jpg', 'card2', ['카드번호'], 1, '경고'],
+    ['card2[2].jpg', 'card2', ['카드번호'], 1, '경고'],
+    ['card3.jpg', 'card3', ['카드번호'], 1, '정상'],
+    ['text-out.jpg', 'Unregistered', [], 0, 'None'],
+    ['sample.jpg', 'registCard', ['주소', '주민등록번호'], 2, '정상'],
+    ['sample2.jpg', 'registCard', ['주소', '주민등록번호'], 2, '정상'],
+    ['sample3.jpg', 'registCard', ['주소', '주민등록번호'], 2, '정상'],
+    ['sample2.jpg', 'registCard', ['주소', '주민등록번호'], 2, '정상'],
+    ['good.jpg', 'Unregistered', [], 0, 'None'],
+  ];
   
   return (
     <div className={classes.root}>
@@ -200,6 +197,7 @@ export default function Search() {
               color="primary"
               aria-label="Add"
               className={classes.margin}
+              disabled={selectedFile.length === 0? true : false}
               onClick={()=>{ if(open === true) setOpen(false); setReRender(false); setValue(1);}}
             >
               검사 시작
@@ -244,7 +242,7 @@ export default function Search() {
       </TabPanel>
       <TabPanel value={value} index={1}>{/* 검색중 페이지 */ }
         <SearchHeader currentPath={value}/>
-        <SearchBody resultList={[]}/>
+        <SearchBody resultList={sample}/>
       </TabPanel>
     </div>
   );

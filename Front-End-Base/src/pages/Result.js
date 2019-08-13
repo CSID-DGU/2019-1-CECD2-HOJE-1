@@ -65,7 +65,6 @@ function getSorting(order, orderBy) {
 
 const headRows = [
   { id: 'FileName', numeric: false, disablePadding: true, label: '파일명' },
-  { id: 'FilePath', numeric: false, disablePadding: false, label: '파일 경로' },
   { id: 'DetectList', numeric: false, disablePadding: false, label: '검출 내역' },
   { id: 'DetectNum', numeric: true, disablePadding: false, label: '검출 개수' },
   { id: 'FormLevel', numeric: true, disablePadding: false, label: '문서등급' },
@@ -357,9 +356,8 @@ export default function Result() {
                         />
                       </TableCell>
                       <TableCell component="th" id={labelId} scope="row" padding="none">
-                        <Typography  noWrap>{row.FileName}</Typography>
+                      <Tooltip title={row.FilePath} placement="top"><Typography  noWrap>{row.FileName}</Typography></Tooltip>
                       </TableCell>
-                      <TableCell align="right"><Typography className={classes.filepath} noWrap>{row.FilePath}</Typography></TableCell>
                       <TableCell className={classes.detectlist} wrap='nowrap' align="right">{row.DetectList}</TableCell>
                       <TableCell align="right">{row.DetectNum}</TableCell>
                       <TableCell align="right">{row.FormLevel}</TableCell>

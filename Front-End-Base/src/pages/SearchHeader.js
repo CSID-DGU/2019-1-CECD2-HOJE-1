@@ -30,11 +30,12 @@ export default function SearchHeader(props) {
   const classes = useStyles(); 
   const [puase, setPuase] = React.useState(0);
 
+  const [ReRender, setReRender] = React.useState(false);
   // Forced ReRendering
   const [,updateState] = React.useState();
-  const forceUpdate = React.useCallback(() => updateState({}), []);
+  const forceUpdate = React.useCallback(() => {updateState({}); setReRender(false)}, []);
   React.useEffect(() => {
-    setTimeout(forceUpdate, 2000); console.log('header reload')
+    if(ReRender) {setTimeout(forceUpdate, 1000);}
   })
 
   return (

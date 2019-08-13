@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import { Paper, FormControl, InputLabel, Select, MenuItem, Fab, Grid, TextField, Popover } from '@material-ui/core';
-import { List, Divider, CardActionArea, CardMedia, CardContent } from '@material-ui/core';
+import { List, Divider, CardActionArea, CardContent } from '@material-ui/core';
 import testimage from './text.jpg';
-
+import testimage2 from './text2.jpg'
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
@@ -60,10 +60,14 @@ const mylistStyles = makeStyles(theme => ({
     padding: 10,
   },
   media: {
-    height: 300,
+    maxHeight: 300,
+    maxWidth: 650,
+    height: '100%',
+    width: '100%',
   },
   content: {
     padding: theme.spacing(2),
+    width: 330,
   },
 }));
 
@@ -95,7 +99,8 @@ export default function QnAMail(props){
   const classes2 = mylistStyles();
   const [value, setValue] = React.useState(1);
   const [file, ] = React.useState(['Pattern.png','Bookmark.png','Find.png','Identification.png','SearchIcon.png']);
-  const [send, setSend] = React.useState([])
+  const [send, setSend] = React.useState([]);
+  const [sendContent, ] = React.useState(['']);
   const [init, setInit] = React.useState(true);
   // 
   function handleChange(event) {
@@ -108,6 +113,11 @@ export default function QnAMail(props){
     send[index] = event.target.value;
     console.log(send);
   };
+
+  const txtContent = () => event => {
+    sendContent[0] = event.target.value;
+    console.log(sendContent);
+  }
 
   console.log(file.length);
   if(init)
@@ -183,7 +193,12 @@ export default function QnAMail(props){
       </TabPanel>
       <TabPanel value={value} index={1}>{ /* 분류구분 추가신청 화면 */ }
         <Grid item alignItems="center" justify="center">
-          <Grid xs={12} item><CardActionArea onClick={handleClick}><CardContent>해당되는 이미지에 대한 설명을 적으려면 이미지를 클릭하세요</CardContent><CardMedia className={classes2.media} image={testimage}/></CardActionArea></Grid>
+          <Grid xs={12} item>
+            <CardActionArea onClick={handleClick}>
+              <CardContent>해당되는 이미지에 대한 설명을 적으려면 이미지를 클릭하세요</CardContent>
+              <img className={classes2.media} src={testimage2} alt={'이미지를 선택해 주삼'}/>
+            </CardActionArea>
+          </Grid>
         </Grid>
         <Popover 
           open={open}
@@ -199,7 +214,7 @@ export default function QnAMail(props){
           }}
         >
           <TextField className={classes2.content} label="이미지 설명을 적어주세요" multiline 
-          rows="6" fullWidth margin="normal" variant="outlined"/>
+          rows="6" fullWidth margin="normal" variant="outlined" value={sendContent} onChange={txtContent()}/>
         </Popover>
       </TabPanel>
       <TabPanel value={value} index={2}>{ /* 오탐지 수정요청 화면 */ }

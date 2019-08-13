@@ -1,36 +1,25 @@
 import React from 'react';
 import { lighten, makeStyles, withStyles } from '@material-ui/core/styles';
-import { Grid, CardMedia, CircularProgress, LinearProgress } from '@material-ui/core';
-import splashIcon1 from '../pages/Splash_1.png';
-import splashIcon2 from '../pages/Splash_2.png';
-//import Grid from '@material-ui/core/Grid';
-
-const BorderLinearProgress = withStyles({
-  root: {
-    height: 30,
-    backgroundColor: lighten('#ff6c5c', 0.5),
-  },
-  bar: {
-    borderRadius: 20,
-    backgroundColor: '#ff6c5c',
-  },
-})(LinearProgress);
+import { Grid } from '@material-ui/core';
+import background from '../pages/background.png';
 
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
+    width: 600,
+    height: 300,
   },
-  paper: {
-    padding: theme.spacing(2),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-    height: '100%',
+  background: {
+    maxWidth: '100%',
+    height: 300,
+    backgroundSize: '100% 100%',
+    backgroundImage: `url(${background})`,
   },
-  image: {
-    padding: theme.spacing(2),
-    textAlign: 'center',
-    height: 200,
-    width: '100%',
+  content: {
+    marginLeft: 10,
+    fontSize: 65,
+    fontWeight: 'bolder',
+    color: '#ffffff',
   },
 }));
 
@@ -44,18 +33,12 @@ export default function Test(){
       <Grid container 
       direction="row"
       justify="center"
-      alignItems="center"
-      spacing={1}>
-        <Grid item xs={4}>
-          <CardMedia border={1} className={classes.image} image={splashIcon1}/>
-        </Grid>
-        <Grid item xs textAlign='center'>
-          <h1>HOJE OCR is Runnig</h1>
-          <td/>
-          <h3>This program is made using for OpenCV, TesseractOCR, React, Electron</h3>
-          <h3>made by HOJE(maetdol type developer team)</h3>
-        </Grid>
-        <Grid>
+      alignItems="flex-end"
+      spacing={1}
+      className={classes.background}
+      >
+        <Grid item xs textAlign='center' className={classes.content}>
+          HOJE OCR
         </Grid>
       </Grid>
     </div>

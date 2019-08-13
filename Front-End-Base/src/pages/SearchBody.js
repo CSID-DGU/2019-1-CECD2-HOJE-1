@@ -19,25 +19,6 @@ import WarningIcon from '@material-ui/icons/Error';
 import DangerIcon from '@material-ui/icons/Warning';
 
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    flexGrow: 1,
-  },
-  formControl: {
-    margin: theme.spacing(3),
-  },
-  list: {
-    width: '100%',
-    backgroundColor: theme.palette.background.paper,
-    position: 'relative',
-    overflow: 'auto',
-    maxHeight: 360,
-  },
-  spacer: {
-    flex: '1 1 auto',
-  },
-})); 
-
 function TabPanel(props) {
   const { children, value, index } = props;
 
@@ -61,28 +42,21 @@ TabPanel.propTypes = {
 };
 
 let test = [];
-setting_data.searchSetting.map(value => {
+setting_data.searchSetting.forEach(value => {
   if(value.checked === true){
     test.push(value.name);
   }
 })
 
-export default function SearchBefore(props) {
+export default function SearchBody(props) {
   const { resultList } = props;
-  const classes = useStyles();
-  const [ReRender, setReRender] = React.useState(0);
+  const [ReRender, setReRender] = React.useState(false);
 
   // Forced ReRendering
   const [,updateState] = React.useState();
-  const forceUpdate = React.useCallback(() => updateState({}), []);
+  const forceUpdate = React.useCallback(() => {updateState({}); setReRender(false)}, []);
   React.useEffect(() => {
-    if(ReRender !== 0) 
-    {
-      var tmp = ReRender;
-      tmp = tmp - 1;
-      forceUpdate();
-      setReRender(tmp);
-    }
+    if(ReRender) {setTimeout(forceUpdate, 1000);}
   })
 
   ///////////////////// 검색결과 //////////////////////////
@@ -248,18 +222,7 @@ export default function SearchBefore(props) {
   };
   
   const VirtualizedTable = withStyles(styles)(MuiVirtualizedTable);
-  
-  const sample = [
-    ['card2[1].jpg', 'card2', ['카드번호'], 1, '경고'],
-    ['card2[2].jpg', 'card2', ['카드번호'], 1, '경고'],
-    ['card3.jpg', 'card3', ['카드번호'], 1, '정상'],
-    ['text-out.jpg', 'Unregistered', [], 0, 'None'],
-    ['sample.jpg', 'registCard', ['주소', '주민등록번호'], 2, '정상'],
-    ['sample2.jpg', 'registCard', ['주소', '주민등록번호'], 2, '정상'],
-    ['sample3.jpg', 'registCard', ['주소', '주민등록번호'], 2, '정상'],
-    ['sample2.jpg', 'registCard', ['주소', '주민등록번호'], 2, '정상'],
-    ['good.jpg', 'Unregistered', [], 0, 'None'],
-  ];
+
   
   function createData(id, fileName, classification, detectList, detectCount, formLevel) {
     return {id, fileName, classification, detectList, detectCount, formLevel };
@@ -272,7 +235,7 @@ export default function SearchBefore(props) {
     rows.push(createData(rows.length, input[0], input[1], input[2], input[3], input[4]));
     //forceUpdate();
   }
-  
+  console.log(resultList);
   for (let i = 0; i < resultList.length; i += 1) {
     //const randomSelection = resultList[Math.floor(Math.random() * resultList.length)];
     addRow(resultList[i]);
