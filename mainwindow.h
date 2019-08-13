@@ -7,6 +7,7 @@
 
 #include "httprequestworker.h"
 #include "trainworker.h"
+#include "sysinfo.h"
 
 namespace Ui {
 class MainWindow;
@@ -26,6 +27,7 @@ private:
     QTextEdit *edit;
     QMessageBox* waitMessage;
     QMessageBox* finishMessage;
+    SysInfo* sysinfo;
 
 private slots:
 

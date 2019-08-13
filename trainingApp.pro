@@ -31,15 +31,18 @@ SOURCES += \
         httprequestworker.cpp \
         main.cpp \
         mainwindow.cpp \
+        sysinfo.cpp \
         trainworker.cpp
 
 HEADERS += \
         httprequestworker.h \
         mainwindow.h \
+        sysinfo.h \
         trainworker.h
 
 FORMS += \
-        mainwindow.ui
+        mainwindow.ui \
+        sysinfo.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

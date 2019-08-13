@@ -23,6 +23,10 @@ MainWindow::MainWindow(QWidget *parent) :
     waitMessage = new QMessageBox(this);
     finishMessage = new QMessageBox(this);
 
+    // system information
+    sysinfo = new SysInfo();
+    ui->sysinfoLayout->addWidget(sysinfo);
+
     // text edit
     edit = ui->textEdit;
     edit->setEnabled(false);
@@ -54,6 +58,10 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete trainworker;
+    delete edit;
+    delete waitMessage;
+    delete finishMessage;
 }
 
 void MainWindow::what_train(TrainWorker* trainworker,QString str)
