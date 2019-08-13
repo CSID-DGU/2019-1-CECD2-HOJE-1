@@ -1,17 +1,16 @@
 #ifndef TRAINWORKER_H
 #define TRAINWORKER_H
 
-#include <QObject>
 #include <QString>
 #include <QProcess>
 #include <QWidget>
 
-class TrainWorker : public QObject
+class TrainWorker : public QWidget
 {
     Q_OBJECT
 public:
-    explicit TrainWorker(QObject *parent = nullptr);
-    QWidget* widget;
+    explicit TrainWorker(QWidget *parent = nullptr);
+    ~TrainWorker();
     void manager_func(QString);
 
     QString homeLocation;

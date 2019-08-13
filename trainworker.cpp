@@ -9,16 +9,19 @@
 #include <QFontDatabase>
 
 
-TrainWorker::TrainWorker(QObject *parent) : QObject(parent)
+TrainWorker::TrainWorker(QWidget *parent) : QWidget(parent)
 {
     process = new QProcess(this);
-    widget = new QWidget();
     homeLocation = QStandardPaths::locate(QStandardPaths::HomeLocation, QString(), QStandardPaths::LocateDirectory);
-    // Process print
     connect(process, SIGNAL(readyReadStandardOutput()),this, SLOT(manager_print()));
     connect(process, SIGNAL(readyReadStandardError()),this, SLOT(manager_print()));
 
     projectPath = PROJECT_PATH;
+}
+
+TrainWorker::~TrainWorker()
+{
+    delete process;
 }
 
 void TrainWorker::manager_func(QString str)
@@ -109,22 +112,22 @@ void TrainWorker::train_images()
     }
     all_boxes.close();
 
-    QString old_traineddata = QFileDialog::getOpenFileName(widget,
+    QString old_traineddata = QFileDialog::getOpenFileName(this,
                                                            tr("Open traineddata"), homeLocation + "mytraining/tesseract/tessdata", tr("traineddata Files (*.traineddata)"));
     if(old_traineddata.isEmpty() || old_traineddata.isNull()){return;}
     bool ok = true;
     QString program(projectPath + "/Scripts/image_training.sh");
-    QString language = QInputDialog::getText(widget, tr("START MODEL"),
+    QString language = QInputDialog::getText(this, tr("START MODEL"),
                                                    tr("language:"), QLineEdit::Normal,
                                                    "kor", &ok);
     if (!ok){return;}
-    QString new_language = QInputDialog::getText(widget, tr("NEW MODEL"),
+    QString new_language = QInputDialog::getText(this, tr("NEW MODEL"),
                                                  tr("language:"), QLineEdit::Normal, "my_kor", &ok);
     if (!ok){return;}
-    QString psm = QInputDialog::getText(widget, tr("PSM"), tr("Input page-segment-mode:"),
+    QString psm = QInputDialog::getText(this, tr("PSM"), tr("Input page-segment-mode:"),
                                         QLineEdit::Normal, "6", &ok);
     if (!ok){return;}
-    QString max_iter = QInputDialog::getText(widget, tr("MAX ITERATIONS"),
+    QString max_iter = QInputDialog::getText(this, tr("MAX ITERATIONS"),
                                                    tr("Input max iterations:"), QLineEdit::Normal, "500", &ok);
     if (!ok){return;}
 
@@ -143,24 +146,24 @@ void TrainWorker::train_singleImage()
 {
     QString program(projectPath + "/Scripts/single_image.sh");
 
-    QString image_file = QFileDialog::getOpenFileName(widget,
+    QString image_file = QFileDialog::getOpenFileName(this,
                                                       tr("Open Image File"), homeLocation, tr("Image Files (*.png)"));
     if(image_file.isEmpty() || image_file.isNull()){return;}
-    QString old_traineddata = QFileDialog::getOpenFileName(widget,
+    QString old_traineddata = QFileDialog::getOpenFileName(this,
                                                            tr("Open traineddata"), homeLocation + "mytraining/tesseract/tessdata", tr("traineddata Files (*.traineddata)"));
     if(old_traineddata.isEmpty() || old_traineddata.isNull()){return;}
     bool ok = true;
-    QString language = QInputDialog::getText(widget, tr("START MODEL"),
+    QString language = QInputDialog::getText(this, tr("START MODEL"),
                                                    tr("language:"), QLineEdit::Normal,
                                                    "kor", &ok);
     if (!ok){return;}
-    QString new_language = QInputDialog::getText(widget, tr("NEW MODEL"),
+    QString new_language = QInputDialog::getText(this, tr("NEW MODEL"),
                                                  tr("language:"), QLineEdit::Normal, "my_kor", &ok);
     if (!ok){return;}
-    QString psm = QInputDialog::getText(widget, tr("PSM"), tr("Input page-segment-mode:"),
+    QString psm = QInputDialog::getText(this, tr("PSM"), tr("Input page-segment-mode:"),
                                         QLineEdit::Normal, "6", &ok);
     if (!ok){return;}
-    QString max_iter = QInputDialog::getText(widget, tr("MAX ITERATIONS"),
+    QString max_iter = QInputDialog::getText(this, tr("MAX ITERATIONS"),
                                                    tr("Input max iterations:"), QLineEdit::Normal, "1200", &ok);
     if (!ok){return;}
 
@@ -179,17 +182,17 @@ void TrainWorker::train_fonts()
     QString program(projectPath + "/Scripts/fontFinetuning.sh");
 
     // gtk-message warning, not error // need to change start directory.
-    QString font_path = QFileDialog::getOpenFileName(widget,
+    QString font_path = QFileDialog::getOpenFileName(this,
                                                      tr("Open Font"), "/usr/share/fonts", tr("Font Files (*.ttf)"));
     if(font_path.isEmpty() || font_path.isNull()){return;}
 
-    QString old_traineddata = QFileDialog::getOpenFileName(widget,
+    QString old_traineddata = QFileDialog::getOpenFileName(this,
                                                            tr("Open traineddata"),
                                                            homeLocation + "mytraining/tesseract/tessdata", tr("traineddata Files (*.traineddata)"));
     if(font_path.isEmpty() || font_path.isNull()){return;}
 
     bool ok = true;
-    QString iterations = QInputDialog::getText(widget, tr("Iterating counts"),
+    QString iterations = QInputDialog::getText(this, tr("Iterating counts"),
                                                    tr("Iterating Counts:"), QLineEdit::Normal,
                                                    "6000", &ok);
     if (!ok){return;}
@@ -198,10 +201,14 @@ void TrainWorker::train_fonts()
     int id = QFontDatabase::addApplicationFont(font_path);
     QString font_name = QFontDatabase::applicationFontFamilies(id).at(0);
 
-    QString language = QInputDialog::getText(widget, tr("START MODEL"),
+    QString language = QInputDialog::getText(this, tr("START MODEL"),
                                                    tr("language:"), QLineEdit::Normal,
                                                    "kor", &ok);
     if (!ok){return;}
+
+    process->setProcessChannelMode(QProcess::MergedChannels);
+    process->start("/bin/bash", QStringList() << program << font_name << iterations << language << old_traineddata);
+
     emit process_start();
     if(process->waitForFinished(-1))
     {
@@ -215,14 +222,15 @@ void TrainWorker::kor_eng()
     // 현재는 기존 bestdata사용하지만 추후에는 기존파일에 계속 더할 수 있도록 그리고 업데이트의 경우 학습파일만들기 생략시키기 쉘에서
     //QString original_traineddata = "";
 
-    QString training_text = QFileDialog::getOpenFileName(widget,
+    QString training_text = QFileDialog::getOpenFileName(this,
                                                          tr("Open Training text"), homeLocation, tr("Training texts (*.training_text)"));
     if(training_text.isEmpty() || training_text.isNull()){return;}
     bool ok = true;
-    QString iterations = QInputDialog::getText(widget, tr("Iterating counts"),
+    QString iterations = QInputDialog::getText(this, tr("Iterating counts"),
                                                    tr("Iterating Counts:"), QLineEdit::Normal,
                                                    "60000", &ok);
     if (!ok){return;}
+
     process->setProcessChannelMode(QProcess::MergedChannels);
     process->start("/bin/bash", QStringList() << program << training_text << iterations);
     emit process_start();
