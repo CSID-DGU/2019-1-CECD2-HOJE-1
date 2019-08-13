@@ -2,17 +2,8 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import CardMedia from'@material-ui/core/CardMedia';
-import CardActionArea from '@material-ui/core/CardActionArea';
-import { Link } from 'react-router-dom';
-import CardContent from '@material-ui/core/CardContent';
-import Typography from '@material-ui/core/Typography';
-import ChartIcon1 from './image/Chart1.png';
-import ChartIcon2 from './image/Chart2.png';
-import { Doughnut, Bar, Polar } from 'react-chartjs-2';
-import { random } from 'node-forge';
+import Paper from '@material-ui/core/Paper';
+import { Polar, Doughnut } from 'react-chartjs-2';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -24,15 +15,6 @@ const useStyles = makeStyles(theme => ({
   maincontentActive: {
     backgroundColor: '#ffffff',
   },
-  paper: {
-    textAlign: 'center',
-    alignItems: 'center',
-    borderRadius: 20, 
-    fontSize: 20,
-    color: theme.palette.text.secondary,
-    height: 160,
-    backgroundColor: '#d1c4e9',
-  },
   image: {
     height: 150,
     width: '100%',
@@ -43,15 +25,16 @@ const useStyles = makeStyles(theme => ({
   chartTitle: {
     textAlign: 'center',
   },
-  chartArea: {
-    height: 300,
-  },
-  item: {
-    padding: 5,
+  paper: {
+    height: 500,
+    width: '100%',
   },
   test: {
     textAlign: 'center',
     backgroundColor: '#ffffff',
+  },
+  versions: {
+    textAlign: 'right',
   },
 }));
 
@@ -150,28 +133,39 @@ const classifyOptions = {
   title: {
     display: true,
     padding: 20,
-    fontSize: 24,
-    position: 'bottom',
-    text: '                   최근 검사 분류 결과'
+    fontSize: 15,
+    position: 'top',
+    text: '최근 검사 분류 결과                                                                                      '
   },
   legend: {
-    position: 'left',
+    position: 'bottom',
     labels: {
       padding: 20,
       fontSize: 17,
     }
-  }
+  },
+  circumference: Math.PI,
+  rotation: Math.PI,
+  cutoutPercentage: 80,
 }
 const detectOptions = {
   title: {
     display: true,
     padding: 20,
     fontSize: 24,
-    position: 'bottom',
-    text: '                           최근 검사 검출 결과'
+    position: 'top',
+    //text: '                           최근 검사 검출 결과'
+  },
+  layout: {
+    padding: {
+        left: 0,
+        right: 50,
+        top: 0,
+        bottom: 0
+    }
   },
   legend: {
-    position: 'left',
+    position: 'right',
     labels: {
       padding: 20,
       fontSize: 17,
@@ -202,7 +196,7 @@ function cal_result(index) {
     Result = 
     <Grid container direction="row" justify="center" alignItems="center">
       <Grid item xs={12}>
-        <Polar height={250} data={classifyData} options={classifyOptions} />
+        <Doughnut height={150} data={classifyData} options={classifyOptions} />
       </Grid>
     </Grid>;
   }
@@ -232,7 +226,7 @@ function cal_result(index) {
     Result = <Grid container direction="row" justify="center" alignItems="center">
     
     <Grid item xs={12}>
-      <Polar height={250} data={detectData} options={detectOptions}/>
+      <Polar height={250} data={detectData} options={detectOptions} />
     </Grid>
   </Grid>;
   }
@@ -265,18 +259,29 @@ export default function Home() {
 
   return(
     <div className={classes.root}>
-      <Grid container
-      justify="center"
-      alignItems="center"
-      direction="row"
-      spacing={3} >
-        <Grid item xs={6}>
-        <TabPanel value={0} index={0}></TabPanel>
+      <Paper className={classes.paper}>
+        <Grid container
+        justify="center"
+        alignItems="center"
+        direction="row"
+        spacing={3} >
+          <Grid item xs={6}>
+          <TabPanel value={0} index={0}></TabPanel>
+          </Grid>
+          <Grid item xs={6}>
+          <TabPanel value={1} index={1}></TabPanel>
+          </Grid>
         </Grid>
-        <Grid item xs={6}>
-        <TabPanel value={1} index={1}></TabPanel>
+        <Grid container
+        justify="flex-end"
+        alignItems="flex-end"
+        direction="row"
+        >
+          <Grid className={classes.versions} item xs={12}>
+            <div>version: </div>
+          </Grid>
         </Grid>
-      </Grid>
+      </Paper>
     </div>
   )
 }

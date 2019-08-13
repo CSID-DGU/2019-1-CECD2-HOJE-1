@@ -135,6 +135,7 @@ export default function SearchBody(props) {
   
     cellRenderer = ({ cellData, columnIndex }) => {
       const { columns, classes, rowHeight, onRowClick } = this.props;
+      const center = false;
       return (
         <TableCell
           component="div"
@@ -143,7 +144,7 @@ export default function SearchBody(props) {
           })}
           variant="body"
           style={{ height: rowHeight }}
-          align={(columnIndex != null && columns[columnIndex].numeric) || false ? 'right' : 'left'}
+          align={(columnIndex != null && columns[columnIndex].numeric) || false ? (center ?'center':'right') : 'left'}
         >
           {columnIndex === 2 ? cellDisplay(cellData) : (columnIndex === 4 ? iconDisplay(cellData) : cellData)}
         </TableCell>
@@ -158,10 +159,10 @@ export default function SearchBody(props) {
           component="div"
           className={clsx(classes.tableCell, classes.flexContainer, classes.noClick)}
           variant="head"
-          style={{ height: headerHeight }}
+          style={{ height: headerHeight, }}
           align={columns[columnIndex].numeric || false ? 'right' : 'left'}
         >
-          <span>{label}</span>
+          <span style={{ fontSize: 18, }}>{label}</span>
         </TableCell>
       );
     };
@@ -235,41 +236,40 @@ export default function SearchBody(props) {
     rows.push(createData(rows.length, input[0], input[1], input[2], input[3], input[4]));
     //forceUpdate();
   }
-  console.log(resultList);
   for (let i = 0; i < resultList.length; i += 1) {
     //const randomSelection = resultList[Math.floor(Math.random() * resultList.length)];
     addRow(resultList[i]);
   }
 
   return (
-    <Paper style={{ height: 400, width: '100%' }}>
+    <Paper style={{ height: 400, width: '100%', border: 100, borderColor: '#000000', paddingLeft: 10, }} elevation={0}>
       <VirtualizedTable
         rowCount={rows.length}
         rowGetter={({ index }) => rows[index]}
         columns={[
           {
-            width: 200,
+            width: 200+84,
             label: '파일명',
             dataKey: 'fileName',
           },
           {
-            width: 120,
+            width: 120+84,
             label: '분류',
             dataKey: 'classification',
           },
           {
-            width: 120,
+            width: 120+84,
             label: '검출 내역',
             dataKey: 'detectList',
           },
           {
-            width: 120,
+            width: 110+84,
             label: '검출 개수',
             dataKey: 'detectCount',
             numeric: true,
           },
           {
-            width: 120,
+            width: 110+84,
             label: '문서등급',
             dataKey: 'formLevel',
             numeric: true,

@@ -11,6 +11,8 @@ import Fade from '@material-ui/core/Fade';
 import IconButton from '@material-ui/core/IconButton';
 import Paper from '@material-ui/core/Paper';
 import SettingIcon from '@material-ui/icons/Settings';
+import { Box } from '@material-ui/core';
+import ClockIcon from '@material-ui/icons/Alarm';
 
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -45,6 +47,29 @@ const useStyles = makeStyles(theme => ({
   },
   spacer: {
     flex: '1 1 auto',
+  },
+  paper: {
+    height: 500,
+    maxHeight: '100%',
+    width: '100%',
+    background: '#ffffff',
+  },
+  paperUp: {
+    height: 100,
+    maxHeight: '100%',
+    width: '100%',
+  },
+  paperDown: {
+    height: 400,
+    maxHeight: '100%',
+    width: '100%',
+  },
+  tree: {
+    width: '100%',
+    backgroundColor: theme.palette.background.paper,
+    position: 'relative',
+    overflow: 'auto',
+    maxHeight: 400,
   },
 })); 
 
@@ -176,25 +201,25 @@ export default function Search() {
   
   return (
     <div className={classes.root}>
+      <Box className={classes.paper} borderBottom={1} borderLeft={1} borderRight={1} borderRadius={10} borderColor="#c5e1a5">
       <TabPanel value={value} index={0}>{ /* 검색 시작 화면 */ }
-        <Grid container direction="row" justify="flex-start" alignItems="center" spacing={2}>{/* 검색화면 헤더 */}
+      <Box style={{ background: '#f1f8e9', height: 74, borderBottom: '1px solid', borderTop: '1px solid', borderColor: '#c5e1a5', borderTopRightRadius: '10px', borderTopLeftRadius: '10px'}}>
+        <Grid container direction="row" justify="flex-start" alignItems="center" spacing={2} style={{paddingTop: 15, paddingLeft: 22, paddingRight: 10, height: 74}}>{/* 검색화면 헤더 */}
           <Grid item xs={12} sm={8}>{/* 최근 검사 일자 */ }
-            <TextField
-              id="outlined-read-only-input"
-              label="최근 검사"
-              margin="normal"
-              InputProps={{
-                readOnly: true,
-              }}
-              defaultValue="이전 검사일을 알 수 없음"
-              variant="outlined"
-            >검사내역</TextField>
+            <Grid container spacing={1} alignItems="flex-end">
+              <Grid item>
+                <ClockIcon />
+              </Grid>
+              <Grid item>
+                <TextField id="input-with-icon-grid" label="최근 검사" value="이전 검사일을 알 수 없음" />
+              </Grid>
+            </Grid>
           </Grid>
           <div className={classes.spacer}/>
           {/* 검색 시작 버튼 */ }
             <Fab
               variant="extended"
-              color="primary"
+              style={{backgroundColor: '#e6ee9c', color: '#000000',}}
               aria-label="Add"
               className={classes.margin}
               disabled={selectedFile.length === 0? true : false}
@@ -234,9 +259,12 @@ export default function Search() {
             )}
             </Popper>
         </Grid>
-        <Grid container justify="center" alignItems="center" spacing={5}>{/* 검색 경로 설정 */ }
+        </Box>
+        <Grid container justify="center" alignItems="center" spacing={5} style={{paddingLeft: 25, paddingRight: 5, paddingTop: 10}}>{/* 검색 경로 설정 */ }
           <Grid item xs>
+          <List className={classes.tree} >
             <Tree onChecked={onChecked} onToggle={onToggle} data={path_data}/>
+          </List>
           </Grid>
         </Grid>
       </TabPanel>
@@ -244,6 +272,7 @@ export default function Search() {
         <SearchHeader currentPath={value}/>
         <SearchBody resultList={sample}/>
       </TabPanel>
+      </Box>
     </div>
   );
 }

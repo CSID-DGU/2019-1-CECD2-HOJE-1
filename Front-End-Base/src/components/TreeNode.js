@@ -18,7 +18,7 @@ const StyledTreeNode = styled.div`
   padding-left: ${props => getPaddingLeft(props.level, props.type)}px;
 
   &:hover {
-    background: lightgray;
+    background: #dcedc8;
   }
 `;
 

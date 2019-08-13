@@ -13,7 +13,7 @@ import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
+import Box from '@material-ui/core/Box';
 import Checkbox from '@material-ui/core/Checkbox';
 import Fab from '@material-ui/core/Fab';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -68,7 +68,7 @@ const headRows = [
   { id: 'DetectList', numeric: false, disablePadding: false, label: '검출 내역' },
   { id: 'DetectNum', numeric: true, disablePadding: false, label: '검출 개수' },
   { id: 'FormLevel', numeric: true, disablePadding: false, label: '문서등급' },
-  { id: 'Fitness', numeric: false, disablePadding: false, label: '위반여부' },
+  { id: 'Fitness', numeric: true, disablePadding: false, label: '위반여부' },
 ];
 
 function EnhancedTableHead(props) {
@@ -99,6 +99,7 @@ function EnhancedTableHead(props) {
               active={orderBy === row.id}
               direction={order}
               onClick={createSortHandler(row.id)}
+              style={{fontSize:18}}
             >
               {row.label}
             </TableSortLabel>
@@ -160,11 +161,12 @@ const EnhancedTableToolbar = props => {
       className={clsx(classes.root, {
         [classes.highlight]: numSelected > 0,
       })}
+      style={{height: 74, backgroundColor: '#f1f8e9', borderBottom: '1px solid', borderTop: '1px solid', borderColor: '#c5e1a5', borderTopRightRadius: '10px', borderTopLeftRadius: '10px'}} 
     >
       <div className={classes.title}>
         {numSelected > 0 ? (
           <Typography color="inherit" variant="subtitle1">
-            {numSelected} selected
+            {numSelected} 선택되었음
           </Typography>
         ) : (
           <Typography variant="h6" id="tableTitle">
@@ -178,12 +180,12 @@ const EnhancedTableToolbar = props => {
           masked.length > 0 && noneMasked.length > 0 ? ('재식별화 항목과 비식별화 항목을 각각 선택하세요'):
           (masked.length > 0?(
             <Tooltip title="재식별화">
-              <Fab className={classes.actions} variant="extended" label='재식별화'>재식별화</Fab>
+              <Fab className={classes.actions} style={{backgroundColor: '#e6ee9c', color: '#000000',}} variant="extended" label='재식별화'>재식별화</Fab>
             </Tooltip>
             ):
             (noneMasked.length > 0?(
               <Tooltip title="비식별화">
-                <Fab className={classes.actions} variant="extended" label='비식별화'>비식별화</Fab>
+                <Fab className={classes.actions} style={{backgroundColor: '#e6ee9c', color: '#000000',}} variant="extended" label='비식별화'>비식별화</Fab>
               </Tooltip>):
               ('')))
           ): 
@@ -191,7 +193,7 @@ const EnhancedTableToolbar = props => {
         }
         {numSelected > 0 && numSelected === 1 && masked.length === 0 ? (
           <Tooltip title="문의">
-            <Fab className={classes.actions} variant="extended" label='문의' component={Link} to='/qna' >문의</Fab>
+            <Fab className={classes.actions} style={{marginLeft:10, backgroundColor: '#e6ee9c', color: '#000000',}} variant="extended" label='문의' component={Link} to='/qna' >문의</Fab>
           </Tooltip>
         ) : ('')
         }
@@ -218,12 +220,6 @@ const useStyles = makeStyles(theme => ({
   tableWrapper: {
     overflowX: 'auto',
   },
-  filepath: {
-    width: 140,
-  },
-  detectlist: {
-    width: 100,
-  },
 }));
 
 const theme = createMuiTheme({
@@ -241,7 +237,7 @@ export default function Result() {
   const [orderBy, setOrderBy] = React.useState('DetectNum');
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(7);
 
   function handleRequestSort(event, property) {
     const isDesc = orderBy === property && order === 'desc';
@@ -316,7 +312,7 @@ export default function Result() {
 
   return (
     <div className={classes.root}>
-      <Paper className={classes.paper}>
+      <Box className={classes.paper} borderLeft={1} borderRight={1} borderRadius={10} borderColor="#c5e1a5">
         <EnhancedTableToolbar numSelected={selected.length} selected={selected} />
         <div className={classes.tableWrapper}>
           <Table
@@ -355,20 +351,20 @@ export default function Result() {
                           inputProps={{ 'aria-labelledby': labelId }}
                         />
                       </TableCell>
-                      <TableCell component="th" id={labelId} scope="row" padding="none">
+                      <TableCell style={{width: 200+84}} component="th" id={labelId} scope="row" padding="none">
                       <Tooltip title={row.FilePath} placement="top"><Typography  noWrap>{row.FileName}</Typography></Tooltip>
                       </TableCell>
-                      <TableCell className={classes.detectlist} wrap='nowrap' align="right">{row.DetectList}</TableCell>
-                      <TableCell align="right">{row.DetectNum}</TableCell>
-                      <TableCell align="right">{row.FormLevel}</TableCell>
-                      <TableCell align="right">
+                      <TableCell style={{width: 120+84}} wrap='nowrap' align="right">{row.DetectList}</TableCell>
+                      <TableCell style={{width: 120+84}} align="right">{row.DetectNum}</TableCell>
+                      <TableCell style={{width: 110+84}} align="right">{row.FormLevel}</TableCell>
+                      <TableCell style={{width: 110+84}} align="right">
                         {iconDisplay(row.Fitness)}
                       </TableCell>
                     </TableRow>
                   );
                 })}
               {emptyRows > 0 && (
-                <TableRow style={{ height: 49 * emptyRows }}>
+                <TableRow style={{ height: 42 * emptyRows }}>
                   <TableCell colSpan={6} />
                 </TableRow>
               )}
@@ -376,7 +372,8 @@ export default function Result() {
           </Table>
         </div>
         <TablePagination
-          rowsPerPageOptions={[5]}
+          style={{backgroundColor: '#f1f8e9', borderBottom: '1px solid', borderColor: '#c5e1a5', borderBottomRightRadius: '10px', borderBottomLeftRadius: '10px'}}
+          rowsPerPageOptions={[7]}
           component="div"
           count={rows.length}
           rowsPerPage={rowsPerPage}
@@ -390,7 +387,7 @@ export default function Result() {
           onChangePage={handleChangePage}
           onChangeRowsPerPage={handleChangeRowsPerPage}
         />
-      </Paper>
+      </Box>
     </div>
   );
 }
