@@ -128,7 +128,7 @@ void TrainWorker::train_images()
                                         QLineEdit::Normal, "6", &ok);
     if (!ok){return;}
     QString max_iter = QInputDialog::getText(this, tr("MAX ITERATIONS"),
-                                                   tr("Input max iterations:"), QLineEdit::Normal, "500", &ok);
+                                                   tr("Input max iterations:"), QLineEdit::Normal, "150", &ok);
     if (!ok){return;}
 
 
