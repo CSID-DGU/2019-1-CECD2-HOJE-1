@@ -99,7 +99,7 @@ function EnhancedTableHead(props) {
               active={orderBy === row.id}
               direction={order}
               onClick={createSortHandler(row.id)}
-              style={{fontSize:18}}
+              style={{fontSize:16, fontWeight: 'bold', color: '#212121'}}
             >
               {row.label}
             </TableSortLabel>
@@ -138,7 +138,8 @@ const useToolbarStyles = makeStyles(theme => ({
     flex: '1 1 auto',
   },
   actions: {
-    color: theme.palette.text.primary,
+    backgroundColor: '#e6ee9c',
+    color: '#000000',
   },
   title: {
     flex: '0 0 auto',
@@ -161,7 +162,7 @@ const EnhancedTableToolbar = props => {
       className={clsx(classes.root, {
         [classes.highlight]: numSelected > 0,
       })}
-      style={{height: 74, backgroundColor: '#f1f8e9', borderBottom: '1px solid', borderTop: '1px solid', borderColor: '#c5e1a5', borderTopRightRadius: '10px', borderTopLeftRadius: '10px'}} 
+      style={{height: 74, background: 'linear-gradient( #f1f8e9, #fafafa )', borderTopRightRadius: '10px', borderTopLeftRadius: '10px'}} 
     >
       <div className={classes.title}>
         {numSelected > 0 ? (
@@ -180,12 +181,12 @@ const EnhancedTableToolbar = props => {
           masked.length > 0 && noneMasked.length > 0 ? ('재식별화 항목과 비식별화 항목을 각각 선택하세요'):
           (masked.length > 0?(
             <Tooltip title="재식별화">
-              <Fab className={classes.actions} style={{backgroundColor: '#e6ee9c', color: '#000000',}} variant="extended" label='재식별화'>재식별화</Fab>
+              <Fab className={classes.actions} variant="extended" label='재식별화'>재식별화</Fab>
             </Tooltip>
             ):
             (noneMasked.length > 0?(
               <Tooltip title="비식별화">
-                <Fab className={classes.actions} style={{backgroundColor: '#e6ee9c', color: '#000000',}} variant="extended" label='비식별화'>비식별화</Fab>
+                <Fab className={classes.actions} variant="extended" label='비식별화'>비식별화</Fab>
               </Tooltip>):
               ('')))
           ): 
@@ -193,7 +194,7 @@ const EnhancedTableToolbar = props => {
         }
         {numSelected > 0 && numSelected === 1 && masked.length === 0 ? (
           <Tooltip title="문의">
-            <Fab className={classes.actions} style={{marginLeft:10, backgroundColor: '#e6ee9c', color: '#000000',}} variant="extended" label='문의' component={Link} to='/qna' >문의</Fab>
+            <Fab className={classes.actions} style={{marginLeft:10}} variant="extended" label='문의' component={Link} to='/qna' >문의</Fab>
           </Tooltip>
         ) : ('')
         }
@@ -213,6 +214,10 @@ const useStyles = makeStyles(theme => ({
   },
   paper: {
     width: '100%',
+    border: '1px solid',
+    borderRadius: '10px',
+    borderColor: "#c5e1a5",
+    boxShadow: '2px 2px 2px',
   },
   table: {
     minWidth: 700,
@@ -312,7 +317,7 @@ export default function Result() {
 
   return (
     <div className={classes.root}>
-      <Box className={classes.paper} borderLeft={1} borderRight={1} borderRadius={10} borderColor="#c5e1a5">
+      <Box className={classes.paper}>
         <EnhancedTableToolbar numSelected={selected.length} selected={selected} />
         <div className={classes.tableWrapper}>
           <Table
@@ -372,7 +377,7 @@ export default function Result() {
           </Table>
         </div>
         <TablePagination
-          style={{backgroundColor: '#f1f8e9', borderBottom: '1px solid', borderColor: '#c5e1a5', borderBottomRightRadius: '10px', borderBottomLeftRadius: '10px'}}
+          style={{backgroundColor: '#f1f8e9', borderBottomRightRadius: '10px', borderBottomLeftRadius: '10px'}}
           rowsPerPageOptions={[7]}
           component="div"
           count={rows.length}

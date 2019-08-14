@@ -8,7 +8,7 @@ function createWindow () {
   // 브라우저 창을 생성합니다.
   win = new BrowserWindow({
     width: 1200+604,
-    height: 600+59,
+    height: 612+59,
     webPreferences: {
       nodeIntegration: true
     }

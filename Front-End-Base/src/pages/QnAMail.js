@@ -1,9 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import { Paper, FormControl, InputLabel, Select, MenuItem, Fab, Grid, TextField, Popover } from '@material-ui/core';
-import { List, Divider, CardActionArea, CardContent } from '@material-ui/core';
+import { FormControl, InputLabel, Select, MenuItem, Fab, Grid, TextField } from '@material-ui/core';
+import { Box, InputBase } from '@material-ui/core';
+import { MobileStepper, Button } from '@material-ui/core';
+import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
+import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import testimage from './text.jpg';
 import testimage2 from './text2.jpg'
 const useStyles = makeStyles(theme => ({
@@ -26,9 +29,18 @@ const useStyles = makeStyles(theme => ({
   },
   fab: {
     width: 70,
+    backgroundColor: '#e6ee9c',
+    color: '#000000',
   },
   imagecrop: {
     width: 130,
+    backgroundColor: '#e6ee9c',
+    color: '#000000',
+  },
+  paper: {
+    background: '#ffffff',
+    width: '100%',
+    height: 500,
   },
 })); 
 const mylistStyles = makeStyles(theme => ({
@@ -37,7 +49,7 @@ const mylistStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.background.paper,
     position: 'relative',
     overflow: 'auto',
-    maxHeight: 330,
+    maxHeight: 380,
   },
   listSection: {
     backgroundColor: 'inherit',
@@ -60,10 +72,16 @@ const mylistStyles = makeStyles(theme => ({
     padding: 10,
   },
   media: {
-    maxHeight: 300,
-    maxWidth: 650,
+    maxHeight: 278,
+    maxWidth: 800,
     height: '100%',
     width: '100%',
+    borderRadius: '10px',
+  },
+  center: {
+    margin: 'auto',
+    width: '50%',
+    textAlign: 'center',
   },
   content: {
     padding: theme.spacing(2),
@@ -93,15 +111,26 @@ TabPanel.propTypes = {
   value: PropTypes.any.isRequired,
 };
 
-export default function QnAMail(props){
-  const { sendingImagePath } = props;
+export default function QnAMail(){
   const classes = useStyles(); 
   const classes2 = mylistStyles();
+  const theme = useTheme();
   const [value, setValue] = React.useState(1);
   const [file, ] = React.useState(['Pattern.png','Bookmark.png','Find.png','Identification.png','SearchIcon.png']);
   const [send, setSend] = React.useState([]);
   const [sendContent, ] = React.useState(['']);
   const [init, setInit] = React.useState(true);
+  const [activeStep, setActiveStep] = React.useState(0);
+  const maxSteps = file.length;
+
+  function handleNext() {
+    setActiveStep(prevActiveStep => prevActiveStep + 1);
+  }
+
+  function handleBack() {
+    setActiveStep(prevActiveStep => prevActiveStep - 1);
+  }
+
   // 
   function handleChange(event) {
     setValue(event.target.value);
@@ -130,112 +159,126 @@ export default function QnAMail(props){
     }
     setInit(false);
   }
-  const [anchorEl, setAnchorEl] = React.useState(null);
-
-  function handleClick(event) {
-    setAnchorEl(event.currentTarget);
-  }
-
-  function handleClose() {
-    setAnchorEl(null);
-  }
-
-  const open = Boolean(anchorEl);
 
   return (
     <div className={classes.root}>
-      {sendingImagePath}
-      <Grid
-      container
-      direction="row"
-      justify="space-between"
-      alignItems="center"
-      >
-        {/* 첫번째 줄 */}
-        <Grid item xs={6}>
-          <FormControl className={classes.formControl}>
-            <InputLabel htmlFor="Tabs-simple">구 분</InputLabel>
-            <Select
-              value={value}
-              onChange={handleChange}
-              inputProps={{
-                name: 'Tabs',
-                id: 'Tabs-simple',
-              }}
-            >
-              <MenuItem value={1}>분류구분 추가신청</MenuItem>
-              <MenuItem value={2}>오탐지 수정요청</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-        <div className={classes.spacer}/>
-        <Fab variant="extended" className={classes.fab}>전  송</Fab>
-        {/* 두번째 줄 */}
-        <Grid item xs={9}>
-          <TextField
-            label="이미지 경로"
-            style={{ margin: 8 }}
-            placeholder="경로"
-            fullWidth
-            margin="normal"
-            variant="outlined"
-            value={''}
-            InputLabelProps={{
-              shrink: true,
-            }}
-          />
-          </Grid>
-          <Fab variant="extended" disabled={value !== 2? true : false} className={classes.imagecrop}>이미지 자르기</Fab>
-      </Grid>
-      <Paper className={classes.list}>
-      <TabPanel value={value} index={null}>{ /* 문의 초기 화면 */ }
-        구분을 선택해 주세요.
-      </TabPanel>
-      <TabPanel value={value} index={1}>{ /* 분류구분 추가신청 화면 */ }
-        <Grid item alignItems="center" justify="center">
-          <Grid xs={12} item>
-            <CardActionArea onClick={handleClick}>
-              <CardContent>해당되는 이미지에 대한 설명을 적으려면 이미지를 클릭하세요</CardContent>
-              <img className={classes2.media} src={testimage2} alt={'이미지를 선택해 주삼'}/>
-            </CardActionArea>
-          </Grid>
-        </Grid>
-        <Popover 
-          open={open}
-          anchorEl={anchorEl}
-          onClose={handleClose}
-          anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'left',
-          }}
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'left',
-          }}
+      <Box className={classes.paper} border={1} borderRadius={10} borderColor="#c5e1a5">
+        <Grid
+        container
+        direction="row"
+        justify="center"
+        alignItems="center"
         >
-          <TextField className={classes2.content} label="이미지 설명을 적어주세요" multiline 
-          rows="6" fullWidth margin="normal" variant="outlined" value={sendContent} onChange={txtContent()}/>
-        </Popover>
-      </TabPanel>
-      <TabPanel value={value} index={2}>{ /* 오탐지 수정요청 화면 */ }
-          <List className={classes2.root} >
-            {
-              ['Pattern.png','Bookmark.png','Find.png','Identification.png','SearchIcon.png'].map(item =>
-              <div>
-              <Grid container zeroMinWidth className={classes2.item}>
-                <Grid xs={6} item><img style={{marginTop: 12, marginBottom: 12}} maxHeight="303" maxWidth="343" height="98%" width="100%" src={testimage}/></Grid>
-                <Grid xs={6} item>
-                  <TextField className={classes2.item} id={item} label="이미지 내의 텍스트를 적어주세요" multiline 
-                   fullWidth margin="normal" variant="outlined" onChange={txtChange(item)}/>
+          <Grid item xs={3}>
+            <Box style={{ height: 500, marginLeft: 10}}>
+              <Grid
+              container
+              direction="row"
+              justify="center"
+              alignItems="center"
+              >
+                <Grid item xs={12}>
+                  <FormControl className={classes.formControl}>
+                    <InputLabel htmlFor="Tabs-simple">구 분</InputLabel>
+                    <Select
+                      value={value}
+                      onChange={handleChange}
+                      inputProps={{
+                        name: 'Tabs',
+                        id: 'Tabs-simple',
+                      }}
+                    >
+                      <MenuItem value={1}>분류구분 추가신청</MenuItem>
+                      <MenuItem value={2}>오탐지 수정요청</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={6}>
+                  <Fab variant="extended" disabled={value !== 2? true : false} className={classes.imagecrop}>이미지 자르기</Fab>
+                </Grid>
+                <Grid item xs={6}>
+                  <Fab variant="extended" className={classes.fab}>전  송</Fab>
                 </Grid>
               </Grid>
-              <Divider/>
-              </div>
-              )
-            }
-          </List>
-      </TabPanel>
-      </Paper>
+            </Box>
+          </Grid> 
+          <Grid item xs={9}>
+            <Box style={{ height: 500, }} borderLeft={1} borderColor="#c5e1a5">
+              <Grid
+              container
+              direction="row"
+              justify="center"
+              alignItems="center"
+              >
+                <Grid item xs={12}>{/* 이미지 경로 */}
+                  <TextField
+                    label="이미지 경로"
+                    style={{ padding: 8 }}
+                    placeholder="경로"
+                    fullWidth
+                    margin="normal"
+                    variant="outlined"
+                    value={''}
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                  />  
+                </Grid>
+                <Grid item xs={12}>
+                <TabPanel value={value} index={null}>{ /* 문의 초기 화면 */ }
+                  구분을 선택해 주세요.
+                </TabPanel>
+                <TabPanel value={value} index={1}>{ /* 분류구분 추가신청 화면 */ }
+                  <Grid item alignItems="center" justify="center">
+                    <Grid style={{paddingLeft: 10, paddingRight: 10,}} xs={12} item>
+                      <Box style={{ height: 280, textAlign: 'center', borderTop: '1px solid', borderLeft: '1px solid', borderRight: '1px solid', borderColor: '#c5e1a5', borderTopRightRadius: '10px', borderTopLeftRadius: '10px', boxShadow: '2px 2px 2px'}}>
+                        <img className={classes2.media} src={testimage2} alt={'이미지를 선택해 주삼'}/>
+                      </Box>
+                      <Box style={{ height: 110, background: '#ffffff', borderBottom: '1px solid', borderRight: '1px solid', borderLeft: '1px solid', borderColor: '#c5e1a5', borderBottomRightRadius: '10px', borderBottomLeftRadius: '10px', boxShadow: '2px 2px 2px' }}>
+                        <InputBase placeholder="이미지 설명을 적어주세요" multiline rows='4' inputProps={{ 'aria-label': 'naked' }}
+                        fullWidth margin="normal" value={sendContent} onChange={txtContent()} style={{paddingLeft: 15, paddingRight: 15,}}/>
+                      </Box>
+                    </Grid>
+                  </Grid>
+                </TabPanel>
+                <TabPanel value={value} index={2}>{ /* 오탐지 수정요청 화면 */ }
+                <Grid style={{paddingLeft: 10, paddingRight: 10,}} xs={12} item>
+                  <Box style={{ height: 390, border: '1px solid', borderRadius: '10px', borderRight: '1px solid', borderColor: '#c5e1a5', boxShadow: '2px 2px 2px' }} border={1}>
+                    <Box style={{ height: 280, }}>
+                      <img className={classes2.media} src={testimage2} alt={''} />
+                    </Box>
+                    <Box style={{ height: 60, background: '#ffffff', }}>
+                      <InputBase placeholder="이미지 설명을 적어주세요" multiline rows='2' inputProps={{ 'aria-label': 'naked' }}
+                      fullWidth margin="normal" value={sendContent} onChange={txtContent()} style={{paddingLeft: 15, paddingRight: 15,}}/>
+                    </Box>
+                    <MobileStepper
+                      steps={maxSteps}
+                      position="static"
+                      variant="text"
+                      activeStep={activeStep}
+                      nextButton={
+                        <Button size="small" onClick={handleNext} disabled={activeStep === maxSteps - 1}>
+                          Next
+                          {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
+                        </Button>
+                      }
+                      backButton={
+                        <Button size="small" onClick={handleBack} disabled={activeStep === 0}>
+                          {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
+                          Back
+                        </Button>
+                      }
+                      style={{ backgroundColor: '#f1f8e9', borderTop: '1px solid #e0e0e0', borderBottomRightRadius: '10px', borderBottomLeftRadius: '10px'}}
+                    />
+                    </Box>
+                  </Grid>
+                </TabPanel>
+                </Grid>
+              </Grid>
+            </Box>
+          </Grid>
+        </Grid>
+      </Box>
     </div>
   )
 }

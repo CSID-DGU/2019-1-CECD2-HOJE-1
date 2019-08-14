@@ -203,7 +203,7 @@ export default function Search() {
     <div className={classes.root}>
       <Box className={classes.paper} borderBottom={1} borderLeft={1} borderRight={1} borderRadius={10} borderColor="#c5e1a5">
       <TabPanel value={value} index={0}>{ /* 검색 시작 화면 */ }
-      <Box style={{ background: '#f1f8e9', height: 74, borderBottom: '1px solid', borderTop: '1px solid', borderColor: '#c5e1a5', borderTopRightRadius: '10px', borderTopLeftRadius: '10px'}}>
+      <Box style={{ background: 'linear-gradient( #f1f8e9, #ffffff )', height: 74, borderTop: '1px solid', borderColor: '#c5e1a5', borderTopRightRadius: '10px', borderTopLeftRadius: '10px'}}>
         <Grid container direction="row" justify="flex-start" alignItems="center" spacing={2} style={{paddingTop: 15, paddingLeft: 22, paddingRight: 10, height: 74}}>{/* 검색화면 헤더 */}
           <Grid item xs={12} sm={8}>{/* 최근 검사 일자 */ }
             <Grid container spacing={1} alignItems="flex-end">

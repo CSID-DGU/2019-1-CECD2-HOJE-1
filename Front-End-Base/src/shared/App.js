@@ -110,11 +110,6 @@ export default function App(props) {
             HOJE-OCR
           </Typography>
         </Grid>
-        <Grid>
-          <IconButton disabled={updateActive} component={Link} to="#/">
-            <UpdataIcon/>
-          </IconButton>
-        </Grid>
       </Grid>
     </Toolbar>
   )
@@ -128,7 +123,6 @@ export default function App(props) {
       button
       activeClassName={classes.active}
       component={NavLink} exact to="/"
-      onClick={()=>setUpdateActive(false)}
 			>
         <Tooltip title='홈' placement="top"><HomeIcon /></Tooltip>
 			</ListItem>
@@ -136,7 +130,6 @@ export default function App(props) {
       button
       activeClassName={classes.active}
       component={NavLink} exact to="/search"
-      onClick={()=>setUpdateActive(true)}
 			>
 			<Tooltip title='검사' placement="top"><SearchIcon /></Tooltip>
 			</ListItem>
@@ -144,7 +137,6 @@ export default function App(props) {
       button
       activeClassName={classes.active}
       component={NavLink} exact to="/result"
-      onClick={()=>setUpdateActive(false)}
 			>
       <Tooltip title='결과' placement="top"><ResultIcon /></Tooltip>
 			</ListItem>
@@ -152,7 +144,6 @@ export default function App(props) {
       button
       activeClassName={classes.active}
       component={NavLink} exact to="/setting"
-      onClick={()=>setUpdateActive(false)}
 			>
 			<Tooltip title='설정' placement="top"><SettingIcon /></Tooltip>
 			</ListItem>
@@ -167,7 +158,6 @@ export default function App(props) {
       button
       activeClassName={classes.active}
       component={NavLink} exact to="/test"
-      onClick={()=>setUpdateActive(false)}
 			>
 			<MailIcon />
 			</ListItem>

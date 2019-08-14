@@ -32,6 +32,8 @@
     "@material-ui/styles": "^4.3.0",
     "chart.js": "^2.8.0",
     "react-chartjs-2": "^2.7.6",
+    "react-swipeable-views": "^0.13.3",
+    "react-swipeable-views-utils": "^0.13.3",
     "react-virtualized": "^9.21.1"
   },
   "devDependencies": {

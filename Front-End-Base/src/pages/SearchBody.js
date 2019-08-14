@@ -159,10 +159,10 @@ export default function SearchBody(props) {
           component="div"
           className={clsx(classes.tableCell, classes.flexContainer, classes.noClick)}
           variant="head"
-          style={{ height: headerHeight, }}
+          style={{ height: headerHeight, paddingBottom: 0}}
           align={columns[columnIndex].numeric || false ? 'right' : 'left'}
         >
-          <span style={{ fontSize: 18, }}>{label}</span>
+          <span style={{ fontSize: 16, fontWeight: 'bold', color: '#212121' }}>{label}</span>
         </TableCell>
       );
     };

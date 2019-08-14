@@ -50,7 +50,7 @@ export default function SearchHeader(props) {
   })
 
   return (
-  <Box style={{ background: '#f1f8e9', height: 74, borderBottom: '1px solid', borderTop: '1px solid', borderColor: '#c5e1a5', borderTopRightRadius: '10px', borderTopLeftRadius: '10px'}} >
+  <Box style={{ background: 'linear-gradient( #f1f8e9, #ffffff )', height: 74, borderTop: '1px solid', borderColor: '#c5e1a5', borderTopRightRadius: '10px', borderTopLeftRadius: '10px'}} >
     <Grid container direction="row" justify="flex-start" alignItems="center" spacing={2} style={{ paddingTop: 15, paddingLeft: 20, paddingRight: 30, height: 74 }}>
       <Grid item xs={12} sm={8}>
         <Grid container spacing={1} alignItems="flex-end">
