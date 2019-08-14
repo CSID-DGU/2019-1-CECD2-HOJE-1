@@ -1,6 +1,7 @@
 import React from 'react';
-import {Route, NavLink, Link} from 'react-router-dom';
+import { Route, Link, NavLink } from 'react-router-dom';
 import PropTypes from 'prop-types';
+
 import Grid from '@material-ui/core/Grid';
 import AppBar from '@material-ui/core/AppBar';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -8,12 +9,11 @@ import Drawer from '@material-ui/core/Drawer';
 import Hidden from '@material-ui/core/Hidden';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import {makeStyles, useTheme} from '@material-ui/core/styles';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
+import Tooltip from '@material-ui/core/Tooltip';
 
 import MenuIcon from '@material-ui/icons/Menu';
 import UpdataIcon from '@material-ui/icons/Update';
@@ -29,7 +29,7 @@ import Setting from '../../renderer/pages/Setting';
 import QnAMail from '../../renderer/pages/QnAMail';
 import Result from '../../renderer/pages/Result';
 import DownloadFile from '../../main/FrameTest/downloadFile';
-const drawerWidth = 180;
+const drawerWidth = 60;
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -43,9 +43,16 @@ const useStyles = makeStyles(theme => ({
     },
     appBar: {
         marginLeft: drawerWidth,
+        backgroundColor: '#aed581',
         [theme.breakpoints.up('sm')]: {
             width: `calc(100% - ${drawerWidth}px)`,
         },
+    },
+    appBarbottom: {
+        height: 10,
+        top: 'auto',
+        bottom: 0,
+        backgroundColor: '#bdbdbd',
     },
     menuButton: {
         marginRight: theme.spacing(2),
@@ -55,35 +62,38 @@ const useStyles = makeStyles(theme => ({
     },
     toolbar: theme.mixins.toolbar,
     drawerPaper: {
+        backgroundColor: '#7cb342',
         width: drawerWidth,
     },
     content: {
         flexGrow: 1,
         padding: theme.spacing(3),
+        height: '100%',
+    },
+    footer: {
+        flexGrow: 1,
+        padding: theme.spacing(3),
     },
     active: {
-        background: '#9e9e9e',
-    }
+        background: '#f5f5f5',
+    },
 }));
 
-export default function ResponsiveDrawer(props) {
-    const {container} = props;
+export default function App(props) {
+    const { container } = props;
     const classes = useStyles();
     const theme = useTheme();
     const [mobileOpen, setMobileOpen] = React.useState(false);
+    const [updateActive, setUpdateActive] = React.useState(false);
 
     function handleDrawerToggle() {
         setMobileOpen(!mobileOpen);
     }
 
-    // Forced ReRendering
-    const [, updateState] = React.useState();
-    const forceUpdate = React.useCallback(() => updateState({}), []);
-
     // 위에 툴바
     const drawerToolbar = (
         <Toolbar>
-            <Grid container direction="row" justify="space-between">
+            <Grid container direction="row" justify="space-between"  alignItems="center">
                 <Grid>
                     <IconButton
                         color="inherit"
@@ -92,80 +102,74 @@ export default function ResponsiveDrawer(props) {
                         onClick={handleDrawerToggle}
                         className={classes.menuButton}
                     >
-                        <MenuIcon/>
+                        <MenuIcon />
                     </IconButton>
-                    <Typography variant="h6">
+                    <Typography variant="h6" noWrap>
                         HOJE-OCR
                     </Typography>
                 </Grid>
-                <Grid>
-                    <IconButton onClick={()=> {
-                        console.log('Download...');
-                        DownloadFile();
-                        forceUpdate();
-                    }}>
-                        <UpdataIcon/>
-                    </IconButton>
-                </Grid>
             </Grid>
         </Toolbar>
-    );
+    )
+
     // 왼쪽 메뉴 부분
     const drawer = (
         <div>
-            <div className={classes.toolbar}/>
+            <div className={classes.toolbar} />
             <List>
                 <ListItem
                     button
                     activeClassName={classes.active}
                     component={NavLink} exact to="/"
                 >
-                    <ListItemIcon><HomeIcon/></ListItemIcon>
-                    <ListItemText primary="홈"/>
+                    <Tooltip title='홈' placement="top"><HomeIcon /></Tooltip>
                 </ListItem>
                 <ListItem
                     button
                     activeClassName={classes.active}
-                    component={NavLink} to="/search"
+                    component={NavLink} exact to="/search"
                 >
-                    <ListItemIcon><SearchIcon/></ListItemIcon>
-                    <ListItemText primary="검사"/>
+                    <Tooltip title='검사' placement="top"><SearchIcon /></Tooltip>
                 </ListItem>
                 <ListItem
                     button
                     activeClassName={classes.active}
-                    component={NavLink} to="/result"
+                    component={NavLink} exact to="/result"
                 >
-                    <ListItemIcon><ResultIcon/></ListItemIcon>
-                    <ListItemText primary="검출내역"/>
+                    <Tooltip title='결과' placement="top"><ResultIcon /></Tooltip>
                 </ListItem>
                 <ListItem
                     button
                     activeClassName={classes.active}
-                    component={NavLink} to="/setting"
+                    component={NavLink} exact to="/setting"
                 >
-                    <ListItemIcon><SettingIcon/></ListItemIcon>
-                    <ListItemText primary="설정"/>
+                    <Tooltip title='설정' placement="top"><SettingIcon /></Tooltip>
                 </ListItem>
                 <ListItem
                     button
                     activeClassName={classes.active}
-                    activeClassName={classes.active}
-                    component={NavLink} to="/qna"
+                    component={NavLink} exact to="/qna"
                 >
-                    <ListItemIcon><MailIcon/></ListItemIcon>
-                    <ListItemText primary="문의"/>
+                    <Tooltip title='문의' placement="top"><MailIcon /></Tooltip>
+                </ListItem>
+                <ListItem
+                    button
+                    activeClassName={classes.active}
+                    component={NavLink} exact to="/test"
+                >
+                    <MailIcon />
                 </ListItem>
             </List>
         </div>
     );
+
     return (
         <div className={classes.root}>
-            <CssBaseline/>
+            <CssBaseline />
             <AppBar position="fixed" className={classes.appBar}>
                 {drawerToolbar}
             </AppBar>
-            <nav className={classes.drawer} aria-label="Mailbox folders">
+            <nav className={classes.drawer}>
                 <Hidden smUp implementation="css">
                     <Drawer
                         container={container}
@@ -196,18 +200,22 @@ export default function ResponsiveDrawer(props) {
                 </Hidden>
             </nav>
             <main className={classes.content}>
-                <div className={classes.toolbar}/>
-                <Route exact={true} path={"/"} component={Home}/>
-                <Route path={"/search"} component={Search}/>
-                <Route path="/setting" component={Setting}/>
-                <Route path="/qna" component={QnAMail}/>
-                <Route path="/result" component={Result}/>
+                <div className={classes.toolbar} />
+                <Route exact path="/" component={ Home } />
+                <Route exact path="/search" component={ Search } />
+                <Route exact path="/setting" component={ Setting } />
+                <Route exact path="/qna" component={ QnAMail } />
+                <Route exact path="/result" component={ Result } />
             </main>
+            <AppBar position="fixed" color="primary" className={classes.appBarbottom}>
+                <Toolbar>
+                </Toolbar>
+            </AppBar>
         </div>
     );
 }
 
-ResponsiveDrawer.propTypes = {
+App.propTypes = {
     // Injected by the documentation to work in an iframe.
     // You won't need it on your project.
     container: PropTypes.object,

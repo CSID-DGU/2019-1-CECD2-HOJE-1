@@ -25,6 +25,16 @@ var _TextField = _interopRequireDefault(require("@material-ui/core/TextField"));
 
 var _electron = require("electron");
 
+var _Box = _interopRequireDefault(require("@material-ui/core/Box"));
+
+var _PlayArrow = _interopRequireDefault(require("@material-ui/icons/PlayArrow"));
+
+var _Pause = _interopRequireDefault(require("@material-ui/icons/Pause"));
+
+var _Stop = _interopRequireDefault(require("@material-ui/icons/Stop"));
+
+var _FolderOutlined = _interopRequireDefault(require("@material-ui/icons/FolderOutlined"));
+
 var useStyles = (0, _styles.makeStyles)(function (theme) {
   return {
     root: {
@@ -42,10 +52,14 @@ var useStyles = (0, _styles.makeStyles)(function (theme) {
     },
     spacer: {
       flex: '1 1 auto'
+    },
+    textfield: {
+      marginLeft: theme.spacing(1),
+      marginRight: theme.spacing(1),
+      backgroundColor: '#ffffff'
     }
   };
 });
-var currentPath = '';
 
 function SearchHeader() {
   var classes = useStyles();
@@ -69,61 +83,90 @@ function SearchHeader() {
       _electron.ipcRenderer.removeAllListeners('SEARCH_START');
     };
   });
-  return _react["default"].createElement(_Grid["default"], {
+  return _react["default"].createElement(_Box["default"], {
+    style: {
+      background: 'linear-gradient( #f1f8e9, #ffffff )',
+      height: 74,
+      borderTop: '1px solid',
+      borderColor: '#c5e1a5',
+      borderTopRightRadius: '10px',
+      borderTopLeftRadius: '10px'
+    }
+  }, _react["default"].createElement(_Grid["default"], {
     container: true,
     direction: "row",
     justify: "flex-start",
     alignItems: "center",
-    spacing: 2
+    spacing: 2,
+    style: {
+      paddingTop: 15,
+      paddingLeft: 20,
+      paddingRight: 30,
+      height: 74
+    }
   }, _react["default"].createElement(_Grid["default"], {
     item: true,
     xs: 12,
-    sm: 8
+    sm: 10
+  }, _react["default"].createElement(_Grid["default"], {
+    container: true,
+    spacing: 1,
+    alignItems: "flex-end"
+  }, _react["default"].createElement(_Grid["default"], {
+    item: true
+  }, _react["default"].createElement(_FolderOutlined["default"], null)), _react["default"].createElement(_Grid["default"], {
+    item: true,
+    xs: 11
   }, _react["default"].createElement(_TextField["default"], {
-    id: "outlined-read-only-input",
-    label: "\uAC80\uC0AC\uC911 \uD30C\uC77C",
-    margin: "normal",
-    InputProps: {
-      readOnly: true
-    },
-    variant: "outlined",
+    id: "input-with-icon-grid",
+    label: "\uAC80\uC0AC \uACBD\uB85C",
     value: path,
     fullWidth: true
-  })), _react["default"].createElement("div", {
+  })))), _react["default"].createElement("div", {
     className: classes.spacer
   }), _react["default"].createElement("div", {
     hidden: puase % 2 === 0 ? false : true
   }, _react["default"].createElement(_Fab["default"], {
     variant: "extended",
-    color: "primary",
-    "aria-label": "Add",
-    className: classes.margin,
+    style: {
+      backgroundColor: '#e6ee9c',
+      color: '#000000'
+    },
+    "aria-label": "Pause",
     onClick: function onClick() {
       setPuase(1);
 
       _electron.ipcRenderer.send('PAUSE_SEARCH', true);
     }
-  }, "\uC77C\uC2DC \uC911\uC9C0")), _react["default"].createElement("div", {
+  }, _react["default"].createElement(_Pause["default"], null))), _react["default"].createElement("div", {
     hidden: puase % 2 === 1 ? false : true
   }, _react["default"].createElement(_Fab["default"], {
     variant: "extended",
-    color: "primary",
-    "aria-label": "Add",
-    className: classes.margin,
+    style: {
+      backgroundColor: '#e6ee9c',
+      color: '#000000'
+    },
+    "aria-label": "Restart",
     onClick: function onClick() {
       setPuase(0);
 
       _electron.ipcRenderer.send('RESTART_SEARCH', true);
     }
-  }, "\uB2E4\uC2DC \uC2DC\uC791")), _react["default"].createElement(_Fab["default"], {
+  }, _react["default"].createElement(_PlayArrow["default"], null))), _react["default"].createElement("div", {
+    style: {
+      width: 14
+    }
+  }), _react["default"].createElement(_Fab["default"], {
     variant: "extended",
-    color: "primary",
-    "aria-label": "Add",
-    className: classes.margin,
+    style: {
+      backgroundColor: '#e6ee9c',
+      color: '#000000'
+    },
+    "aria-label": "Stop",
     component: _reactRouterDom.Link,
     to: "/result",
     onClick: function onClick() {
       _electron.ipcRenderer.send('STOP_SEARCH', true);
     }
-  }, "\uAC80\uC0AC \uC911\uC9C0"));
+  }, _react["default"].createElement(_Stop["default"], null))));
 }

@@ -29,8 +29,6 @@ var _propTypes = _interopRequireDefault(require("prop-types"));
 
 var _styles = require("@material-ui/core/styles");
 
-var _electron = require("electron");
-
 var _Grid = _interopRequireDefault(require("@material-ui/core/Grid"));
 
 var _Fab = _interopRequireDefault(require("@material-ui/core/Fab"));
@@ -47,7 +45,9 @@ var _Paper = _interopRequireDefault(require("@material-ui/core/Paper"));
 
 var _Settings = _interopRequireDefault(require("@material-ui/icons/Settings"));
 
-var _Button = _interopRequireDefault(require("@material-ui/core/Button"));
+var _core = require("@material-ui/core");
+
+var _Alarm = _interopRequireDefault(require("@material-ui/icons/Alarm"));
 
 var _List = _interopRequireDefault(require("@material-ui/core/List"));
 
@@ -60,6 +60,8 @@ var _ListItemText = _interopRequireDefault(require("@material-ui/core/ListItemTe
 var _Checkbox = _interopRequireDefault(require("@material-ui/core/Checkbox"));
 
 var _reg = _interopRequireDefault(require("../../../reg/reg"));
+
+var _electron = require("electron");
 
 var _Typography = _interopRequireDefault(require("@material-ui/core/Typography"));
 
@@ -92,6 +94,29 @@ var useStyles = (0, _styles.makeStyles)(function (theme) {
     },
     spacer: {
       flex: '1 1 auto'
+    },
+    paper: {
+      height: 500,
+      maxHeight: '100%',
+      width: '100%',
+      background: '#ffffff'
+    },
+    paperUp: {
+      height: 100,
+      maxHeight: '100%',
+      width: '100%'
+    },
+    paperDown: {
+      height: 400,
+      maxHeight: '100%',
+      width: '100%'
+    },
+    tree: {
+      width: '100%',
+      backgroundColor: theme.palette.background.paper,
+      position: 'relative',
+      overflow: 'auto',
+      maxHeight: 400
     }
   };
 });
@@ -302,33 +327,61 @@ function Search() {
 
   return _react["default"].createElement("div", {
     className: classes.root
+  }, _react["default"].createElement(_core.Box, {
+    className: classes.paper,
+    borderBottom: 1,
+    borderLeft: 1,
+    borderRight: 1,
+    borderRadius: 10,
+    borderColor: "#c5e1a5"
   }, _react["default"].createElement(TabPanel, {
     value: value,
     index: 0
+  }, _react["default"].createElement(_core.Box, {
+    style: {
+      background: 'linear-gradient( #f1f8e9, #ffffff )',
+      height: 74,
+      borderTop: '1px solid',
+      borderColor: '#c5e1a5',
+      borderTopRightRadius: '10px',
+      borderTopLeftRadius: '10px'
+    }
   }, _react["default"].createElement(_Grid["default"], {
     container: true,
     direction: "row",
     justify: "flex-start",
     alignItems: "center",
-    spacing: 2
+    spacing: 2,
+    style: {
+      paddingTop: 15,
+      paddingLeft: 22,
+      paddingRight: 10,
+      height: 74
+    }
   }, _react["default"].createElement(_Grid["default"], {
     item: true,
     xs: 12,
     sm: 8
+  }, _react["default"].createElement(_Grid["default"], {
+    container: true,
+    spacing: 1,
+    alignItems: "flex-end"
+  }, _react["default"].createElement(_Grid["default"], {
+    item: true
+  }, _react["default"].createElement(_Alarm["default"], null)), _react["default"].createElement(_Grid["default"], {
+    item: true
   }, _react["default"].createElement(_TextField["default"], {
-    id: "outlined-read-only-input",
+    id: "input-with-icon-grid",
     label: "\uCD5C\uADFC \uAC80\uC0AC",
-    margin: "normal",
-    InputProps: {
-      readOnly: true
-    },
-    value: birth,
-    variant: "outlined"
-  }, "\uAC80\uC0AC\uB0B4\uC5ED")), _react["default"].createElement("div", {
+    value: birth
+  })))), _react["default"].createElement("div", {
     className: classes.spacer
   }), _react["default"].createElement(_Fab["default"], {
     variant: "extended",
-    color: "primary",
+    style: {
+      backgroundColor: '#e6ee9c',
+      color: '#000000'
+    },
     "aria-label": "Add",
     className: classes.margin,
     disabled: selectedFile.length === 0 ? true : false,
@@ -342,14 +395,13 @@ function Search() {
           switch (_context.prev = _context.next) {
             case 0:
               if (open === true) setOpen(false);
-              setReRender(false);
               setValue(1);
 
               _electron.ipcRenderer.send('START_SEARCH', checked);
 
               _electron.ipcRenderer.send('PATH', selectedFile);
 
-            case 5:
+            case 4:
             case "end":
               return _context.stop();
           }
@@ -369,7 +421,7 @@ function Search() {
       timeout: 350
     }), _react["default"].createElement(_Paper["default"], null, _react["default"].createElement(_List["default"], {
       className: classes.root
-    }, _reg["default"].reg.map(function (value) {
+    }, _reg["default"].searchSetting.map(function (value) {
       var labelId = "op-".concat(value.id);
       return _react["default"].createElement(_ListItem["default"], {
         disabled: value.disable,
@@ -377,10 +429,10 @@ function Search() {
         role: undefined,
         dense: true,
         button: true,
-        onClick: handleToggle(value.key)
+        onClick: handleToggle(value.name)
       }, _react["default"].createElement(_ListItemIcon["default"], null, _react["default"].createElement(_Checkbox["default"], {
         edge: "start",
-        checked: checked.indexOf(value.key) !== -1,
+        checked: checked.indexOf(value.name) !== -1,
         tabIndex: -1,
         disableRipple: true,
         inputProps: {
@@ -388,23 +440,30 @@ function Search() {
         }
       })), _react["default"].createElement(_ListItemText["default"], {
         id: labelId,
-        primary: "".concat(value.key)
+        primary: "".concat(value.name)
       }));
     }))));
-  })), _react["default"].createElement(_Grid["default"], {
+  }))), _react["default"].createElement(_Grid["default"], {
     container: true,
     justify: "center",
     alignItems: "center",
-    spacing: 5
+    spacing: 5,
+    style: {
+      paddingLeft: 25,
+      paddingRight: 5,
+      paddingTop: 10
+    }
   }, _react["default"].createElement(_Grid["default"], {
     item: true,
     xs: true
+  }, _react["default"].createElement(_List["default"], {
+    className: classes.tree
   }, _react["default"].createElement(_Tree["default"], {
     onChecked: onChecked,
     onToggle: onToggle,
     data: path_data
-  })))), _react["default"].createElement(TabPanel, {
+  }))))), _react["default"].createElement(TabPanel, {
     value: value,
     index: 1
-  }, _react["default"].createElement(_SearchHeader["default"], null), _react["default"].createElement(_SearchBody["default"], null)));
+  }, _react["default"].createElement(_SearchHeader["default"], null), _react["default"].createElement(_SearchBody["default"], null))));
 }

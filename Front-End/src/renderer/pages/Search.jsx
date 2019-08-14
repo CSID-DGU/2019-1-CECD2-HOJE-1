@@ -1,8 +1,8 @@
 import React, {useEffect} from 'react';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import {makeStyles} from '@material-ui/core/styles';
-import {ipcRenderer} from'electron';
+import { makeStyles } from '@material-ui/core/styles';
+
 import Grid from '@material-ui/core/Grid';
 import Fab from '@material-ui/core/Fab';
 import TextField from '@material-ui/core/TextField';
@@ -11,7 +11,8 @@ import Fade from '@material-ui/core/Fade';
 import IconButton from '@material-ui/core/IconButton';
 import Paper from '@material-ui/core/Paper';
 import SettingIcon from '@material-ui/icons/Settings';
-import Button from '@material-ui/core/Button';
+import { Box } from '@material-ui/core';
+import ClockIcon from '@material-ui/icons/Alarm';
 
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -19,8 +20,9 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
 
-import setting_data from '../../../reg/reg';
 
+import setting_data from '../../../reg/reg';
+import {ipcRenderer} from'electron';
 import Typography from '@material-ui/core/Typography';
 
 import Tree from './Tree';
@@ -47,6 +49,29 @@ const useStyles = makeStyles(theme => ({
     },
     spacer: {
         flex: '1 1 auto',
+    },
+    paper: {
+        height: 500,
+        maxHeight: '100%',
+        width: '100%',
+        background: '#ffffff',
+    },
+    paperUp: {
+        height: 100,
+        maxHeight: '100%',
+        width: '100%',
+    },
+    paperDown: {
+        height: 400,
+        maxHeight: '100%',
+        width: '100%',
+    },
+    tree: {
+        width: '100%',
+        backgroundColor: theme.palette.background.paper,
+        position: 'relative',
+        overflow: 'auto',
+        maxHeight: 400,
     },
 }));
 const moment = require('moment');
@@ -87,12 +112,15 @@ export default function Search() {
     const [placement, setPlacement] = React.useState();
     const [selectedFile, setSelectedFile] = React.useState([]);
     const [ReRender, setReRender] = React.useState(false);
+
     const [birth,setBirth] = React.useState('');
+
     const handleClick = newPlacement => event => {
         setAnchorEl(event.currentTarget);
         setOpen(prev => placement !== newPlacement || !prev);
         setPlacement(newPlacement);
     };
+
     useEffect(()=>{
         fs.exists(`${__dirname}/../../../resultfile.json`,(exists)=>{
             if(exists){
@@ -205,81 +233,83 @@ export default function Search() {
 
     return (
         <div className={classes.root}>
-            <TabPanel value={value} index={0}>{ /* 검색 시작 화면 */}
-                <Grid container direction="row" justify="flex-start" alignItems="center" spacing={2}>{/* 검색화면 헤더 */}
-                    <Grid item xs={12} sm={8}>{/* 최근 검사 일자 */}
-                        <TextField
-                            id="outlined-read-only-input"
-                            label="최근 검사"
-                            margin="normal"
-                            InputProps={{
-                                readOnly: true,
-                            }}
-                            value={birth}
-                            variant="outlined"
-                        >검사내역</TextField>
+            <Box className={classes.paper} borderBottom={1} borderLeft={1} borderRight={1} borderRadius={10} borderColor="#c5e1a5">
+                <TabPanel value={value} index={0}>{ /* 검색 시작 화면 */}
+                    <Box style={{ background: 'linear-gradient( #f1f8e9, #ffffff )', height: 74, borderTop: '1px solid', borderColor: '#c5e1a5', borderTopRightRadius: '10px', borderTopLeftRadius: '10px' }}>
+                        <Grid container direction="row" justify="flex-start" alignItems="center" spacing={2} style={{ paddingTop: 15, paddingLeft: 22, paddingRight: 10, height: 74 }}>{/* 검색화면 헤더 */}
+                            <Grid item xs={12} sm={8}>{/* 최근 검사 일자 */}
+                                <Grid container spacing={1} alignItems="flex-end">
+                                    <Grid item>
+                                        <ClockIcon />
+                                    </Grid>
+                                    <Grid item>
+                                        <TextField id="input-with-icon-grid" label="최근 검사" value={birth} />
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                            <div className={classes.spacer} />
+                            {/* 검색 시작 버튼 */}
+                            <Fab
+                                variant="extended"
+                                style={{ backgroundColor: '#e6ee9c', color: '#000000', }}
+                                aria-label="Add"
+                                className={classes.margin}
+                                disabled={selectedFile.length === 0 ? true : false}
+                                onClick={async () => {
+                                    if (open === true) setOpen(false);
+                                    setValue(1);
+                                    ipcRenderer.send('START_SEARCH', checked);
+                                    ipcRenderer.send('PATH', selectedFile);
+                                }}
+                            >
+                                검사 시작
+                            </Fab>
+                            {/* 검색 설정 */}
+                            <IconButton onClick={handleClick('bottom-end')}>
+                                <SettingIcon />
+                            </IconButton>
+                            <Popper open={open} anchorEl={anchorEl} placement={placement} transition >
+                                {({ TransitionProps }) => (
+                                    <Fade {...TransitionProps} timeout={350}>
+                                        <Paper>
+                                            <List className={classes.root}>
+                                                {setting_data.searchSetting.map(value => {
+                                                    const labelId = `op-${value.id}`;
+                                                    return (
+                                                        <ListItem disabled={value.disable} key={value.id} role={undefined} dense button onClick={handleToggle(value.name)}>
+                                                            <ListItemIcon>
+                                                                <Checkbox
+                                                                    edge="start"
+                                                                    checked={checked.indexOf(value.name) !== -1}
+                                                                    tabIndex={-1}
+                                                                    disableRipple
+                                                                    inputProps={{ 'aria-labelledby': labelId }}
+                                                                />
+                                                            </ListItemIcon>
+                                                            <ListItemText id={labelId} primary={`${value.name}`} />
+                                                        </ListItem>
+                                                    );
+                                                })}
+                                            </List>
+                                        </Paper>
+                                    </Fade>
+                                )}
+                            </Popper>
+                        </Grid>
+                    </Box>
+                    <Grid container justify="center" alignItems="center" spacing={5} style={{ paddingLeft: 25, paddingRight: 5, paddingTop: 10 }}>{/* 검색 경로 설정 */}
+                        <Grid item xs>
+                            <List className={classes.tree} >
+                                <Tree onChecked={onChecked} onToggle={onToggle} data={path_data} />
+                            </List>
+                        </Grid>
                     </Grid>
-                    <div className={classes.spacer}/>
-                    {/* 검색 시작 버튼 */}
-                    <Fab
-                        variant="extended"
-                        color="primary"
-                        aria-label="Add"
-                        className={classes.margin}
-                        disabled={selectedFile.length === 0 ? true : false}
-                        onClick={async () => {
-                            if (open === true) setOpen(false);
-                            setReRender(false);
-                            setValue(1);
-                            ipcRenderer.send('START_SEARCH',checked);
-                            ipcRenderer.send('PATH',selectedFile);
-                        }}
-                    >
-                        검사 시작
-                    </Fab>
-                    {/* 검색 설정 */}
-                    <IconButton onClick={handleClick('bottom-end')}>
-                        <SettingIcon/>
-                    </IconButton>
-                    <Popper open={open} anchorEl={anchorEl} placement={placement} transition>
-                        {({TransitionProps}) => (
-                            <Fade {...TransitionProps} timeout={350}>
-                                <Paper>
-                                    <List className={classes.root}>
-                                        {setting_data.reg.map(value => {
-                                            const labelId = `op-${value.id}`;
-                                            return (
-                                                <ListItem disabled={value.disable} key={value.id} role={undefined} dense
-                                                          button onClick={handleToggle(value.key)}>
-                                                    <ListItemIcon>
-                                                        <Checkbox
-                                                            edge="start"
-                                                            checked={checked.indexOf(value.key) !== -1}
-                                                            tabIndex={-1}
-                                                            disableRipple
-                                                            inputProps={{'aria-labelledby': labelId}}
-                                                        />
-                                                    </ListItemIcon>
-                                                    <ListItemText id={labelId} primary={`${value.key}`}/>
-                                                </ListItem>
-                                            );
-                                        })}
-                                    </List>
-                                </Paper>
-                            </Fade>
-                        )}
-                    </Popper>
-                </Grid>
-                <Grid container justify="center" alignItems="center" spacing={5}>{/* 검색 경로 설정 */}
-                    <Grid item xs>
-                        {<Tree onChecked={onChecked} onToggle={onToggle} data={path_data}/>}
-                    </Grid>
-                </Grid>
-            </TabPanel>
-            <TabPanel value={value} index={1}>{/* 검색중 페이지 */}
-                <SearchHeader/>
-                <SearchBody/>
-            </TabPanel>
+                </TabPanel>
+                <TabPanel value={value} index={1}>{/* 검색중 페이지 */}
+                    <SearchHeader />
+                    <SearchBody/>
+                </TabPanel>
+            </Box>
         </div>
     );
 }

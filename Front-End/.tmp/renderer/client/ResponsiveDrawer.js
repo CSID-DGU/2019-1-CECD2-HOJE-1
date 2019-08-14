@@ -5,7 +5,7 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports["default"] = ResponsiveDrawer;
+exports["default"] = App;
 
 var _slicedToArray2 = _interopRequireDefault(require("@babel/runtime/helpers/slicedToArray"));
 
@@ -31,10 +31,6 @@ var _List = _interopRequireDefault(require("@material-ui/core/List"));
 
 var _ListItem = _interopRequireDefault(require("@material-ui/core/ListItem"));
 
-var _ListItemIcon = _interopRequireDefault(require("@material-ui/core/ListItemIcon"));
-
-var _ListItemText = _interopRequireDefault(require("@material-ui/core/ListItemText"));
-
 var _Toolbar = _interopRequireDefault(require("@material-ui/core/Toolbar"));
 
 var _Typography = _interopRequireDefault(require("@material-ui/core/Typography"));
@@ -42,6 +38,8 @@ var _Typography = _interopRequireDefault(require("@material-ui/core/Typography")
 var _styles = require("@material-ui/core/styles");
 
 var _IconButton = _interopRequireDefault(require("@material-ui/core/IconButton"));
+
+var _Tooltip = _interopRequireDefault(require("@material-ui/core/Tooltip"));
 
 var _Menu = _interopRequireDefault(require("@material-ui/icons/Menu"));
 
@@ -69,7 +67,7 @@ var _Result = _interopRequireDefault(require("../../renderer/pages/Result"));
 
 var _downloadFile = _interopRequireDefault(require("../../main/FrameTest/downloadFile"));
 
-var drawerWidth = 180;
+var drawerWidth = 60;
 var useStyles = (0, _styles.makeStyles)(function (theme) {
   return {
     root: {
@@ -80,10 +78,17 @@ var useStyles = (0, _styles.makeStyles)(function (theme) {
       flexShrink: 0
     }),
     appBar: (0, _defineProperty2["default"])({
-      marginLeft: drawerWidth
+      marginLeft: drawerWidth,
+      backgroundColor: '#aed581'
     }, theme.breakpoints.up('sm'), {
       width: "calc(100% - ".concat(drawerWidth, "px)")
     }),
+    appBarbottom: {
+      height: 10,
+      top: 'auto',
+      bottom: 0,
+      backgroundColor: '#bdbdbd'
+    },
     menuButton: (0, _defineProperty2["default"])({
       marginRight: theme.spacing(2)
     }, theme.breakpoints.up('sm'), {
@@ -91,21 +96,25 @@ var useStyles = (0, _styles.makeStyles)(function (theme) {
     }),
     toolbar: theme.mixins.toolbar,
     drawerPaper: {
+      backgroundColor: '#7cb342',
       width: drawerWidth
     },
     content: {
       flexGrow: 1,
+      padding: theme.spacing(3),
+      height: '100%'
+    },
+    footer: {
+      flexGrow: 1,
       padding: theme.spacing(3)
     },
     active: {
-      background: '#9e9e9e'
+      background: '#f5f5f5'
     }
   };
 });
 
-function ResponsiveDrawer(props) {
-  var _React$createElement;
-
+function App(props) {
   var container = props.container;
   var classes = useStyles();
   var theme = (0, _styles.useTheme)();
@@ -115,24 +124,21 @@ function ResponsiveDrawer(props) {
       mobileOpen = _React$useState2[0],
       setMobileOpen = _React$useState2[1];
 
+  var _React$useState3 = _react["default"].useState(false),
+      _React$useState4 = (0, _slicedToArray2["default"])(_React$useState3, 2),
+      updateActive = _React$useState4[0],
+      setUpdateActive = _React$useState4[1];
+
   function handleDrawerToggle() {
     setMobileOpen(!mobileOpen);
-  } // Forced ReRendering
-
-
-  var _React$useState3 = _react["default"].useState(),
-      _React$useState4 = (0, _slicedToArray2["default"])(_React$useState3, 2),
-      updateState = _React$useState4[1];
-
-  var forceUpdate = _react["default"].useCallback(function () {
-    return updateState({});
-  }, []); // 위에 툴바
+  } // 위에 툴바
 
 
   var drawerToolbar = _react["default"].createElement(_Toolbar["default"], null, _react["default"].createElement(_Grid["default"], {
     container: true,
     direction: "row",
-    justify: "space-between"
+    justify: "space-between",
+    alignItems: "center"
   }, _react["default"].createElement(_Grid["default"], null, _react["default"].createElement(_IconButton["default"], {
     color: "inherit",
     "aria-label": "Open drawer",
@@ -140,14 +146,9 @@ function ResponsiveDrawer(props) {
     onClick: handleDrawerToggle,
     className: classes.menuButton
   }, _react["default"].createElement(_Menu["default"], null)), _react["default"].createElement(_Typography["default"], {
-    variant: "h6"
-  }, "HOJE-OCR")), _react["default"].createElement(_Grid["default"], null, _react["default"].createElement(_IconButton["default"], {
-    onClick: function onClick() {
-      console.log('Download...');
-      (0, _downloadFile["default"])();
-      forceUpdate();
-    }
-  }, _react["default"].createElement(_Update["default"], null))))); // 왼쪽 메뉴 부분
+    variant: "h6",
+    noWrap: true
+  }, "HOJE-OCR")))); // 왼쪽 메뉴 부분
 
 
   var drawer = _react["default"].createElement("div", null, _react["default"].createElement("div", {
@@ -158,35 +159,52 @@ function ResponsiveDrawer(props) {
     component: _reactRouterDom.NavLink,
     exact: true,
     to: "/"
-  }, _react["default"].createElement(_ListItemIcon["default"], null, _react["default"].createElement(_Home["default"], null)), _react["default"].createElement(_ListItemText["default"], {
-    primary: "\uD648"
-  })), _react["default"].createElement(_ListItem["default"], {
+  }, _react["default"].createElement(_Tooltip["default"], {
+    title: "\uD648",
+    placement: "top"
+  }, _react["default"].createElement(_Home["default"], null))), _react["default"].createElement(_ListItem["default"], {
     button: true,
     activeClassName: classes.active,
     component: _reactRouterDom.NavLink,
+    exact: true,
     to: "/search"
-  }, _react["default"].createElement(_ListItemIcon["default"], null, _react["default"].createElement(_Search["default"], null)), _react["default"].createElement(_ListItemText["default"], {
-    primary: "\uAC80\uC0AC"
-  })), _react["default"].createElement(_ListItem["default"], {
+  }, _react["default"].createElement(_Tooltip["default"], {
+    title: "\uAC80\uC0AC",
+    placement: "top"
+  }, _react["default"].createElement(_Search["default"], null))), _react["default"].createElement(_ListItem["default"], {
     button: true,
     activeClassName: classes.active,
     component: _reactRouterDom.NavLink,
+    exact: true,
     to: "/result"
-  }, _react["default"].createElement(_ListItemIcon["default"], null, _react["default"].createElement(_Assignment["default"], null)), _react["default"].createElement(_ListItemText["default"], {
-    primary: "\uAC80\uCD9C\uB0B4\uC5ED"
-  })), _react["default"].createElement(_ListItem["default"], {
+  }, _react["default"].createElement(_Tooltip["default"], {
+    title: "\uACB0\uACFC",
+    placement: "top"
+  }, _react["default"].createElement(_Assignment["default"], null))), _react["default"].createElement(_ListItem["default"], {
     button: true,
     activeClassName: classes.active,
     component: _reactRouterDom.NavLink,
+    exact: true,
     to: "/setting"
-  }, _react["default"].createElement(_ListItemIcon["default"], null, _react["default"].createElement(_Settings["default"], null)), _react["default"].createElement(_ListItemText["default"], {
-    primary: "\uC124\uC815"
-  })), _react["default"].createElement(_ListItem["default"], (_React$createElement = {
+  }, _react["default"].createElement(_Tooltip["default"], {
+    title: "\uC124\uC815",
+    placement: "top"
+  }, _react["default"].createElement(_Settings["default"], null))), _react["default"].createElement(_ListItem["default"], {
     button: true,
-    activeClassName: classes.active
-  }, (0, _defineProperty2["default"])(_React$createElement, "activeClassName", classes.active), (0, _defineProperty2["default"])(_React$createElement, "component", _reactRouterDom.NavLink), (0, _defineProperty2["default"])(_React$createElement, "to", "/qna"), _React$createElement), _react["default"].createElement(_ListItemIcon["default"], null, _react["default"].createElement(_Mail["default"], null)), _react["default"].createElement(_ListItemText["default"], {
-    primary: "\uBB38\uC758"
-  }))));
+    activeClassName: classes.active,
+    component: _reactRouterDom.NavLink,
+    exact: true,
+    to: "/qna"
+  }, _react["default"].createElement(_Tooltip["default"], {
+    title: "\uBB38\uC758",
+    placement: "top"
+  }, _react["default"].createElement(_Mail["default"], null))), _react["default"].createElement(_ListItem["default"], {
+    button: true,
+    activeClassName: classes.active,
+    component: _reactRouterDom.NavLink,
+    exact: true,
+    to: "/test"
+  }, _react["default"].createElement(_Mail["default"], null))));
 
   return _react["default"].createElement("div", {
     className: classes.root
@@ -194,8 +212,7 @@ function ResponsiveDrawer(props) {
     position: "fixed",
     className: classes.appBar
   }, drawerToolbar), _react["default"].createElement("nav", {
-    className: classes.drawer,
-    "aria-label": "Mailbox folders"
+    className: classes.drawer
   }, _react["default"].createElement(_Hidden["default"], {
     smUp: true,
     implementation: "css"
@@ -230,21 +247,29 @@ function ResponsiveDrawer(props) {
     path: "/",
     component: _Home2["default"]
   }), _react["default"].createElement(_reactRouterDom.Route, {
+    exact: true,
     path: "/search",
     component: _Search2["default"]
   }), _react["default"].createElement(_reactRouterDom.Route, {
+    exact: true,
     path: "/setting",
     component: _Setting["default"]
   }), _react["default"].createElement(_reactRouterDom.Route, {
+    exact: true,
     path: "/qna",
     component: _QnAMail["default"]
   }), _react["default"].createElement(_reactRouterDom.Route, {
+    exact: true,
     path: "/result",
     component: _Result["default"]
-  })));
+  })), _react["default"].createElement(_AppBar["default"], {
+    position: "fixed",
+    color: "primary",
+    className: classes.appBarbottom
+  }, _react["default"].createElement(_Toolbar["default"], null)));
 }
 
-ResponsiveDrawer.propTypes = {
+App.propTypes = {
   // Injected by the documentation to work in an iframe.
   // You won't need it on your project.
   container: _propTypes["default"].object

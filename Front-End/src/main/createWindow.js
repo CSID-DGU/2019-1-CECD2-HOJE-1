@@ -2,8 +2,8 @@ import {BrowserWindow} from 'electron' ;
 class MainWindow {
     constructor() {
         this.window = new BrowserWindow({
-            width: 1500,
-            height: 700,
+            width: 1200,
+            height: 612,
             show : false,
             webPreferences : {
                 nodeIntegration : true

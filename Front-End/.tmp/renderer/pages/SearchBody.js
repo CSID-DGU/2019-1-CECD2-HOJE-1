@@ -7,9 +7,7 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports["default"] = SearchBefore;
-
-var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
+exports["default"] = SearchBody;
 
 var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
 
@@ -22,6 +20,8 @@ var _getPrototypeOf2 = _interopRequireDefault(require("@babel/runtime/helpers/ge
 var _assertThisInitialized2 = _interopRequireDefault(require("@babel/runtime/helpers/assertThisInitialized"));
 
 var _inherits2 = _interopRequireDefault(require("@babel/runtime/helpers/inherits"));
+
+var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
@@ -58,8 +58,6 @@ var _FiberManualRecord = _interopRequireDefault(require("@material-ui/icons/Fibe
 var _Error = _interopRequireDefault(require("@material-ui/icons/Error"));
 
 var _Warning = _interopRequireDefault(require("@material-ui/icons/Warning"));
-
-var _uploadLog = _interopRequireDefault(require("../../main/FrameTest/uploadLog"));
 
 var _require = require('electron'),
     ipcRenderer = _require.ipcRenderer;
@@ -106,14 +104,15 @@ TabPanel.propTypes = {
   value: _propTypes["default"].any.isRequired
 };
 
-function SearchBefore() {
+function SearchBody() {
   // console.log('body rendering......');
   var classes = useStyles();
 
   var _useState = (0, _react.useState)([]),
       _useState2 = (0, _slicedToArray2["default"])(_useState, 2),
       rows = _useState2[0],
-      setRow = _useState2[1];
+      setRow = _useState2[1]; //배열 결과를 메인으로 넘기기 위해 사용
+
 
   (0, _react.useEffect)(function () {
     ipcRenderer.on('RESULT_DICTIONARY',
@@ -243,6 +242,30 @@ function SearchBefore() {
 
       (0, _classCallCheck2["default"])(this, MuiVirtualizedTable);
       _this = (0, _possibleConstructorReturn2["default"])(this, (0, _getPrototypeOf2["default"])(MuiVirtualizedTable).call(this, props));
+      (0, _defineProperty2["default"])((0, _assertThisInitialized2["default"])(_this), "headerRenderer", function (_ref2) {
+        var label = _ref2.label,
+            columnIndex = _ref2.columnIndex;
+        var _this$props = _this.props,
+            headerHeight = _this$props.headerHeight,
+            columns = _this$props.columns,
+            classes = _this$props.classes;
+        return _react["default"].createElement(_TableCell["default"], {
+          component: "div",
+          className: (0, _clsx3["default"])(classes.tableCell, classes.flexContainer, classes.noClick),
+          variant: "head",
+          style: {
+            height: headerHeight,
+            paddingBottom: 0
+          },
+          align: columns[columnIndex].numeric || false ? 'right' : 'left'
+        }, _react["default"].createElement("span", {
+          style: {
+            fontSize: 16,
+            fontWeight: 'bold',
+            color: '#212121'
+          }
+        }, label));
+      });
       _this.getRowClassName = _this.getRowClassName.bind((0, _assertThisInitialized2["default"])(_this));
       _this.cellRenderer = _this.cellRenderer.bind((0, _assertThisInitialized2["default"])(_this));
       _this.headerRenderer = _this.headerRenderer.bind((0, _assertThisInitialized2["default"])(_this));
@@ -251,23 +274,23 @@ function SearchBefore() {
 
     (0, _createClass2["default"])(MuiVirtualizedTable, [{
       key: "getRowClassName",
-      value: function getRowClassName(_ref2) {
-        var index = _ref2.index;
-        var _this$props = this.props,
-            classes = _this$props.classes,
-            onRowClick = _this$props.onRowClick;
+      value: function getRowClassName(_ref3) {
+        var index = _ref3.index;
+        var _this$props2 = this.props,
+            classes = _this$props2.classes,
+            onRowClick = _this$props2.onRowClick;
         return (0, _clsx3["default"])(classes.tableRow, classes.flexContainer, (0, _defineProperty2["default"])({}, classes.tableRowHover, index !== -1 && onRowClick != null));
       }
     }, {
       key: "cellRenderer",
-      value: function cellRenderer(_ref3) {
-        var cellData = _ref3.cellData,
-            columnIndex = _ref3.columnIndex;
-        var _this$props2 = this.props,
-            columns = _this$props2.columns,
-            classes = _this$props2.classes,
-            rowHeight = _this$props2.rowHeight,
-            onRowClick = _this$props2.onRowClick;
+      value: function cellRenderer(_ref4) {
+        var cellData = _ref4.cellData,
+            columnIndex = _ref4.columnIndex;
+        var _this$props3 = this.props,
+            columns = _this$props3.columns,
+            classes = _this$props3.classes,
+            rowHeight = _this$props3.rowHeight,
+            onRowClick = _this$props3.onRowClick;
         return _react["default"].createElement(_TableCell["default"], {
           component: "div",
           className: (0, _clsx3["default"])(classes.tableCell, classes.flexContainer, (0, _defineProperty2["default"])({}, classes.noClick, onRowClick == null)),
@@ -277,25 +300,6 @@ function SearchBefore() {
           },
           align: columnIndex != null && columns[columnIndex].numeric || false ? 'right' : 'left'
         }, columnIndex === 2 ? cellDisplay(cellData) : columnIndex === 4 ? iconDisplay(cellData) : cellData);
-      }
-    }, {
-      key: "headerRenderer",
-      value: function headerRenderer(_ref4) {
-        var label = _ref4.label,
-            columnIndex = _ref4.columnIndex;
-        var _this$props3 = this.props,
-            headerHeight = _this$props3.headerHeight,
-            columns = _this$props3.columns,
-            classes = _this$props3.classes;
-        return _react["default"].createElement(_TableCell["default"], {
-          component: "div",
-          className: (0, _clsx3["default"])(classes.tableCell, classes.flexContainer, classes.noClick),
-          variant: "head",
-          style: {
-            height: headerHeight
-          },
-          align: columns[columnIndex].numeric || false ? 'right' : 'left'
-        }, _react["default"].createElement("span", null, label));
       }
     }, {
       key: "render",
@@ -382,8 +386,12 @@ function SearchBefore() {
   return _react["default"].createElement(_Paper["default"], {
     style: {
       height: 400,
-      width: '100%'
-    }
+      width: '100%',
+      border: 100,
+      borderColor: '#000000',
+      paddingLeft: 10
+    },
+    elevation: 0
   }, _react["default"].createElement(VirtualizedTable, {
     rowCount: rows.length,
     rowGetter: function rowGetter(_ref7) {
@@ -391,24 +399,24 @@ function SearchBefore() {
       return rows[index];
     },
     columns: [{
-      width: 200,
+      width: 200 + 84,
       label: '파일명',
       dataKey: 'fileName'
     }, {
-      width: 120,
+      width: 120 + 84,
       label: '분류',
       dataKey: 'classification'
     }, {
-      width: 120,
+      width: 120 + 84,
       label: '검출 내역',
       dataKey: 'detectList'
     }, {
-      width: 120,
+      width: 110 + 84,
       label: '검출 개수',
       dataKey: 'detectCount',
       numeric: true
     }, {
-      width: 120,
+      width: 110 + 84,
       label: '적합도',
       dataKey: 'fitness',
       numeric: true

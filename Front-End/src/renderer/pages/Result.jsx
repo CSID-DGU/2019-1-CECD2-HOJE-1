@@ -1,10 +1,9 @@
 import React, {useEffect, useState} from 'react';
-import {Link} from 'react-router-dom';
-import {ipcRenderer, shell} from 'electron';
+import { Link } from 'react-router-dom';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
-import {lighten, makeStyles, createMuiTheme, MuiThemeProvider} from '@material-ui/core/styles';
-import {red, yellow, green, blue} from '@material-ui/core/colors';
+import { lighten, makeStyles, createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
+import { red, yellow, green, blue } from '@material-ui/core/colors';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -14,13 +13,16 @@ import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
+import Box from '@material-ui/core/Box';
 import Checkbox from '@material-ui/core/Checkbox';
 import Fab from '@material-ui/core/Fab';
 import Tooltip from '@material-ui/core/Tooltip';
+
 import NormalIcon from '@material-ui/icons/FiberManualRecord'
 import WarningIcon from '@material-ui/icons/Error';
 import DangerIcon from '@material-ui/icons/Warning';
+
+import {ipcRenderer, shell} from 'electron';
 import masking from '../../main/FrameTest/masking';
 
 const path = require('path');
@@ -93,6 +95,7 @@ function EnhancedTableHead(props) {
                             active={orderBy === row.id}
                             direction={order}
                             onClick={createSortHandler(row.id)}
+                            style={{fontSize:16, fontWeight: 'bold', color: '#212121'}}
                         >
                             {row.label}
                         </TableSortLabel>
@@ -173,7 +176,8 @@ const useToolbarStyles = makeStyles(theme => ({
         flex: '1 1 auto',
     },
     actions: {
-        color: theme.palette.text.primary,
+        backgroundColor: '#e6ee9c',
+        color: '#000000',
     },
     title: {
         flex: '0 0 auto',
@@ -255,6 +259,10 @@ const useStyles = makeStyles(theme => ({
     },
     paper: {
         width: '100%',
+        border: '1px solid',
+        borderRadius: '10px',
+        borderColor: "#c5e1a5",
+        boxShadow: '2px 2px 2px',
     },
     table: {
         minWidth: 700,
@@ -262,21 +270,17 @@ const useStyles = makeStyles(theme => ({
     tableWrapper: {
         overflowX: 'auto',
     },
-    filepath: {
-        width: 140,
-    },
-    detectlist: {
-        width: 100,
-    },
 }));
 
 const theme = createMuiTheme({
     palette: {
-        primary: {main: green[500]}, // Purple and green play nicely together.
-        secondary: {main: yellow[500]}, // This is just green.A700 as hex.
-        error: {main: red[500]},
+        primary: { main: green[500] },
+        secondary: { main: yellow[500] },
+        error: { main: red[500] },
+        default: { main: blue[500] },
     },
 });
+
 
 export default function Result() {
     const classes = useStyles();
@@ -285,7 +289,7 @@ export default function Result() {
     const [orderBy, setOrderBy] = React.useState('formLevel');
     const [selected, setSelected] = React.useState([]);
     const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [rowsPerPage, setRowsPerPage] = React.useState(7);
     const EnhancedTableToolbar = props => {
         const classes = useToolbarStyles();
         const {numSelected, selected} = props;
@@ -300,11 +304,12 @@ export default function Result() {
                 className={clsx(classes.root, {
                     [classes.highlight]: numSelected > 0,
                 })}
+                style={{height: 74, background: 'linear-gradient( #f1f8e9, #fafafa )', borderTopRightRadius: '10px', borderTopLeftRadius: '10px'}}
             >
                 <div className={classes.title}>
                     {numSelected > 0 ? (
                         <Typography color="inherit" variant="subtitle1">
-                            {numSelected} selected
+                            {numSelected} 선택됨
                         </Typography>
                     ) : (
                         <Typography variant="h6" id="tableTitle">
@@ -345,7 +350,7 @@ export default function Result() {
                     }
                     {numSelected > 0 && numSelected === 1 && masked.length === 0 ? (
                         <Tooltip title="문의">
-                            <Fab className={classes.actions} variant="extended" label='문의' component={Link}
+                            <Fab className={classes.actions}  style={{marginLeft:10}} variant="extended" label='문의' component={Link}
                                  to='/qna' onClick={() => {
                                 ipcRenderer.send('RESULT1', selected.pop());
                             }}>문의</Fab>
@@ -465,8 +470,8 @@ export default function Result() {
     }
     return (
         <div className={classes.root}>
-            <Paper className={classes.paper}>
-                <EnhancedTableToolbar numSelected={selected.length} selected={selected}/>
+            <Box className={classes.paper}>
+                <EnhancedTableToolbar numSelected={selected.length} selected={selected} />
                 <div className={classes.tableWrapper}>
                     <Table
                         className={classes.table}
@@ -501,32 +506,32 @@ export default function Result() {
                                             <TableCell padding="checkbox">
                                                 <Checkbox
                                                     checked={isItemSelected}
-                                                    inputProps={{'aria-labelledby': labelId}}
+                                                    inputProps={{ 'aria-labelledby': labelId }}
                                                 />
                                             </TableCell>
-                                            <TableCell component="th" id={labelId} scope="row" padding="none">
-                                                <Tooltip title={row.filePath} placement="top"><Typography noWrap>{row.fileName}</Typography></Tooltip>
+                                            <TableCell style={{width: 200+84}} component="th" id={labelId} scope="row" padding="none">
+                                                <Tooltip title={row.filePath} placement="top"><Typography  noWrap>{row.fileName}</Typography></Tooltip>
                                             </TableCell>
-                                            <TableCell className={classes.detectlist} wrap='nowrap'
-                                                       align="right">{row.detectList}</TableCell>
-                                            <TableCell align="right">{row.detectCount}</TableCell>
-                                            <TableCell align="right">{row.formLevel}</TableCell>
-                                            <TableCell align="right">
+                                            <TableCell style={{width: 120+84}} wrap='nowrap' align="right">{row.detectList}</TableCell>
+                                            <TableCell style={{width: 120+84}} align="right">{row.detectCount}</TableCell>
+                                            <TableCell style={{width: 110+84}} align="right">{row.formLevel}</TableCell>
+                                            <TableCell style={{width: 110+84}} align="right">
                                                 {iconDisplay(row.fitness)}
                                             </TableCell>
                                         </TableRow>
                                     );
                                 })}
                             {emptyRows > 0 && (
-                                <TableRow style={{height: 49 * emptyRows}}>
-                                    <TableCell colSpan={6}/>
+                                <TableRow style={{ height: 42 * emptyRows }}>
+                                    <TableCell colSpan={6} />
                                 </TableRow>
                             )}
                         </TableBody>
                     </Table>
                 </div>
                 <TablePagination
-                    rowsPerPageOptions={[5]}
+                    style={{backgroundColor: '#f1f8e9', borderBottomRightRadius: '10px', borderBottomLeftRadius: '10px'}}
+                    rowsPerPageOptions={[7]}
                     component="div"
                     count={rows.length}
                     rowsPerPage={rowsPerPage}
@@ -540,7 +545,7 @@ export default function Result() {
                     onChangePage={handleChangePage}
                     onChangeRowsPerPage={handleChangeRowsPerPage}
                 />
-            </Paper>
+            </Box>
         </div>
     );
 }

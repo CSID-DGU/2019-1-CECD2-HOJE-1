@@ -16,8 +16,8 @@ var MainWindow = function MainWindow() {
 
   (0, _classCallCheck2["default"])(this, MainWindow);
   this.window = new _electron.BrowserWindow({
-    width: 1500,
-    height: 700,
+    width: 1200,
+    height: 612,
     show: false,
     webPreferences: {
       nodeIntegration: true

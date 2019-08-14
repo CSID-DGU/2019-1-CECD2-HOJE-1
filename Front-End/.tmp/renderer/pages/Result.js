@@ -21,8 +21,6 @@ var _react = _interopRequireWildcard(require("react"));
 
 var _reactRouterDom = require("react-router-dom");
 
-var _electron = require("electron");
-
 var _clsx2 = _interopRequireDefault(require("clsx"));
 
 var _propTypes = _interopRequireDefault(require("prop-types"));
@@ -49,7 +47,7 @@ var _Toolbar = _interopRequireDefault(require("@material-ui/core/Toolbar"));
 
 var _Typography = _interopRequireDefault(require("@material-ui/core/Typography"));
 
-var _Paper = _interopRequireDefault(require("@material-ui/core/Paper"));
+var _Box = _interopRequireDefault(require("@material-ui/core/Box"));
 
 var _Checkbox = _interopRequireDefault(require("@material-ui/core/Checkbox"));
 
@@ -62,6 +60,8 @@ var _FiberManualRecord = _interopRequireDefault(require("@material-ui/icons/Fibe
 var _Error = _interopRequireDefault(require("@material-ui/icons/Error"));
 
 var _Warning = _interopRequireDefault(require("@material-ui/icons/Warning"));
+
+var _electron = require("electron");
 
 var _masking = _interopRequireDefault(require("../../main/FrameTest/masking"));
 
@@ -176,7 +176,12 @@ function EnhancedTableHead(props) {
     }, _react["default"].createElement(_TableSortLabel["default"], {
       active: orderBy === row.id,
       direction: order,
-      onClick: createSortHandler(row.id)
+      onClick: createSortHandler(row.id),
+      style: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#212121'
+      }
     }, row.label));
   })));
 }
@@ -256,7 +261,8 @@ var useToolbarStyles = (0, _styles.makeStyles)(function (theme) {
       flex: '1 1 auto'
     },
     actions: {
-      color: theme.palette.text.primary
+      backgroundColor: '#e6ee9c',
+      color: '#000000'
     },
     title: {
       flex: '0 0 auto'
@@ -338,19 +344,17 @@ var useStyles = (0, _styles.makeStyles)(function (theme) {
       marginTop: theme.spacing(3)
     },
     paper: {
-      width: '100%'
+      width: '100%',
+      border: '1px solid',
+      borderRadius: '10px',
+      borderColor: "#c5e1a5",
+      boxShadow: '2px 2px 2px'
     },
     table: {
       minWidth: 700
     },
     tableWrapper: {
       overflowX: 'auto'
-    },
-    filepath: {
-      width: 140
-    },
-    detectlist: {
-      width: 100
     }
   };
 });
@@ -359,13 +363,14 @@ var theme = (0, _styles.createMuiTheme)({
     primary: {
       main: _colors.green[500]
     },
-    // Purple and green play nicely together.
     secondary: {
       main: _colors.yellow[500]
     },
-    // This is just green.A700 as hex.
     error: {
       main: _colors.red[500]
+    },
+    "default": {
+      main: _colors.blue[500]
     }
   }
 });
@@ -398,7 +403,7 @@ function Result() {
       page = _React$useState8[0],
       setPage = _React$useState8[1];
 
-  var _React$useState9 = _react["default"].useState(5),
+  var _React$useState9 = _react["default"].useState(7),
       _React$useState10 = (0, _slicedToArray2["default"])(_React$useState9, 2),
       rowsPerPage = _React$useState10[0],
       setRowsPerPage = _React$useState10[1];
@@ -413,13 +418,19 @@ function Result() {
       if (element.indexOf('.mask') !== -1) masked.push(element);else noneMasked.push(element);
     });
     return _react["default"].createElement(_Toolbar["default"], {
-      className: (0, _clsx2["default"])(classes.root, (0, _defineProperty2["default"])({}, classes.highlight, numSelected > 0))
+      className: (0, _clsx2["default"])(classes.root, (0, _defineProperty2["default"])({}, classes.highlight, numSelected > 0)),
+      style: {
+        height: 74,
+        background: 'linear-gradient( #f1f8e9, #fafafa )',
+        borderTopRightRadius: '10px',
+        borderTopLeftRadius: '10px'
+      }
     }, _react["default"].createElement("div", {
       className: classes.title
     }, numSelected > 0 ? _react["default"].createElement(_Typography["default"], {
       color: "inherit",
       variant: "subtitle1"
-    }, numSelected, " selected") : _react["default"].createElement(_Typography["default"], {
+    }, numSelected, " \uC120\uD0DD\uB428") : _react["default"].createElement(_Typography["default"], {
       variant: "h6",
       id: "tableTitle"
     }, "\uAC80\uC0AC \uB0B4\uC5ED")), _react["default"].createElement("div", {
@@ -602,6 +613,9 @@ function Result() {
       title: "\uBB38\uC758"
     }, _react["default"].createElement(_Fab["default"], {
       className: classes.actions,
+      style: {
+        marginLeft: 10
+      },
       variant: "extended",
       label: "\uBB38\uC758",
       component: _reactRouterDom.Link,
@@ -765,7 +779,7 @@ function Result() {
 
   return _react["default"].createElement("div", {
     className: classes.root
-  }, _react["default"].createElement(_Paper["default"], {
+  }, _react["default"].createElement(_Box["default"], {
     className: classes.paper
   }, _react["default"].createElement(EnhancedTableToolbar, {
     numSelected: selected.length,
@@ -804,6 +818,9 @@ function Result() {
         'aria-labelledby': labelId
       }
     })), _react["default"].createElement(_TableCell["default"], {
+      style: {
+        width: 200 + 84
+      },
       component: "th",
       id: labelId,
       scope: "row",
@@ -814,24 +831,40 @@ function Result() {
     }, _react["default"].createElement(_Typography["default"], {
       noWrap: true
     }, row.fileName))), _react["default"].createElement(_TableCell["default"], {
-      className: classes.detectlist,
+      style: {
+        width: 120 + 84
+      },
       wrap: "nowrap",
       align: "right"
     }, row.detectList), _react["default"].createElement(_TableCell["default"], {
+      style: {
+        width: 120 + 84
+      },
       align: "right"
     }, row.detectCount), _react["default"].createElement(_TableCell["default"], {
+      style: {
+        width: 110 + 84
+      },
       align: "right"
     }, row.formLevel), _react["default"].createElement(_TableCell["default"], {
+      style: {
+        width: 110 + 84
+      },
       align: "right"
     }, iconDisplay(row.fitness)));
   }), emptyRows > 0 && _react["default"].createElement(_TableRow["default"], {
     style: {
-      height: 49 * emptyRows
+      height: 42 * emptyRows
     }
   }, _react["default"].createElement(_TableCell["default"], {
     colSpan: 6
   }))))), _react["default"].createElement(_TablePagination["default"], {
-    rowsPerPageOptions: [5],
+    style: {
+      backgroundColor: '#f1f8e9',
+      borderBottomRightRadius: '10px',
+      borderBottomLeftRadius: '10px'
+    },
+    rowsPerPageOptions: [7],
     component: "div",
     count: rows.length,
     rowsPerPage: rowsPerPage,

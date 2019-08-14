@@ -16,7 +16,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import NormalIcon from '@material-ui/icons/FiberManualRecord'
 import WarningIcon from '@material-ui/icons/Error';
 import DangerIcon from '@material-ui/icons/Warning';
-import UploadLog from "../../main/FrameTest/uploadLog";
+
 const {ipcRenderer} = require('electron');
 const delay = require('delay');
 
@@ -61,10 +61,10 @@ TabPanel.propTypes = {
     value: PropTypes.any.isRequired,
 };
 
-export default function SearchBefore() {
+export default function SearchBody() {
    // console.log('body rendering......');
     const classes = useStyles();
-    const [rows ,setRow] = useState([]);
+    const [rows ,setRow] = useState([]); //배열 결과를 메인으로 넘기기 위해 사용
     useEffect( ()=>{
         ipcRenderer.on('RESULT_DICTIONARY',async (event,result)=>{
             setRow([...rows,createData(rows.length, result.fileName,result.classification,result.detectList,result.detectCount,result.formLevel,result.filePath,result.fitness)]);
@@ -167,17 +167,18 @@ export default function SearchBefore() {
                 </TableCell>
             );
         };
-        headerRenderer({ label, columnIndex }){
+        headerRenderer = ({ label, columnIndex }) => {
             const { headerHeight, columns, classes } = this.props;
+
             return (
                 <TableCell
                     component="div"
                     className={clsx(classes.tableCell, classes.flexContainer, classes.noClick)}
                     variant="head"
-                    style={{ height: headerHeight }}
+                    style={{ height: headerHeight, paddingBottom: 0}}
                     align={columns[columnIndex].numeric || false ? 'right' : 'left'}
                 >
-                    <span>{label}</span>
+                    <span style={{ fontSize: 16, fontWeight: 'bold', color: '#212121' }}>{label}</span>
                 </TableCell>
             );
         };
@@ -247,34 +248,34 @@ export default function SearchBefore() {
 
    // console.log('body end........');
     return (
-        <Paper style={{ height: 400, width: '100%' }}>
+        <Paper style={{ height: 400, width: '100%', border: 100, borderColor: '#000000', paddingLeft: 10, }} elevation={0}>
             <VirtualizedTable
                 rowCount={rows.length}
                 rowGetter={({ index }) => rows[index]}
                 columns={[
                     {
-                        width: 200,
+                        width: 200+84,
                         label: '파일명',
                         dataKey: 'fileName',
                     },
                     {
-                        width: 120,
+                        width: 120+84,
                         label: '분류',
                         dataKey: 'classification',
                     },
                     {
-                        width: 120,
+                        width: 120+84,
                         label: '검출 내역',
                         dataKey: 'detectList',
                     },
                     {
-                        width: 120,
+                        width: 110+84,
                         label: '검출 개수',
                         dataKey: 'detectCount',
                         numeric: true,
                     },
                     {
-                        width: 120,
+                        width: 110 +84,
                         label: '적합도',
                         dataKey: 'fitness',
                         numeric: true,
