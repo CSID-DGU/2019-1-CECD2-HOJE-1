@@ -69,7 +69,6 @@ lstmtraining \
 #결과 적용
 lstmtraining \
   	--stop_training \
-  	--convert_to_int \
   	--continue_from ./${ns_font_name}_output/result_checkpoint \
 	--old_traineddata ${old_traineddata} \
   	--traineddata ./fonts_train/${language}/${language}.traineddata \

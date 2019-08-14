@@ -59,7 +59,6 @@ lstmtraining --debug_interval 0 \
 #결과 적용
 lstmtraining \
   	--stop_training \
-  	--convert_to_int \
   	--continue_from ./layer_output/result_checkpoint \
   	--traineddata ./kor_eng_train/kor/kor.traineddata \
   	--model_output ./layer_output/kor_eng.traineddata

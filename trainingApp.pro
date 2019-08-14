@@ -32,12 +32,14 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
         sysinfo.cpp \
+        sysinfolinux.cpp \
         trainworker.cpp
 
 HEADERS += \
         httprequestworker.h \
         mainwindow.h \
         sysinfo.h \
+        sysinfolinux.h \
         trainworker.h
 
 FORMS += \
