@@ -29,7 +29,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // text edit
     edit = ui->textEdit;
-    edit->setEnabled(false);
+    edit->setReadOnly(true);
+
     QStringList opening = QStringList() << "안녕하세요 HOJE입니다!" << "본 어플은 Tesseract OCR 학습기능을 담고 있습니다."
                                         << "Images : 한줄 이미지들을 학습시킵니다." << "\t 이미지 파일들과 gt.txt파일을 GT directory에 저장합니다."
                                        << "Single Image : 이미지 한장을 학습시킵니다." << "\t 이미지파일과 box 파일이 필요합니다."
