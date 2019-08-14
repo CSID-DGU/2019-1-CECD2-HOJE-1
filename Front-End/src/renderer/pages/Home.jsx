@@ -193,7 +193,7 @@ const detectListChart = () => {
         return value.detectList.indexOf('통장번호') !== -1;})
     let no4 = temp.filter(function(value){
         return value.detectList.indexOf('운전면허번호') !== -1;})
-    detectData.labels = listOfPattern; // 수정 
+    detectData.labels = listOfPattern; // 수정
     detectData.datasets[0].data = [no1.length, no2.length+1, no3.length+3, no4.length+7, 9, 8];
     detectData.datasets[0].backgroundColor = [];
     detectData.datasets[0].borderColor = [];
@@ -283,7 +283,7 @@ export default function Home() {
                                         <Grid item xs={3}>
                                             <Box style={{height: 246, textAlign: 'center', backgroundColor: '#e8f5e9'}}>
                                                 <Box style={{padding: 8}}>
-                                                    <Badge badgeContent={110} showZero='true' color="secondary">
+                                                    <Badge badgeContent={110} showZero='true' color="secondary"> //수정
                                                         <Button style={{backgroundColor: '#1b5e20', color: '#ffffff', borderRadius: '10px', height: 44, width: 80}}>
                                                             Total
                                                         </Button>

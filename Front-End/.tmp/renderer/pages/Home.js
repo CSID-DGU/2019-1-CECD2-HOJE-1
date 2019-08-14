@@ -65,7 +65,7 @@ var useStyles = (0, _styles.makeStyles)(function (theme) {
     }
   };
 });
-var test = []; // 원형
+var test = []; // 막대
 
 var classifyData = {
   labels: [''],
@@ -93,7 +93,7 @@ var classifyData = {
     backgroundColor: ['rgba(75, 192, 192, 0.2)'],
     borderColor: ['rgba(75, 192, 192, 1)'],
     borderWidth: 1
-  }] // 막대
+  }] // 원형
 
 };
 var detectData = {
@@ -168,7 +168,8 @@ var classifyChart = function classifyChart() {
   var no4 = temp.filter(function (value) {
     return value.formLevel === 'None';
   });
-  classifyData.datasets[0].data[0] = no1.length;
+  classifyData.datasets[0].data[0] = no1.length; //수정
+
   classifyData.datasets[1].data[0] = no2.length;
   classifyData.datasets[2].data[0] = no3.length;
   classifyData.datasets[3].data[0] = no4.length + 1;
@@ -204,12 +205,14 @@ var detectListChart = function detectListChart() {
   var no4 = temp.filter(function (value) {
     return value.detectList.indexOf('운전면허번호') !== -1;
   });
-  detectData.labels = listOfPattern;
+  detectData.labels = listOfPattern; // 수정
+
   detectData.datasets[0].data = [no1.length, no2.length + 1, no3.length + 3, no4.length + 7, 9, 8];
   detectData.datasets[0].backgroundColor = [];
   detectData.datasets[0].borderColor = [];
 
   for (var i = 0; i < detectData.datasets[0].data.length; i++) {
+    //랜덤으로 채워지는 것
     var r = getRandomInt(0, 255),
         g = getRandomInt(0, 255),
         b = getRandomInt(0, 255);
@@ -345,7 +348,7 @@ function Home() {
     badgeContent: 110,
     showZero: "true",
     color: "secondary"
-  }, _react["default"].createElement(_core.Button, {
+  }, " //\uC218\uC815", _react["default"].createElement(_core.Button, {
     style: {
       backgroundColor: '#1b5e20',
       color: '#ffffff',
