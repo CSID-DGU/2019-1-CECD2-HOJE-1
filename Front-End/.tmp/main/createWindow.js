@@ -17,11 +17,12 @@ var MainWindow = function MainWindow() {
   (0, _classCallCheck2["default"])(this, MainWindow);
   this.window = new _electron.BrowserWindow({
     width: 1200,
-    height: 612,
+    height: 650,
     show: false,
     webPreferences: {
       nodeIntegration: true
-    }
+    } // resizable : false
+
   });
   this.window.loadURL("file://".concat(__dirname, "/../../index.html"));
   this.window.on("closed", function () {

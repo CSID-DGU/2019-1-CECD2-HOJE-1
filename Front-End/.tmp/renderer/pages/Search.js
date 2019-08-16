@@ -202,7 +202,6 @@ function Search() {
       if (exists) {
         fs.stat("".concat(__dirname, "/../../../resultfile.json"), function (err, stat) {
           var data = moment(stat.atime).format('YYYY년 MM월 DD일');
-          console.log('date : ', data);
           setBirth(data);
         });
       } else setBirth('이전 검사일을 알 수 없음');
@@ -421,7 +420,7 @@ function Search() {
       timeout: 350
     }), _react["default"].createElement(_Paper["default"], null, _react["default"].createElement(_List["default"], {
       className: classes.root
-    }, _reg["default"].searchSetting.map(function (value) {
+    }, _reg["default"].reg.map(function (value) {
       var labelId = "op-".concat(value.id);
       return _react["default"].createElement(_ListItem["default"], {
         disabled: value.disable,
@@ -432,7 +431,7 @@ function Search() {
         onClick: handleToggle(value.name)
       }, _react["default"].createElement(_ListItemIcon["default"], null, _react["default"].createElement(_Checkbox["default"], {
         edge: "start",
-        checked: checked.indexOf(value.name) !== -1,
+        checked: checked.indexOf(value.key) !== -1,
         tabIndex: -1,
         disableRipple: true,
         inputProps: {
@@ -440,7 +439,7 @@ function Search() {
         }
       })), _react["default"].createElement(_ListItemText["default"], {
         id: labelId,
-        primary: "".concat(value.name)
+        primary: "".concat(value.key)
       }));
     }))));
   }))), _react["default"].createElement(_Grid["default"], {

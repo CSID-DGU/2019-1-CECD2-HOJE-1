@@ -19,6 +19,8 @@ var _react = _interopRequireWildcard(require("react"));
 
 var _propTypes = _interopRequireDefault(require("prop-types"));
 
+var _reactRouterDom = require("react-router-dom");
+
 var _styles = require("@material-ui/core/styles");
 
 var _Typography = _interopRequireDefault(require("@material-ui/core/Typography"));
@@ -342,11 +344,10 @@ function QnAMail(props) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
-              console.log('imagePath : ', imagePath);
-              _context.next = 3;
+              _context.next = 2;
               return (0, _cropImage["default"])(imagePath);
 
-            case 3:
+            case 2:
               //Todo 경로 설정
               files = fs.readdirSync(PATH); //해당 디렉토리 탐색
 
@@ -362,7 +363,7 @@ function QnAMail(props) {
               _iteratorNormalCompletion = true;
               _didIteratorError = false;
               _iteratorError = undefined;
-              _context.prev = 12;
+              _context.prev = 11;
 
               for (_iterator = files[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
                 tmp = _step.value;
@@ -370,40 +371,40 @@ function QnAMail(props) {
                 listImage.push(nativeImage.createFromPath(p).toDataURL());
               }
 
-              _context.next = 20;
+              _context.next = 19;
               break;
 
-            case 16:
-              _context.prev = 16;
-              _context.t0 = _context["catch"](12);
+            case 15:
+              _context.prev = 15;
+              _context.t0 = _context["catch"](11);
               _didIteratorError = true;
               _iteratorError = _context.t0;
 
-            case 20:
+            case 19:
+              _context.prev = 19;
               _context.prev = 20;
-              _context.prev = 21;
 
               if (!_iteratorNormalCompletion && _iterator["return"] != null) {
                 _iterator["return"]();
               }
 
-            case 23:
-              _context.prev = 23;
+            case 22:
+              _context.prev = 22;
 
               if (!_didIteratorError) {
-                _context.next = 26;
+                _context.next = 25;
                 break;
               }
 
               throw _iteratorError;
 
+            case 25:
+              return _context.finish(22);
+
             case 26:
-              return _context.finish(23);
+              return _context.finish(19);
 
             case 27:
-              return _context.finish(20);
-
-            case 28:
               setList(listImage);
               notifier.notify({
                 title: "Image Crop Success",
@@ -411,17 +412,16 @@ function QnAMail(props) {
                 wait: true,
                 timeout: 2
               }, function (err, response) {
-                console.log('response  :', response);
                 if (response.match('clicked')) _electron.shell.openItem(PATH);
               });
               setCrop(true);
 
-            case 31:
+            case 30:
             case "end":
               return _context.stop();
           }
         }
-      }, _callee, null, [[12, 16, 20, 28], [21,, 23, 27]]);
+      }, _callee, null, [[11, 15, 19, 27], [20,, 22, 26]]);
     }))
   }, "\uC774\uBBF8\uC9C0 \uC790\uB974\uAE30")), _react["default"].createElement(_core.Grid, {
     item: true,
@@ -437,10 +437,19 @@ function QnAMail(props) {
         (0, _uploadSubImage["default"])(send, data, "HR");
         setSend([]);
         setList([]);
-        console.log('test');
+        notifier.notify({
+          title: "Send Completed",
+          message: "전송이 완료됐습니다",
+          wait: true,
+          timeout: 2
+        }, function (err, response) {
+          console.log(response);
+        });
       } // forceUpdate();
 
-    }
+    },
+    component: _reactRouterDom.Link,
+    to: value === 2 ? '/' : ''
   }, "\uC804  \uC1A1"))))), _react["default"].createElement(_core.Grid, {
     item: true,
     xs: 9

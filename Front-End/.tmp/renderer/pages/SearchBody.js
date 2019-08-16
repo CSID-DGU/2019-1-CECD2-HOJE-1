@@ -126,11 +126,10 @@ function SearchBody() {
             switch (_context.prev = _context.next) {
               case 0:
                 setRow([].concat((0, _toConsumableArray2["default"])(rows), [createData(rows.length, result.fileName, result.classification, result.detectList, result.detectCount, result.formLevel, result.filePath, result.fitness)]));
-                console.log(rows);
-                _context.next = 4;
+                _context.next = 3;
                 return delay(30);
 
-              case 4:
+              case 3:
               case "end":
                 return _context.stop();
             }
@@ -143,7 +142,6 @@ function SearchBody() {
       };
     }());
     return function () {
-      //console.log('closed : ' ,rows);
       ipcRenderer.send('TEST1', rows);
       ipcRenderer.removeAllListeners('RESULT_DICTIONARY');
     };

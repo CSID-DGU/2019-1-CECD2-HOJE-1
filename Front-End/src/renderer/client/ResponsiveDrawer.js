@@ -16,7 +16,6 @@ import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 
 import MenuIcon from '@material-ui/icons/Menu';
-import UpdataIcon from '@material-ui/icons/Update';
 import HomeIcon from '@material-ui/icons/Home';
 import SearchIcon from '@material-ui/icons/Search';
 import ResultIcon from '@material-ui/icons/Assignment'
@@ -25,10 +24,8 @@ import MailIcon from '@material-ui/icons/Mail';
 
 import Home from '../../renderer/pages/Home';
 import Search from '../pages/Search';
-import Setting from '../../renderer/pages/Setting';
 import QnAMail from '../../renderer/pages/QnAMail';
 import Result from '../../renderer/pages/Result';
-import DownloadFile from '../../main/FrameTest/downloadFile';
 const drawerWidth = 60;
 
 const useStyles = makeStyles(theme => ({
@@ -141,23 +138,9 @@ export default function App(props) {
                 <ListItem
                     button
                     activeClassName={classes.active}
-                    component={NavLink} exact to="/setting"
-                >
-                    <Tooltip title='설정' placement="top"><SettingIcon /></Tooltip>
-                </ListItem>
-                <ListItem
-                    button
-                    activeClassName={classes.active}
                     component={NavLink} exact to="/qna"
                 >
                     <Tooltip title='문의' placement="top"><MailIcon /></Tooltip>
-                </ListItem>
-                <ListItem
-                    button
-                    activeClassName={classes.active}
-                    component={NavLink} exact to="/test"
-                >
-                    <MailIcon />
                 </ListItem>
             </List>
         </div>
@@ -203,7 +186,6 @@ export default function App(props) {
                 <div className={classes.toolbar} />
                 <Route exact path="/" component={ Home } />
                 <Route exact path="/search" component={ Search } />
-                <Route exact path="/setting" component={ Setting } />
                 <Route exact path="/qna" component={ QnAMail } />
                 <Route exact path="/result" component={ Result } />
             </main>

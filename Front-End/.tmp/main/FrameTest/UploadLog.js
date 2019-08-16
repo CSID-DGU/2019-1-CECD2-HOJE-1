@@ -73,7 +73,6 @@ function UploadLog(data) {
   };
   request(options, function (err, body) {
     if (err) console.log('error : ', err);
-    console.log('body ', body);
   });
 }
 

@@ -68,11 +68,9 @@ export default function SearchBody() {
     useEffect( ()=>{
         ipcRenderer.on('RESULT_DICTIONARY',async (event,result)=>{
             setRow([...rows,createData(rows.length, result.fileName,result.classification,result.detectList,result.detectCount,result.formLevel,result.filePath,result.fitness)]);
-            console.log(rows);
             await delay(30);
         });
         return ()=>{
-            //console.log('closed : ' ,rows);
             ipcRenderer.send('TEST1',rows);
             ipcRenderer.removeAllListeners('RESULT_DICTIONARY');
         }

@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
+import {Link} from 'react-router-dom';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import { FormControl, InputLabel, Select, MenuItem, Fab, Grid, TextField } from '@material-ui/core';
@@ -221,7 +222,6 @@ export default function QnAMail(props) {
                                 <Grid item xs={6}>
                                     <Fab variant="extended" disabled={value !== 2 ? true : false} className={classes.imagecrop}
                                          onClick={async () => {
-                                             console.log('imagePath : ', imagePath);
                                              await cropImage(imagePath);  //Todo 경로 설정
                                              let files = fs.readdirSync(PATH); //해당 디렉토리 탐색
                                              const newsend = send;
@@ -243,7 +243,6 @@ export default function QnAMail(props) {
                                                  wait : true,
                                                  timeout : 2
                                              },function(err,response){
-                                                 console.log('response  :' , response);
                                                  if(response.match('clicked'))
                                                      shell.openItem(PATH);
                                              });
@@ -260,10 +259,19 @@ export default function QnAMail(props) {
                                                  UploadSubImage(send, data, "HR");
                                                  setSend([]);
                                                  setList([]);
-                                                 console.log('test')
+                                                 notifier.notify({
+                                                     title : "Send Completed",
+                                                     message : "전송이 완료됐습니다",
+                                                     wait : true,
+                                                     timeout : 2
+                                                 },function(err,response){
+                                                     console.log(response);
+                                                 });
                                              }
                                              // forceUpdate();
-                                         }}>전  송</Fab>
+                                         }}
+                                         component={Link} to={value === 2 ? '/' : ''}
+                                    >전  송</Fab>
                                 </Grid>
                             </Grid>
                         </Box>

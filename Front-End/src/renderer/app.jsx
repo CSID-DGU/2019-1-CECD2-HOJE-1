@@ -3,8 +3,6 @@ import {render} from 'react-dom';
 import ResponsiveDrawer from './client/ResponsiveDrawer';
 import {Redirect, BrowserRouter as Router} from 'react-router-dom';
 
-import Test from './test/test';
-
 class App extends React.Component {
     render() {
         return (

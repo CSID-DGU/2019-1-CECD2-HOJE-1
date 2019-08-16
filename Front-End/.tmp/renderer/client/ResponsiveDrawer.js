@@ -43,8 +43,6 @@ var _Tooltip = _interopRequireDefault(require("@material-ui/core/Tooltip"));
 
 var _Menu = _interopRequireDefault(require("@material-ui/icons/Menu"));
 
-var _Update = _interopRequireDefault(require("@material-ui/icons/Update"));
-
 var _Home = _interopRequireDefault(require("@material-ui/icons/Home"));
 
 var _Search = _interopRequireDefault(require("@material-ui/icons/Search"));
@@ -59,13 +57,9 @@ var _Home2 = _interopRequireDefault(require("../../renderer/pages/Home"));
 
 var _Search2 = _interopRequireDefault(require("../pages/Search"));
 
-var _Setting = _interopRequireDefault(require("../../renderer/pages/Setting"));
-
 var _QnAMail = _interopRequireDefault(require("../../renderer/pages/QnAMail"));
 
 var _Result = _interopRequireDefault(require("../../renderer/pages/Result"));
-
-var _downloadFile = _interopRequireDefault(require("../../main/FrameTest/downloadFile"));
 
 var drawerWidth = 60;
 var useStyles = (0, _styles.makeStyles)(function (theme) {
@@ -185,26 +179,11 @@ function App(props) {
     activeClassName: classes.active,
     component: _reactRouterDom.NavLink,
     exact: true,
-    to: "/setting"
-  }, _react["default"].createElement(_Tooltip["default"], {
-    title: "\uC124\uC815",
-    placement: "top"
-  }, _react["default"].createElement(_Settings["default"], null))), _react["default"].createElement(_ListItem["default"], {
-    button: true,
-    activeClassName: classes.active,
-    component: _reactRouterDom.NavLink,
-    exact: true,
     to: "/qna"
   }, _react["default"].createElement(_Tooltip["default"], {
     title: "\uBB38\uC758",
     placement: "top"
-  }, _react["default"].createElement(_Mail["default"], null))), _react["default"].createElement(_ListItem["default"], {
-    button: true,
-    activeClassName: classes.active,
-    component: _reactRouterDom.NavLink,
-    exact: true,
-    to: "/test"
-  }, _react["default"].createElement(_Mail["default"], null))));
+  }, _react["default"].createElement(_Mail["default"], null)))));
 
   return _react["default"].createElement("div", {
     className: classes.root
@@ -250,10 +229,6 @@ function App(props) {
     exact: true,
     path: "/search",
     component: _Search2["default"]
-  }), _react["default"].createElement(_reactRouterDom.Route, {
-    exact: true,
-    path: "/setting",
-    component: _Setting["default"]
   }), _react["default"].createElement(_reactRouterDom.Route, {
     exact: true,
     path: "/qna",

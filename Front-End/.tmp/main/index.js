@@ -50,8 +50,8 @@ var tmpList = [];
 
 _electron.app.on('ready', function () {
   var splash = new _electron.BrowserWindow({
-    width: 600,
-    height: 300,
+    width: 607,
+    height: 312,
     frame: false,
     alwaysOnTop: true,
     resizable: false,
@@ -64,9 +64,11 @@ _electron.app.on('ready', function () {
   win = (0, _createWindow["default"])();
   win.window.removeMenu();
   win.window.once('ready-to-show', function () {
-    splash.close();
-    win.window.show();
-    win.window.webContents.openDevTools();
+    setTimeout(function () {
+      splash.close();
+      win.window.show();
+      win.window.webContents.openDevTools();
+    }, 2000);
   });
 
   _electron.ipcMain.on('RESULT1', function (event, result) {
@@ -110,70 +112,77 @@ _electron.app.on('ready', function () {
                     while (1) {
                       switch (_context.prev = _context.next) {
                         case 0:
+                          console.log('result : ', result);
                           _iteratorNormalCompletion = true;
                           _didIteratorError = false;
                           _iteratorError = undefined;
-                          _context.prev = 3;
+                          _context.prev = 4;
                           _iterator = result[Symbol.iterator]();
 
-                        case 5:
+                        case 6:
                           if (_iteratorNormalCompletion = (_step = _iterator.next()).done) {
-                            _context.next = 13;
+                            _context.next = 14;
                             break;
                           }
 
                           tmpPath = _step.value;
-                          _context.next = 9;
+                          _context.next = 10;
                           return Exec(tmpPath, ['.jpg', '.png', '.tif']);
 
-                        case 9:
+                        case 10:
                           tmp = _context.sent;
 
-                        case 10:
+                        case 11:
                           _iteratorNormalCompletion = true;
-                          _context.next = 5;
+                          _context.next = 6;
                           break;
 
-                        case 13:
-                          _context.next = 19;
+                        case 14:
+                          _context.next = 20;
                           break;
 
-                        case 15:
-                          _context.prev = 15;
-                          _context.t0 = _context["catch"](3);
+                        case 16:
+                          _context.prev = 16;
+                          _context.t0 = _context["catch"](4);
                           _didIteratorError = true;
                           _iteratorError = _context.t0;
 
-                        case 19:
-                          _context.prev = 19;
+                        case 20:
                           _context.prev = 20;
+                          _context.prev = 21;
 
                           if (!_iteratorNormalCompletion && _iterator["return"] != null) {
                             _iterator["return"]();
                           }
 
-                        case 22:
-                          _context.prev = 22;
+                        case 23:
+                          _context.prev = 23;
 
                           if (!_didIteratorError) {
-                            _context.next = 25;
+                            _context.next = 26;
                             break;
                           }
 
                           throw _iteratorError;
 
-                        case 25:
-                          return _context.finish(22);
-
                         case 26:
-                          return _context.finish(19);
+                          return _context.finish(23);
 
                         case 27:
+                          return _context.finish(20);
+
+                        case 28:
+                          notifier.notify({
+                            title: "Search Completed",
+                            message: "검사  완료"
+                          });
+
+                        case 29:
                         case "end":
                           return _context.stop();
                       }
                     }
-                  }, _callee, null, [[3, 15, 19, 27], [20,, 22, 26]]);
+                  }, _callee, null, [[4, 16, 20, 28], [21,, 23, 27]]);
                 }));
 
                 return function (_x3, _x4) {
@@ -205,8 +214,7 @@ _electron.app.on('ready', function () {
         var json = JSON.stringify(tmpList);
         fs.writeFileSync('resultfile.json', json, 'utf8'); //Todo 경로 위치 바꿔야 됨
 
-        console.log('file created');
-        (0, _uploadLog["default"])(tmpList); //서버에 최근 검사한 내역 전송
+        console.log('file created'); // UploadLog(tmpList); //서버에 최근 검사한 내역 전송
       }
     });
 
@@ -494,15 +502,14 @@ function () {
                       }
 
                     case 10:
-                      _context5.next = 15;
+                      _context5.next = 14;
                       break;
 
                     case 12:
                       _context5.prev = 12;
                       _context5.t0 = _context5["catch"](0);
-                      console.log('error : ', _context5.t0.description);
 
-                    case 15:
+                    case 14:
                     case "end":
                       return _context5.stop();
                   }

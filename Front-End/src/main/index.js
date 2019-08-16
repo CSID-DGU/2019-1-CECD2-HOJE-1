@@ -22,8 +22,8 @@ let de = delay(250000); //Todo 일시정지 시간 조정
 let tmpList = [];
 app.on('ready', () => {
     let splash = new BrowserWindow({
-        width: 600,
-        height: 300,
+        width: 607,
+        height: 312,
         frame: false,
         alwaysOnTop: true,
         resizable: false,
@@ -36,9 +36,11 @@ app.on('ready', () => {
     win = createWindow();
     win.window.removeMenu();
     win.window.once('ready-to-show', () => {
-        splash.close();
-        win.window.show();
-        win.window.webContents.openDevTools();
+        setTimeout(()=>{
+            splash.close();
+            win.window.show();
+            win.window.webContents.openDevTools();
+        },2000);
     });
     ipcMain.on('RESULT1', (event, result) => { //QnA 페이지에 결과 이미지 전송 및 반환
         data = result;
@@ -53,9 +55,14 @@ app.on('ready', () => {
         isStop = false;
         await regRead(result); //정규 표현식 파일 읽음
         ipcMain.on('PATH',async (event,result)=>{
+            console.log('result : ' ,result);
             for(const tmpPath of result) {
                 let tmp = await Exec(tmpPath, ['.jpg', '.png', '.tif']); //함수 실행
             }
+            notifier.notify({
+                title : "Search Completed",
+                message : "검사  완료"
+            })
         })
     });
     ipcMain.on('STOP_SEARCH',(event,result)=>{
@@ -66,7 +73,7 @@ app.on('ready', () => {
                 let json = JSON.stringify(tmpList);
                 fs.writeFileSync('resultfile.json', json, 'utf8'); //Todo 경로 위치 바꿔야 됨
                 console.log('file created');
-                UploadLog(tmpList); //서버에 최근 검사한 내역 전송
+               // UploadLog(tmpList); //서버에 최근 검사한 내역 전송
             }
         });
         if(isStop && isPlaying){
@@ -162,7 +169,6 @@ const imageClassification = async (result1, hash, depart, ppath, name) => {
                 check = false;
             }
         }catch(e){
-            console.log('error : ', e.description);
         }
     };
     xhr.ontimeout = 5000;

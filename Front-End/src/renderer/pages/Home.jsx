@@ -1,4 +1,4 @@
-import React,{useEffect} from 'react';
+import React,{useEffect,useState} from 'react';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { Grid, Paper, Box, MobileStepper, Button, Badge } from '@material-ui/core';
 import { ListItem, ListItemAvatar, ListItemText, Avatar, IconButton } from '@material-ui/core';
@@ -10,6 +10,11 @@ import UpdataIcon from '@material-ui/icons/Update';
 
 const fs= require('fs');
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
+const nativeImage = require('electron').nativeImage;
+const FasooImage = nativeImage.createFromPath(`assets/fasoo.png`);
+const hojeImage = nativeImage.createFromPath('assets/hoje.png');
+const moment = require('moment');
+import DownloadFile from '../../main/FrameTest/DownloadFile';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -49,7 +54,7 @@ let test = [];
 
 // 막대
 const classifyData = {
-    labels: [''],
+    labels : ["검사"],
     datasets: [{
         label: '대외비',
         data: [0],
@@ -163,17 +168,18 @@ function getRandomInt(min, max) { //min ~ max 사이의 임의의 정수 반환
 const classifyChart = () => {
     let temp = test.map(value => {return value});
     let no1 = temp.filter(function(value){
-        return value.formLevel === '대외비';})
+        return value.formLevel === 'CONFIDENTIALITY';})
     let no2 = temp.filter(function(value){
-        return value.formLevel === '사내한';})
+        return value.formLevel === 'COMPANY_ONLY';}) //Todo 수정
     let no3 = temp.filter(function(value){
-        return value.formLevel === '공개';})
+        return value.formLevel === 'PUBLIC';})
     let no4 = temp.filter(function(value){
-        return value.formLevel === 'None';})
-    classifyData.datasets[0].data[0] = no1.length; //수정
+        return value.formLevel === 'NONE';})
+
+    classifyData.datasets[0].data[0] = no1.length;
     classifyData.datasets[1].data[0] = no2.length;
     classifyData.datasets[2].data[0] = no3.length;
-    classifyData.datasets[3].data[0] = no4.length + 1;
+    classifyData.datasets[3].data[0] = no4.length;
     return (
         <Grid container direction="row" justify="center" alignItems="center">
             <Grid item xs={12}>
@@ -182,21 +188,34 @@ const classifyChart = () => {
         </Grid>);
 }
 
+const countListPattern = () =>{
+    let tmp = [];
+    for(const t of test){
+        for(const dl of t.detectList){
+            tmp.push(dl);
+        }
+    }
+    tmp = Array.from(new Set(tmp));
+    return tmp;
+
+};
 const detectListChart = () => {
-    const listOfPattern = ['주민등록번호', '여권번호', '통장번호', '운전면허번호', 'A', 'B']
+    const listOfPattern = countListPattern();
     let temp = test.map(value => {return value});
-    let no1 = temp.filter(function(value){
-        return value.detectList.indexOf('주민등록번호') !== -1;})
-    let no2 = temp.filter(function(value){
-        return value.detectList.indexOf('여권번호') !== -1;})
-    let no3 = temp.filter(function(value){
-        return value.detectList.indexOf('통장번호') !== -1;})
-    let no4 = temp.filter(function(value){
-        return value.detectList.indexOf('운전면허번호') !== -1;})
+    let indexLIst = [];
+    for(let i = 0 ; i < listOfPattern.length ; i++){
+        let no1 = temp.filter(function(value){
+            return value.detectList.indexOf(listOfPattern[i]) !== -1;});
+        indexLIst.push(no1);
+    }
     detectData.labels = listOfPattern; // 수정
-    detectData.datasets[0].data = [no1.length, no2.length+1, no3.length+3, no4.length+7, 9, 8];
+    detectData.datasets[0].data = [];
+    for(const t of indexLIst) {
+        detectData.datasets[0].data.push(t.length);
+    }
     detectData.datasets[0].backgroundColor = [];
     detectData.datasets[0].borderColor = [];
+
     for(var i = 0; i < detectData.datasets[0].data.length; i++)
     { //랜덤으로 채워지는 것
         let r = getRandomInt(0,255), g = getRandomInt(0,255), b = getRandomInt(0,255);
@@ -211,29 +230,58 @@ const detectListChart = () => {
             </Grid>
         </Grid>);
 }
-const testImageList = [
-    'test.jpg',
-    'test.jpg',
-    'test.jpg',
-]
 
-console.log('Home Rendering');
+//이미지 보여지는 곳
+const testImageList = [
+    FasooImage.toDataURL(),
+    hojeImage.toDataURL()
+]
 
 export default function Home() {
     const classes = useStyles();
     const theme = useTheme();
     const [value, setValue] = React.useState(0);
     const [activeStep, setActiveStep] = React.useState(0);
+    const [,setUpdate] = useState([]);
+    const [birth, setBirth] = useState('');
+    const [jpg , setJPG] = useState();
+    const [png,setPNG] = useState();
+    const [gif, setGIF] = useState();
     const maxSteps = testImageList.length;
     useEffect(()=>{
         fs.exists('resultfile.json', (exists => {
             if (exists) {
                 test = fs.readFileSync('resultfile.json', 'utf8');
                 test = JSON.parse(test);
-            }
+                fs.stat(`${__dirname}/../../../resultfile.json`,(err,stat)=>{
+                    let data = moment(stat.atime).format('YYYY년 MM월 DD일');
+                    setBirth(data);
+                })
+                let temp = test.map(value => {
+                    return value
+                });
+                let no1 = temp.filter(function (value) {
+                    return value.fileName.indexOf('jpg') !== -1;
+                })
+                let no2 = temp.filter(function (value) {
+                    return value.fileName.indexOf('png') !== -1;
+                })
+                let no3 = temp.filter(function (value) {
+                    return value.fileName.indexOf('gif') !== -1;
+                })
+                setJPG(no1.length);
+                setPNG(no2.length);
+                setGIF(no3.length);
+
+            }else
+                setBirth('이전 검사일을 알 수 없음');
             setUpdate();
         }));
     },[]);
+
+    // Forced ReRendering
+    const [, updateState] = React.useState();
+    const forceUpdate = React.useCallback(() => updateState({}), []);
 
     function handleStepChange(step) {
         setActiveStep(step);
@@ -266,13 +314,18 @@ export default function Home() {
                                                             <RecentSearchIcon style={{color: '#ffffff'}}/>
                                                         </Avatar>
                                                     </ListItemAvatar>
-                                                    <ListItemText primary="최근 검사일" secondary={"Jan 9, 2014"} />
+                                                    <ListItemText primary="최근 검사일" secondary={birth} />
                                                 </ListItem>
                                                 <ListItem>
                                                     <ListItemAvatar>
                                                         <Avatar style={{backgroundColor: '#212121'}}>
                                                             <IconButton>
-                                                                <UpdataIcon style={{color: '#ffffff'}}/>
+                                                                <UpdataIcon style={{color: '#ffffff'}} onClick={()=> {
+                                                                    console.log('Download...');
+                                                                    DownloadFile();
+                                                                    forceUpdate();
+                                                                }
+                                                                }/>
                                                             </IconButton>
                                                         </Avatar>
                                                     </ListItemAvatar>
@@ -283,28 +336,28 @@ export default function Home() {
                                         <Grid item xs={3}>
                                             <Box style={{height: 246, textAlign: 'center', backgroundColor: '#e8f5e9'}}>
                                                 <Box style={{padding: 8}}>
-                                                    <Badge badgeContent={110} showZero='true' color="secondary"> //수정
+                                                    <Badge badgeContent={test.length} showZero='true' color="secondary">
                                                         <Button style={{backgroundColor: '#1b5e20', color: '#ffffff', borderRadius: '10px', height: 44, width: 80}}>
                                                             Total
                                                         </Button>
                                                     </Badge>
                                                 </Box>
                                                 <Box style={{padding: 8}}>
-                                                    <Badge badgeContent={110} showZero='true' color="secondary">
+                                                    <Badge badgeContent={jpg} showZero='true' color="secondary">
                                                         <Button style={{backgroundColor: '#33691e', color: '#ffffff', borderRadius: '10px', height: 44, width: 80}}>
                                                             JPG
                                                         </Button>
                                                     </Badge>
                                                 </Box>
                                                 <Box style={{padding: 8}}>
-                                                    <Badge badgeContent={11} showZero='true' color="secondary">
+                                                    <Badge badgeContent={png} showZero='true' color="secondary">
                                                         <Button style={{backgroundColor: '#827717', color: '#ffffff', borderRadius: '10px', height: 44, width: 80}}>
                                                             PNG
                                                         </Button>
                                                     </Badge>
                                                 </Box>
                                                 <Box style={{padding: 8}}>
-                                                    <Badge badgeContent={0} showZero='true' color="secondary">
+                                                    <Badge badgeContent={gif} showZero='true' color="secondary">
                                                         <Button style={{backgroundColor: '#e65100', color: '#ffffff', borderRadius: '10px', height: 44, width: 80}}>
                                                             GIF
                                                         </Button>
@@ -326,7 +379,7 @@ export default function Home() {
                                             {testImageList.map((step, index) => (
                                                 <div>
                                                     {Math.abs(activeStep - index) <= 2 ? (
-                                                        <img style={{height: 224, width: '100%'}} src={'step'} alt={''} />
+                                                        <img style={{height: 224, width: '100%'}} src={step} alt={''} />
                                                     ) : null}
                                                 </div>
                                             ))}

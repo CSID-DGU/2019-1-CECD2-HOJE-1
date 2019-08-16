@@ -126,7 +126,6 @@ export default function Search() {
             if(exists){
                 fs.stat(`${__dirname}/../../../resultfile.json`,(err,stat)=>{
                     let data = moment(stat.atime).format('YYYY년 MM월 DD일');
-                    console.log('date : ' , data);
                     setBirth(data);
                 })
             }else
@@ -273,20 +272,20 @@ export default function Search() {
                                     <Fade {...TransitionProps} timeout={350}>
                                         <Paper>
                                             <List className={classes.root}>
-                                                {setting_data.searchSetting.map(value => {
+                                                {setting_data.reg.map(value => {
                                                     const labelId = `op-${value.id}`;
                                                     return (
                                                         <ListItem disabled={value.disable} key={value.id} role={undefined} dense button onClick={handleToggle(value.name)}>
                                                             <ListItemIcon>
                                                                 <Checkbox
                                                                     edge="start"
-                                                                    checked={checked.indexOf(value.name) !== -1}
+                                                                    checked={checked.indexOf(value.key) !== -1}
                                                                     tabIndex={-1}
                                                                     disableRipple
                                                                     inputProps={{ 'aria-labelledby': labelId }}
                                                                 />
                                                             </ListItemIcon>
-                                                            <ListItemText id={labelId} primary={`${value.name}`} />
+                                                            <ListItemText id={labelId} primary={`${value.key}`} />
                                                         </ListItem>
                                                     );
                                                 })}
