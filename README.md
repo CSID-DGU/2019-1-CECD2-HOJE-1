@@ -15,7 +15,7 @@
 Client Application 플랫폼
 ----------------------
 	플랫폼 : Window 10
-	개발환경 : VS, Node.js 10.16.0
+	개발환경 : VS, Node.js 10.16.0, IntellJ
 	프레임워크 : 일렉트론
 	사용언어 : JavaScript 
 	역할 : 사용자에게 서비스를 제공하는 애플리케이션 형태
@@ -23,7 +23,7 @@ Client Application 플랫폼
 학습 Application 플랫폼
 -------------------
 	플랫폼 : 리눅스, 우분투
-	개발환경 : VS
+	개발환경 : Qt Creator, Vs Code
 	프레임워크 : Qt	
 	사용언어 : bash script, c++, 
 	역할 : 문자 학습 
