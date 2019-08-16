@@ -28,7 +28,7 @@ Application 플랫폼
 	
 실행 방법
 ---------
-[클라이언트 앱]
+[클라이언트 앱] (https://github.com/CSID-DGU/2019-1-CECD2-HOJE-1/wiki/ExecuteClientApp)
 
 애플리케이션 (프로토타입) 구상도.
 ----
