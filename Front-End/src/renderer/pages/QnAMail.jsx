@@ -163,6 +163,9 @@ export default function QnAMail(props) {
 
             }
         });
+        return ()=>{
+            ipcRenderer.removeAllListeners('RESULT2');
+        }
     });
 
     const txtChange = prop => event => {

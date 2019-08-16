@@ -253,6 +253,10 @@ function QnAMail(props) {
         setImage(findImage.toDataURL());
       }
     });
+
+    return function () {
+      _electron.ipcRenderer.removeAllListeners('RESULT2');
+    };
   });
 
   var txtChange = function txtChange(prop) {

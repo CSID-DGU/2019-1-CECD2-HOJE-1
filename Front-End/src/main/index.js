@@ -54,7 +54,7 @@ app.on('ready', () => {
         isPlaying = true;
         isStop = false;
         await regRead(result); //정규 표현식 파일 읽음
-        ipcMain.on('PATH',async (event,result)=>{
+        ipcMain.once('PATH',async (event,result)=>{
             console.log('result : ' ,result);
             for(const tmpPath of result) {
                 let tmp = await Exec(tmpPath, ['.jpg', '.png', '.tif']); //함수 실행
@@ -73,7 +73,7 @@ app.on('ready', () => {
                 let json = JSON.stringify(tmpList);
                 fs.writeFileSync('resultfile.json', json, 'utf8'); //Todo 경로 위치 바꿔야 됨
                 console.log('file created');
-               // UploadLog(tmpList); //서버에 최근 검사한 내역 전송
+                UploadLog(tmpList); //서버에 최근 검사한 내역 전송
             }
         });
         if(isStop && isPlaying){

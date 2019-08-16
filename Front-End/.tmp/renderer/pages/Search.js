@@ -206,6 +206,7 @@ function Search() {
         });
       } else setBirth('이전 검사일을 알 수 없음');
     });
+    return function () {};
   });
 
   var _React$useState15 = _react["default"].useState(test),
@@ -428,7 +429,7 @@ function Search() {
         role: undefined,
         dense: true,
         button: true,
-        onClick: handleToggle(value.name)
+        onClick: handleToggle(value.key)
       }, _react["default"].createElement(_ListItemIcon["default"], null, _react["default"].createElement(_Checkbox["default"], {
         edge: "start",
         checked: checked.indexOf(value.key) !== -1,

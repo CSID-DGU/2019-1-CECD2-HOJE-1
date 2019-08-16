@@ -131,6 +131,9 @@ export default function Search() {
             }else
                 setBirth('이전 검사일을 알 수 없음');
         })
+        return ()=>{
+
+        }
     });
     const [checked, setChecked] = React.useState(test);
 
@@ -275,7 +278,7 @@ export default function Search() {
                                                 {setting_data.reg.map(value => {
                                                     const labelId = `op-${value.id}`;
                                                     return (
-                                                        <ListItem disabled={value.disable} key={value.id} role={undefined} dense button onClick={handleToggle(value.name)}>
+                                                        <ListItem disabled={value.disable} key={value.id} role={undefined} dense button onClick={handleToggle(value.key)}>
                                                             <ListItemIcon>
                                                                 <Checkbox
                                                                     edge="start"

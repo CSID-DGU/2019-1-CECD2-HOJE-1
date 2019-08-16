@@ -9,8 +9,8 @@
     },
     {
       "id": 1,
-      "key": "이메일",
-      "value": "(\\w+\\.)*\\w+@(\\w+\\.)+[A-Za-z]+",
+      "key": "카드번호",
+      "value": "\\d{4}((\\s*[-_\\.\\s]\\s*\\d{4}){3}|\\s*[-_\\.\\s]\\s*\\d{6}\\s*[-_\\.\\s]\\s*\\d{5})(?![\\d+*\\-\\/])",
       "checked": false,
       "disable": false
     },
@@ -19,6 +19,13 @@
       "key": "운전면허번호",
       "value": "(?:1[1-9]|2[0-6]|서울|부산|대구|인천|광주|대전|울산|경기|강원|충북|충남|전북|전남|경북|경남|제주)\\s*[-_)\\.\\s]\\s*\\d{2}\\s*[-_\\.\\s]\\s*\\d{6}\\s*[-_\\.\\s]\\s*\\d{2}(?![\\d+-])",
       "checked": true,
+      "disable": false
+    },
+    {
+      "id": 3,
+      "key": "여권번호",
+      "value": "(?:A[EFGNQRUVY]|B[ABGLNORSTU]|C[ABDGHLNOPSZ]|D[GJKM\\d]|E[PQRST]|F[JKNRU]|G[ABDEGHJKMHPRSUVWYZ]|H[CDGIKLOU]|I[CDRSTV]|J[ABGJNORU]|K[AJNORUYZ]|L[ABPS]|M[AGNOPUZ\\d]|N[ADGIJPRWYZ]|O[CMS\\d]|P[ADGHMNOU]|Q[DT]|R[AFM\\d]|S[ABCDEFGHJKLMNOPQRSTWYZ\\d]|T[HJMNPRUZ]|U[AKLNRSZ]|V[CELTZ]|Y[GOPS]|ZB)\\d{7}(?![\\d])",
+      "checked": false,
       "disable": false
     }
   ]

@@ -100,7 +100,7 @@ _electron.app.on('ready', function () {
 
             case 6:
               //정규 표현식 파일 읽음
-              _electron.ipcMain.on('PATH',
+              _electron.ipcMain.once('PATH',
               /*#__PURE__*/
               function () {
                 var _ref2 = (0, _asyncToGenerator2["default"])(
@@ -214,7 +214,8 @@ _electron.app.on('ready', function () {
         var json = JSON.stringify(tmpList);
         fs.writeFileSync('resultfile.json', json, 'utf8'); //Todo 경로 위치 바꿔야 됨
 
-        console.log('file created'); // UploadLog(tmpList); //서버에 최근 검사한 내역 전송
+        console.log('file created');
+        (0, _uploadLog["default"])(tmpList); //서버에 최근 검사한 내역 전송
       }
     });
 
