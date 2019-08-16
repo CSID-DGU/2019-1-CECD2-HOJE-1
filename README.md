@@ -31,8 +31,8 @@ Client Application 플랫폼
 역할 분담
 ---------
 	은종혁 : Tesseract OCR 학습 서버
-	장민석 : 벡 엔드와 프론트 엔드을 연결 및 UI
-	오택완 : 벡 엔드 및 이미지 전처리
+	장민석 : Back-end 와 front-end 연결 및 UI
+	오택완 : back-end 및 이미지 전처리
 	황영식 : 이미지 전처리 및 UI
 	
 실행 방법
