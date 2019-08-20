@@ -44,9 +44,9 @@
             <td>
                 <select name="formLevel" id="FORMLEVEL">
                     <option value="">select</option>
-                    <option value="public"> public </option>
-                    <option value="companyOnly">CompanyOnly</option>
-                    <option value="confidentiality">Confidentiality</option>
+                    <option value="공개"> 공개 </option>
+                    <option value="사내한">사내한</option>
+                    <option value="대외비">대외비</option>
                 </select>
             </td>
         </tr>

@@ -45,7 +45,7 @@
                     yValueFormatString: "#,###",
                     xValueFormatString: "DD MMM YYYY",
                     showInLegend: true,
-                    name: "RED",
+                    name: "부적합",
                     dataPoints: dataPoints[0]
                 },
                 {
@@ -54,7 +54,7 @@
                     xValueType: "dateTime",
                     yValueFormatString: "#,###",
                     showInLegend: true,
-                    name: "GREEN" ,
+                    name: "적합" ,
                     dataPoints: dataPoints[1]
                 },
                 {
@@ -63,7 +63,7 @@
                     xValueType: "dateTime",
                     yValueFormatString: "#,###",
                     showInLegend: true,
-                    name: "YELLOW" ,
+                    name: "보통" ,
                     dataPoints: dataPoints[2]
                 }]
             });
