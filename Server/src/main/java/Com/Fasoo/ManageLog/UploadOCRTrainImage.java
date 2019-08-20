@@ -7,11 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.beans.SimpleBeanInfo;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 
@@ -33,7 +29,7 @@ public class UploadOCRTrainImage {
         int index = originFileName.lastIndexOf(".");
         String pureFileName = originFileName.substring(0, index);
         folderName = pureFileName+"_"+ Utilization.getMD5(ip+sdf.format(nowDate));
-        ocrTrainImageDTO.setFolderPath("ManageTrainImageFile/" + folderName);
+        ocrTrainImageDTO.setFolderPath("/resources/ManageTrainImageFile/" + folderName);
 
         File mkFolder = new File(path+folderName);
 
@@ -43,11 +39,19 @@ public class UploadOCRTrainImage {
     }
 
     public boolean saveFile(MultipartFile file, String text, String pureFileName, String textFileName) throws Exception{
+
         ByteArrayInputStream in = new ByteArrayInputStream(file.getBytes());
         BufferedImage bufferedImage = ImageIO.read(in);
+        ImageIO.write(bufferedImage, "jpg", new File(path+folderName, pureFileName+".jpg"));
+
+        in = new ByteArrayInputStream(file.getBytes());
+        bufferedImage = ImageIO.read(in);
         ImageIO.write(bufferedImage, "tif", new File(path+folderName, pureFileName+".tif"));
 
-        FileWriter fileWriter = new FileWriter(path+folderName + "/" + textFileName);
+        //인코딩 변경
+        //FileWriter fileWriter = new FileWriter();
+        BufferedWriter fileWriter = new BufferedWriter(
+                                            new OutputStreamWriter(new FileOutputStream(path+folderName + "/" + textFileName), "UTF8"));
         fileWriter.write(text);
         fileWriter.close();
 

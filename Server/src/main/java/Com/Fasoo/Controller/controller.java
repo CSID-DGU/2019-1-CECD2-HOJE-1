@@ -3,12 +3,14 @@ import Com.Fasoo.DBController.*;
 import Com.Fasoo.ImageClassification.Classification;
 import Com.Fasoo.ImageRegister.ImageRegistry;
 import Com.Fasoo.ManageLog.DetectLog;
+import Com.Fasoo.ManageLog.DownloadOCRTrainImage;
 import Com.Fasoo.ManageLog.ManageOCRFile;
 import Com.Fasoo.ManageLog.UploadOCRTrainImage;
 import Com.Fasoo.PredictModel.KNN;
 import Com.Fasoo.PredictModel.PrincipleComponentAnalysis;
 import Com.Fasoo.Utilization.Utilization;
 import Com.Fasoo.ViewModel.ImageInfoBean;
+import Com.Fasoo.ViewModel.OcrTrainRequestView;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -22,26 +24,17 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
-import java.awt.image.BufferedImage;
 import java.io.*;
+
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Controller
 public class controller {
 
-    //todo:수정
-//    @RequestMapping(value="/")
-//    public String MonitoringPage(){
-//        return "index";
-//    }
-
-    @RequestMapping(value="/index")
-    public void indexPage(Model model){
+    @RequestMapping(value="/classificationRequest")
+    public String indexPage(Model model){
         List<ImageRegistrationDTO> imageList = null;
         ImageRegistrationDAO imageRegistrationDAO = new ImageRegistrationDAO();
         try {
@@ -49,20 +42,29 @@ public class controller {
             model.addAttribute("imageInfoList", imageList);
         }catch(Exception e){
             e.printStackTrace();
+            model.addAttribute("imageInfoList", null);
         }
-        //return "index";
+        return "classificationRequest";
     }
 
-    @RequestMapping(value="/indexJson")
-    public  @ResponseBody  List<ImageRegistrationDTO> indexJson(){
-        List<ImageRegistrationDTO> imageList = null;
-        ImageRegistrationDAO imageRegistrationDAO = new ImageRegistrationDAO();
-        try {
-            imageList = imageRegistrationDAO.getImageRegistryList();
-        }catch(Exception e){
-            e.printStackTrace();
+    @RequestMapping(value="/test")//
+    public  @ResponseBody String indexJson(@ModelAttribute("imageInfo") ImageInfoBean bean){
+        System.out.println(bean.getImagePath());
+        System.out.println(bean.getFormName());
+        System.out.println(bean.getFormLevel());
+
+        for(String value : bean.getDepartCheck()){
+            System.out.println(value);
         }
-        return imageList;
+
+        System.out.println(bean.getIndex());
+
+        return "test";
+    }
+
+    @RequestMapping(value="/index")//@ModelAttribute("imageInfo") ImageInfoBean bean
+    public String index(){
+        return "etc/index";
     }
 
     @RequestMapping(value="/DBConnectTest")
@@ -89,25 +91,9 @@ public class controller {
         }
     }
 
-    @RequestMapping(value="/test")
-    public @ResponseBody String dbtest(){
-
-        ImageRegistrationDAO dao = new ImageRegistrationDAO();
-        try {
-            ImageRegistrationDTO dto= dao.getImageRegistryInfo(6);
-            System.out.println(dto.getId());
-            System.out.println(dto.getImagePath());
-            System.out.println(dto.getRequestDepart());
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-
-        return "ok";
-    }
-
     @GetMapping(value = "/classification") //, @RequestParam String filePath
     //public @ResponseBody HashMap<String, ArrayList<Object>> classification(@RequestParam String dhashValue, @RequestParam String depart) throws Exception
-    public @ResponseBody HashMap<String, Object> classification(@RequestParam String dhashValue, @RequestParam String depart) throws Exception { //List<Animal>
+    public @ResponseBody HashMap<String, Object> classification(@RequestParam String dhashValue, @RequestParam String depart) throws Exception {
 
         // todo : dhashValue or depart value null processing will need!
         Classification classification = new Classification(dhashValue, depart);
@@ -124,7 +110,15 @@ public class controller {
     }
 
     @RequestMapping(value="/singleFileUpload")
-    public @ResponseBody String singleFileUpload(@RequestParam("mediaFile") MultipartFile file, @RequestParam String request_depart){
+    public @ResponseBody String singleFileUpload(HttpServletRequest requestContext, @RequestParam("mediaFile") MultipartFile file, @RequestParam String request_depart, @RequestParam String comment){
+        String ip = requestContext.getRemoteAddr();
+        Calendar date = new GregorianCalendar(Locale.KOREA);
+
+        date.set(Calendar.HOUR_OF_DAY, 0);
+        date.set(Calendar.MINUTE, 0);
+        date.set(Calendar.SECOND, 0);
+        date.set(Calendar.MILLISECOND, 0);
+        Timestamp reqTime = new Timestamp(date.getTimeInMillis());
         try{
             if(!file.getOriginalFilename().isEmpty()){
                 //todo : replace path and save_file_name(부서+시간)
@@ -134,7 +128,7 @@ public class controller {
 
                 //todo: db에 저장
                 ImageRegistrationDAO dao = new ImageRegistrationDAO();
-                dao.insertImageRegistrationStatus(filePath, request_depart, "Unapproved");
+                dao.insertImageRegistrationStatus(filePath, ip,request_depart,reqTime, comment,"Unapproved");
 
                 //todo : result json format
                 return "Upload Success";
@@ -147,9 +141,9 @@ public class controller {
     }
 
     @RequestMapping(value="/dhashRegistration")
-    public String dhashRegistration(@ModelAttribute("imageInfo")ImageInfoBean bean){
+    public String dhashRegistration(@ModelAttribute("imageInfo") ImageInfoBean bean){
         try{
-            ImageRegistry imageRegistry = new ImageRegistry(bean.getDepart());
+            ImageRegistry imageRegistry = new ImageRegistry(bean.getDepart(), bean.getDepartCheck());
             //todo: 상대경로로 변경필요
             String imageFilePath = "C:/Users/GIGABYTE/IdeaProjects/RestAPI_Test/out/artifacts/_/WEB-INF"+bean.getImagePath();
             imageRegistry.DhashCalcuate(imageFilePath);
@@ -171,9 +165,9 @@ public class controller {
 
         }catch(Exception e){
             e.printStackTrace();
-            return "index";
+            return "redirect:/classificationRequest";
         }
-        return "index";
+        return "redirect:/classificationRequest";
     }
 
     @RequestMapping(value="/imageRequestProcess", method= RequestMethod.GET)
@@ -185,12 +179,13 @@ public class controller {
             ImageRegistrationDTO imageRegistrationInfo = dao.getImageRegistryInfo(index);
             model.addAttribute("viewData", imageRegistrationInfo);
 
-            //todo: 상대 경로 변경
-            String imageFilePath = "C:/Users/GIGABYTE/IdeaProjects/RestAPI_Test/out/artifacts/_/WEB-INF" + imageRegistrationInfo.getImagePath();
-            ImageRegistry imageRegistry = new ImageRegistry(imageRegistrationInfo.getRequestDepart());
-            String[] hashList = imageRegistry.DhashCalcuate(imageFilePath);
-
             //관리자가 이미지 등록을 원활히 하기 위해 추천 리스트를 작성하기 위한 classification
+            //todo: 상대 경로 변경
+//            String imageFilePath = "C:/Users/GIGABYTE/IdeaProjects/RestAPI_Test/out/artifacts/_/WEB-INF" + imageRegistrationInfo.getImagePath();
+//            ImageRegistry imageRegistry = new ImageRegistry(imageRegistrationInfo.getRequestDepart());
+//            String[] hashList = imageRegistry.DhashCalcuate(imageFilePath);
+
+
 //            Classification classification = new Classification(hashList[0].replaceAll("\\n|\\s", ""), imageRegistrationInfo.getRequestDepart());
 //
 //            classification.setClassificationAlgorithm(new KNN(), new PrincipleComponentAnalysis());
@@ -218,7 +213,7 @@ public class controller {
 //                return "requestImage";
 //            }
 
-            return "requestImage";
+            return "etc/requestImage";
 
         }catch (Exception e){
             e.printStackTrace();
@@ -232,7 +227,7 @@ public class controller {
     //todo : 정규식 download restful
     @RequestMapping(value="/downloadRexFile")
     public @ResponseBody ResponseEntity<InputStreamResource> downloadRexFile() throws IOException{
-        final String REX_FILE_PATH =  "C:/Users/GIGABYTE/IdeaProjects/RestAPI_Test/out/artifacts/_/WEB-INF" + "/resources/ManageRexFile/downloadTest.json";
+        final String REX_FILE_PATH =  "C:/Users/GIGABYTE/IdeaProjects/RestAPI_Test/out/artifacts/_/WEB-INF" + "/resources/ManageRexFile/reg.json";
 
         File file = new File(REX_FILE_PATH);
         InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
@@ -347,46 +342,7 @@ public class controller {
     }
 
     @PostMapping("/multipleFileUpload")
-    public @ResponseBody String multipleFileUpload(HttpServletRequest requestContext, @RequestParam("mediaFile") MultipartFile[] files, String[] text, Model model) throws IOException {
-        // Save mediaFile on system
-        for (int i =0; i<files.length; i++) {
-            if (!files[i].getOriginalFilename().isEmpty()) {
-                String fileName = files[i].getOriginalFilename();
-                String fileTextPath ="C:/Users/GIGABYTE/IdeaProjects/RestAPI_Test/out/artifacts/_/WEB-INF/resources/ManageTrainImageFile";
-                int index = fileName.lastIndexOf(".");
-                String pureFileName = fileName.substring(0, index);
-                String textFileName = fileName.substring(0, index) + ".txt";
-
-                try {
-                    ByteArrayInputStream in = new ByteArrayInputStream(files[i].getBytes());
-                    BufferedImage bufferedImage = ImageIO.read(in);
-                    ImageIO.write(bufferedImage, "tif", new File("C:/Users/GIGABYTE/IdeaProjects/RestAPI_Test/out/artifacts/_/WEB-INF/resources/ManageTrainImageFile", pureFileName+".tif"));
-                    System.out.println("C:/Users/GIGABYTE/IdeaProjects/RestAPI_Test/out/artifacts/_/WEB-INF/resources/ManageTrainImageFile/"+pureFileName+".tif");
-                }catch (Exception e){
-                    e.printStackTrace();
-                    return "write image file error";
-                }
-
-                try {
-                    FileWriter fileWriter = new FileWriter(fileTextPath + "/" + textFileName);
-                    fileWriter.write(text[i]);
-                    fileWriter.close();
-                    System.out.println(text[i]);
-                }catch (Exception e){
-                    e.printStackTrace();
-                    return "write text File Error";
-                }
-
-            } else {
-                return "Please select at least one mediaFile..";
-            }
-        }
-        return "Multiple files uploaded successfully.";
-    }
-
-
-    @PostMapping("/multipleFileUploadConvert")
-    public @ResponseBody String multipleFileUploadTestConvert(HttpServletRequest requestContext, @RequestParam("mediaFile") MultipartFile[] files, String[] text, String originFileName, String depart, Model model){
+    public @ResponseBody String multipleFileUploadTestConvert(HttpServletRequest requestContext, @RequestParam("mediaFile") MultipartFile[] files, String[] text, String originFileName, String depart){
         String ip = requestContext.getRemoteAddr();
         UploadOCRTrainImage uploadOCRTrainImage = null;
 
@@ -403,10 +359,9 @@ public class controller {
         for (int i =0; i<files.length; i++) {
             if (!files[i].getOriginalFilename().isEmpty()) {
                 String fileName = files[i].getOriginalFilename();
-
                 int index = fileName.lastIndexOf(".");
                 String pureFileName = fileName.substring(0, index);
-                String textFileName = fileName.substring(0, index) + ".txt";
+                String textFileName = fileName.substring(0, index) + ".gt.txt";
 
                 try {
                     uploadOCRTrainImage.saveFile(files[i], text[i], pureFileName, textFileName);
@@ -420,12 +375,146 @@ public class controller {
             }
         }
 
-
         if(!uploadOCRTrainImage.insertUploadImageInfo()){
             return "sql Insert error";
         }
 
         return "Multiple files uploaded successfully.";
+    }
+
+    @RequestMapping(value="/OCRTrainImageList")
+    public String OCRTrainImageList(@RequestParam int pageNum, Model model){
+        final String absPath ="C:/Users/GIGABYTE/IdeaProjects/RestAPI_Test/out/artifacts/_/WEB-INF/";
+        List<OCRTrainImageDTO> list = null;
+        OCRTrainImageDAO ocrTrainImageDAO = new OCRTrainImageDAO();
+        List<OcrTrainRequestView> requestViewList = new ArrayList<OcrTrainRequestView>();
+
+        try {
+            list = ocrTrainImageDAO.getDownloadImageList();
+
+            for(OCRTrainImageDTO info : list) {
+                OcrTrainRequestView ocrTrainRequestView = new OcrTrainRequestView();
+                ocrTrainRequestView.setFolderPath(info.getFolderPath());
+                ocrTrainRequestView.setIp(info.getIp());
+                ocrTrainRequestView.setRequestTime(info.getRequestDate());
+
+                File folder = new File(absPath + info.getFolderPath());
+
+                List<String> thumbNailImagePath = new ArrayList<String>();
+
+                for(final File fileEntry : folder.listFiles()){
+                    String name = fileEntry.getName();
+                    int index = name.lastIndexOf(".");
+                    String ext = name.substring(index, name.length());
+                    //System.out.println(ext);
+
+                    if(ext.equals(".jpg")){
+                        //경로 수정 필요....
+                        thumbNailImagePath.add(fileEntry.getCanonicalPath().replace("C:\\Users\\GIGABYTE\\IdeaProjects\\RestAPI_Test\\out\\artifacts\\_\\WEB-INF",""));
+                    }
+
+                    if(thumbNailImagePath.size() > 3) //섬네일 이미지 4개
+                        break;
+                }
+                ocrTrainRequestView.setImagePath(thumbNailImagePath);
+                requestViewList.add(ocrTrainRequestView);
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+            return "recognitionFault";
+        }
+
+        model.addAttribute("requestImageList", requestViewList);
+        return "recognitionFault";
+    }
+
+    @RequestMapping(value="/singleOCRRequestView")
+    public String test(@RequestParam String folderPath,@RequestParam String ip, @RequestParam String reqTime, Model model) {
+        final String absPath ="C:/Users/GIGABYTE/IdeaProjects/RestAPI_Test/out/artifacts/_/WEB-INF/";
+        List<String> textList = new ArrayList<String>();
+        List<String> pathList = new ArrayList<String>();
+
+        try {
+            File folder = new File(absPath + folderPath);
+
+            for(final File fileEntry : folder.listFiles()){
+                String name = fileEntry.getName();
+                int index = name.lastIndexOf(".");
+                String ext = name.substring(index, name.length());
+                switch(ext){
+                    case ".txt":
+                        //텍스트 파일 읽어와서 저장
+
+                        BufferedReader br = new BufferedReader( new InputStreamReader(new FileInputStream(fileEntry.getPath()), "UTF8"));
+
+                        try{
+                            String result="";
+                            String line;
+                            while((line = br.readLine())!=null){
+                                result += line;
+                            }
+                            textList.add(result);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+
+                        br.close();
+
+                        break;
+                    case ".jpg":
+                        pathList.add(fileEntry.getCanonicalPath().replace("C:\\Users\\GIGABYTE\\IdeaProjects\\RestAPI_Test\\out\\artifacts\\_\\WEB-INF",""));
+                        break;
+
+                    default:
+                        //do nothing;
+                }
+
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return "recognitionFaultDetail";
+        }
+
+        model.addAttribute("ip", ip);
+        model.addAttribute("reqTime", reqTime);
+        model.addAttribute("textList", textList);
+        model.addAttribute("pathList", pathList);
+        return "recognitionFaultDetail";
+    }
+
+
+    @RequestMapping(value="/imageDownload")
+    public @ResponseBody ResponseEntity<InputStreamResource> test() throws FileNotFoundException {
+        DownloadOCRTrainImage downloadOCRTrainImage = new DownloadOCRTrainImage();
+        String zipDir = downloadOCRTrainImage.zipDir();
+
+        //System.out.println(zipDir);
+        File file = new File(zipDir);
+
+        InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+
+
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + file.getName())
+                .contentType(MediaType.APPLICATION_JSON).contentLength(file.length())
+                .body(resource);
+    }
+
+    @RequestMapping(value="/getUpdateTime")
+    public @ResponseBody String getUpdateTime() {
+        ManageOCRFile manageOCRFile = new ManageOCRFile();
+        String updateTime;
+
+        try {
+            updateTime = manageOCRFile.getRecentTime();
+        }catch (Exception e){
+            updateTime = "0000-00-00 00:00:00";
+            e.printStackTrace();
+        }
+
+        return updateTime;
     }
 
 }

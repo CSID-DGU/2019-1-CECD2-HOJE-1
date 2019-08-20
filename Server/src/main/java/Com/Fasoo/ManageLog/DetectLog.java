@@ -71,7 +71,7 @@ public class DetectLog {
                         formLevel = "사내한";
                         break;
                     case "CONFIDENTIALITY":
-                        formLevel = "기밀";
+                        formLevel = "대외비";
                         break;
                     default:
                         formLevel="미분류";

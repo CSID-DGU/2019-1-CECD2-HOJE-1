@@ -1,9 +1,6 @@
 package Com.Fasoo.DBController;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,7 +22,7 @@ public class ImageRegistrationDAO {
         List<ImageRegistrationDTO> imageRegistryList = null;
 
         try{
-            sql = "SELECT * FROM public.image_registration_status ORDER BY id DESC";
+            sql = "SELECT * FROM public.image_registration_status WHERE status = 'Unapproved' ORDER BY id DESC";
             pstmt = con.prepareStatement(sql);
 
             rs = pstmt.executeQuery();
@@ -39,8 +36,12 @@ public class ImageRegistrationDAO {
                     singleData.setImagePath(rs.getString("image_path"));
                     singleData.setRequestDepart(rs.getString("request_depart"));
                     singleData.setStatus(rs.getString("status"));
+                    singleData.setIp(rs.getString("ip"));
+                    singleData.setRequestTime(rs.getTimestamp("request_time"));
+                    singleData.setComment(rs.getString("comment"));
                     imageRegistryList.add(singleData);
                 }while(rs.next());
+
             }else{
                 imageRegistryList = Collections.EMPTY_LIST;
             }
@@ -73,6 +74,9 @@ public class ImageRegistrationDAO {
                 imageRegistryInfo.setImagePath(rs.getString("image_path"));
                 imageRegistryInfo.setRequestDepart(rs.getString("request_depart"));
                 imageRegistryInfo.setStatus(rs.getString("status"));
+                imageRegistryInfo.setIp(rs.getString("ip"));
+                imageRegistryInfo.setRequestTime(rs.getTimestamp("request_time"));
+                imageRegistryInfo.setComment(rs.getString("comment"));
 
             }else{
                 imageRegistryInfo = null;
@@ -85,20 +89,22 @@ public class ImageRegistrationDAO {
         return imageRegistryInfo;
     }
 
-
-    public boolean insertImageRegistrationStatus(String filePath, String depart, String status){
+    public boolean insertImageRegistrationStatus(String filePath, String ip, String depart, Timestamp requestTime, String comment ,String status){
         Connection con = dbConnect.getConeection();
         PreparedStatement pstmt = null;
 
         boolean check = false;
 
         try {
-            sql = "INSERT INTO public.image_registration_status(image_path, request_depart, status) values (?, ?, ?)";
+            sql = "INSERT INTO public.image_registration_status(image_path, request_depart, status, ip, request_time, comment) values (?, ?, ?, ?, ?, ?)";
             pstmt = con.prepareStatement(sql);
 
             pstmt.setString(1, filePath);
             pstmt.setString(2, depart);
             pstmt.setString(3, status);
+            pstmt.setString(4, ip);
+            pstmt.setTimestamp(5, requestTime);
+            pstmt.setString(6,comment);
 
             pstmt.executeUpdate();
 
@@ -112,6 +118,7 @@ public class ImageRegistrationDAO {
 
         return check;
     }
+
 
     public boolean updateStatus(int index, String newStatus){
         Connection con = dbConnect.getConeection();

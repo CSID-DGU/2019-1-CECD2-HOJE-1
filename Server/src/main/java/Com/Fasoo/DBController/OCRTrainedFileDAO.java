@@ -73,4 +73,34 @@ public class OCRTrainedFileDAO {
         return check;
     }
 
+    public Timestamp getRecentUpdateTime(){
+        Connection con = dbConnect.getConeection();
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        Timestamp updateTime = null;
+
+        try {
+            sql = "SELECT update_time FROM public.trained_file_update_log ORDER BY update_time DESC LIMIT 1";
+            pstmt = con.prepareStatement(sql);
+
+            rs = pstmt.executeQuery();
+
+            if(rs.next()){
+                updateTime = rs.getTimestamp("update_time");
+            }else{
+                updateTime = null;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            updateTime = null;
+        }finally {
+            DBClose.close(con, pstmt);
+        }
+
+        return updateTime;
+    }
+
+
+
 }

@@ -53,19 +53,20 @@ public class ImageClassificationDAO {
         return dataSetList;
     }
 
-    public boolean insertImageDhashAndDepart(String form, String dhash, String depart) {
+    public boolean insertImageDhashAndDepart(String form, String dhash, String depart, String manageDepart) {
         Connection con = dbConnect.getConeection();
         PreparedStatement pstmt = null;
 
         boolean check = false;
 
         try {
-            sql = "INSERT INTO public.imageforminfo(form_name, dhash, manage_depart) values (?, ?, ?)";
+            sql = "INSERT INTO public.imageforminfo(form_name, dhash, manage_depart, granted_depart) values (?, ?, ?, ?)";
             pstmt = con.prepareStatement(sql);
 
             pstmt.setString(1, form);
             pstmt.setString(2, dhash);
             pstmt.setString(3, depart);
+            pstmt.setString(4, manageDepart);
 
             pstmt.executeUpdate();
             check = true;

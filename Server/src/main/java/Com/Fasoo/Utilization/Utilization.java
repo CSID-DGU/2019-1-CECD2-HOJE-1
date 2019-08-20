@@ -39,22 +39,19 @@ public class Utilization {
 
         int length = datas.size();
 
-        //todo:majorClass인 대상들만을 구하고 거기서, 부서가 맞는지 체크해야할듯 수정
         for(int i = 0; i<length; i++){
             //System.out.println(datas.get(i).getManageDepart());
             if(depart.equals(datas.get(i).getManageDepart())){
                 return FITNESS.GREEN;
             }
-        }
 
-//        for(int i = 0; i<length; i++){
-//            String grantedDepart = datas.get(i).getGrantedDepart();
-//
-//            //todo: parsing grantedDepart
-//
-//            return fitness;
-//
-//        }
+            String[] manageDepartList = datas.get(i).getGrantedDepart().split("\\|");
+            for(int j=0; j<manageDepartList.length; j++){
+                if(depart.equals(manageDepartList[j])){
+                    return FITNESS.GREEN;
+                }
+            }
+        }
 
         return fitness;
     }
@@ -81,7 +78,7 @@ public class Utilization {
 
     public static String fileNameChange(){
         String nowTime = new SimpleDateFormat("yyyyMMddHmsS").format(new Date());
-        String changeFileName = "kor_"+nowTime + ".trainneddata";
+        String changeFileName = "kor_"+nowTime + ".traineddata";
 
         return changeFileName;
     }

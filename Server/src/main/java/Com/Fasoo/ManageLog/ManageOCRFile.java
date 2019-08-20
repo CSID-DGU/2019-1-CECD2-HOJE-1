@@ -5,6 +5,7 @@ import Com.Fasoo.DBController.OCRTrainedFileDTO;
 
 import java.sql.Timestamp;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class ManageOCRFile {
@@ -40,4 +41,14 @@ public class ManageOCRFile {
             return null;
         }
     }
+
+
+    public String getRecentTime() throws  Exception {
+        Timestamp time = dao.getRecentUpdateTime();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        return sdf.format(time);
+    }
+
 }

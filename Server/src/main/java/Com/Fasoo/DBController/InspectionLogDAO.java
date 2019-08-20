@@ -1,5 +1,7 @@
 package Com.Fasoo.DBController;
 
+import Com.Fasoo.ViewModel.RecentDetectView;
+
 import java.sql.*;
 import java.util.*;
 import java.util.Date;
@@ -274,5 +276,58 @@ public class InspectionLogDAO {
 
         return inspectionCount;
     }
+
+    public List<RecentDetectView> detectCountByDate(Calendar calendar) {
+        Connection con = dbConnect.getConeection();
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        List<RecentDetectView> list = null;
+
+        //Timestamp startTime = this.getDateSetting(calendar, 0);
+        //Timestamp endTime= this.getDateSetting(calendar, 1);
+
+        try{
+            sql =  "SELECT inspection_key, ip, inspection_date, SUM(detect_count) as detectsum " +
+                   "FROM ( SELECT inspection_key, ip, inspection_date, detect_count " +
+                           "FROM inspection_date_log " +
+                           "LEFT JOIN inspection_info_log " +
+                           "USING (inspection_key)" +
+                         ") as t2 " +
+                   //"WHERE inspection_date >= ? and inspection_date <= ? and detect_count is not null "+
+                   "WHERE detect_count is not null "+
+                   "GROUP BY inspection_key, ip, inspection_date " +
+                   "ORDER BY detectSum DESC " +
+                   "LIMIT 3";
+            pstmt = con.prepareStatement(sql);
+
+            //pstmt.setTimestamp(1, startTime);
+            //pstmt.setTimestamp(2, endTime);
+            rs = pstmt.executeQuery();
+
+            if(rs.next()){
+                list = new ArrayList<RecentDetectView>();
+
+                do{
+                    RecentDetectView viewData = new RecentDetectView();
+                    viewData.setIp(rs.getString("ip"));
+                    viewData.setDetectCount(rs.getInt("detectsum"));
+                    viewData.setInspectionDate(rs.getTimestamp("inspection_date"));
+
+                    list.add(viewData);
+                }while(rs.next());
+            }else{
+                list = Collections.EMPTY_LIST;
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+
+        }finally {
+            DBClose.close(con, pstmt);
+        }
+
+        return list;
+    }
+
 
 }
