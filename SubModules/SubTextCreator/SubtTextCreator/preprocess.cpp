@@ -526,14 +526,14 @@ cv::Mat Preprocess::GS_erode(cv::Mat src_image, int type, int method)
 	return dst_image;
 }
 
-cv::Mat Preprocess::removeDotNoise(cv::Mat src_image) {
+cv::Mat Preprocess::removeDotNoise(cv::Mat src_image, int removeDotSize) {
 	cv::Mat labels, stats, centroids;
 
 	auto nlabels = connectedComponentsWithStats(src_image, labels, stats, centroids, 8, CV_32S, cv::CCL_WU);
 	cv::Mat imageWithoutDots(src_image.rows, src_image.cols, CV_8UC1, cv::Scalar(0));
 
 	for (int i = 1; i < nlabels; i++) {
-		if (stats.at<int>(i, 4) >= 5) { // 10보다 큰 경우에 동작이 원활한 경우가 있음
+		if (stats.at<int>(i, 4) >= removeDotSize) { // 10보다 큰 경우에 동작이 원활한 경우가 있음
 			for (int j = 0; j < imageWithoutDots.total(); j++) {
 				if (labels.at<int>(j) == i) {
 					imageWithoutDots.data[j] = 255;

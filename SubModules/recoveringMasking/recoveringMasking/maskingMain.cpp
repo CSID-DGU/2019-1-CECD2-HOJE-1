@@ -59,11 +59,21 @@ int main(int argc, char** argv)
 		cv::cvtColor(img, edged, COLOR_BGR2GRAY);
 		//imageProcessing.push_back(edged);
 		cv::GaussianBlur(edged, edged, cv::Size(7, 7), 0);
+		cv::GaussianBlur(edged, edged, cv::Size(7, 7), 0);
 		//imageProcessing.push_back(edged);
-		cv::copyMakeBorder(img, img, 5, 5, 5, 5, cv::BORDER_CONSTANT, Scalar(0, 0, 0));
-		cv::copyMakeBorder(edged, edged, 5, 5, 5, 5, cv::BORDER_CONSTANT, Scalar(0, 0, 0));
+		//cv::copyMakeBorder(img, img, 5, 5, 5, 5, cv::BORDER_CONSTANT, Scalar(0, 0, 0));
+		//cv::copyMakeBorder(edged, edged, 5, 5, 5, 5, cv::BORDER_CONSTANT, Scalar(0, 0, 0));
 		//imageProcessing.push_back(edged);
-		cv::Canny(edged, edged, 50, 100);
+		cv::Canny(edged, edged, 30, 80);
+
+		
+		cv::Mat rect_kernel = cv::getStructuringElement(cv::MORPH_CROSS, cv::Size(3, 3));
+		cv::dilate(edged, edged, rect_kernel, Point(-1, -1), 5);
+		rect_kernel = cv::getStructuringElement(cv::MORPH_CROSS, cv::Size(3, 3));
+		cv::erode(edged, edged, rect_kernel, Point(-1, -1), 5);
+		
+		cv::copyMakeBorder(img, img, 1, 1, 1, 1, cv::BORDER_CONSTANT, Scalar(0, 0, 0));
+		cv::copyMakeBorder(edged, edged, 1, 1, 1, 1, cv::BORDER_CONSTANT, Scalar(1, 1, 1));
 
 		//imageProcessing.push_back(edged);
 
@@ -72,18 +82,20 @@ int main(int argc, char** argv)
 		int height = edged.rows;
 		int width = edged.cols;
 
-		const long MAX_COUNTOUR_AREA = (width - 10) * (height - 10);
-		long maxAreaFound = MAX_COUNTOUR_AREA * 0.3;
+		const long MAX_COUNTOUR_AREA = (width - 2) * (height - 2);
+		long maxAreaFound = MAX_COUNTOUR_AREA * 0.35;
 
 		vector<Mat> rectList;
 
 		for (size_t i = 0; i < contours.size(); i++) {
-			if (cv::contourArea(contours[i]) <= maxAreaFound)
-				continue;
-
+			
 			RotatedRect box = cv::minAreaRect(contours[i]);
 			Mat boxPts; // bottom left, top left, top right, bottom right;
 			boxPoints(box, boxPts);
+			
+			if (cv::contourArea(boxPts) <= maxAreaFound)
+				continue;
+			
 
 			if (rectList.size() == 0) {
 				rectList.push_back(boxPts);
@@ -119,34 +131,49 @@ int main(int argc, char** argv)
 		//cv::imshow("warped result", warped);
 		//cv::waitKey(0);
 
+		//for (int i = 0; i < imageProcessing.size(); i++) {
+		//	cv::imshow(to_string(i), imageProcessing[i]);
+		//}
+		//cv::waitKey(0);
+		
 		Mat roiImg;
 		roiImg = p_tool.GS_rgb2gray(warped); // 변환 등을 적용하기 위해서 grayscale로 변환
 		//imageProcessing.push_back(roiImg);
 		roiImg = p_tool.GS_topHat(~roiImg, MorphShapes::MORPH_CROSS, 5, 3);
 		//imageProcessing.push_back(roiImg);
-		roiImg = ~p_tool.GS_threshold(roiImg, 150, THRESH_OTSU);
+		roiImg = ~p_tool.GS_threshold(roiImg, 170, THRESH_OTSU); //150
 		//imageProcessing.push_back(roiImg);
-
-		roiImg = p_tool.removeDotNoise(~roiImg);
+		roiImg = p_tool.removeDotNoise(~roiImg, 5);
 		//imageProcessing.push_back(roiImg);
-
 		roiImg = p_tool.GS_add_image(roiImg, p_tool.findTable(roiImg, 9));// Erosion, Dilation - 표 선분 제거
-		//imageProcessing.push_back(roiImg);
 
 		//for (int i = 0; i < imageProcessing.size(); i++) {
 		//	cv::imshow(to_string(i), imageProcessing[i]);
 		//}
 		//cv::waitKey(0);
-
+		
 		//Detect
 		std::vector<cv::Rect> letterBBoxes1 = detectLetters(roiImg);
+		letterBBoxes1 = mergeLettersBox(letterBBoxes1);
+		//for (int i = 0; i < letterBBoxes1.size(); i++) {
+		//	cout <<"test : " << letterBBoxes1[i] << endl;
+		//}
+		//std::system("pause");
+		std::reverse(letterBBoxes1.begin(), letterBBoxes1.end());
 		scaleBoundingBoxSize(letterBBoxes1, roiImg.cols, roiImg.rows, img.cols, img.rows);
-
-
+		
+		//텍스트 추출 이후 노이즈 제거
+		roiImg = p_tool.removeDotNoise(~roiImg, 4 + 2 * (roiImg.cols / 400));
+		
 		vector<Mat> subImage;
 		for (int i = 0; i < letterBBoxes1.size(); i++) {
 			subImage.push_back(roiImg(letterBBoxes1[i]));
 		}
+
+		//for (int i = 0; i < letterBBoxes1.size(); i++) {
+		//	imshow("sub_"+to_string(i), subImage[i]);
+		//}
+		//cv::waitKey(0);
 
 		const int BufferLength = 4096;
 		char readBuffer[BufferLength] = { 0, };
@@ -173,13 +200,13 @@ int main(int argc, char** argv)
 		}
 
 		const Json::Value list = root["reg"];
-
-
+		
 
 		char lang[] = "kor";
 		tesseract::TessBaseAPI tess;
 		tess.Init(NULL, lang);
-
+		//tess.Init(NULL, lang, tesseract::OEM_DEFAULT);
+		//tess.SetPageSegMode(tesseract::PSM_SINGLE_BLOCK);
 		//std::system("chcp 65001");
 		vector<Rect> subImageRectList;
 		
@@ -202,14 +229,17 @@ int main(int argc, char** argv)
 			tess.Recognize(0);
 
 			string outtext(tess.GetUTF8Text());
-
+			//cout << "텍스트" << outtext << endl;
 			vector<string> outtextSplit;
 			//outtext의 공백 제거
 			outtextSplit = stringProcess(outtext);
-			for (int splitTextIndex = 0; splitTextIndex < outtextSplit.size(); splitTextIndex++) {
 
+			for (int splitTextIndex = 0; splitTextIndex < outtextSplit.size(); splitTextIndex++) {
 				for (int listIndex = 0; listIndex < list.size(); listIndex++) {
+				
 					regex pattern(list[listIndex]["value"].asString());
+					//cout << outtextSplit[splitTextIndex] << "|" << list[listIndex]["value"].asString() << endl;
+					
 					if (regex_match(outtextSplit[splitTextIndex], pattern)) {
 						//cout << "masking!" + outtextSplit[splitTextIndex] << endl;
 						subImageRectList.push_back(letterBBoxes1[subImageIndex]);
@@ -296,9 +326,13 @@ int main(int argc, char** argv)
 
 		}
 
+		//system("pause");
 		Mat reverseWarped = four_point_transform_reverse(img, warped, roiBox);
 	
-		cv::Rect rect(Point(5, 5), Point(img.cols - 5, img.rows - 5));
+		//imshow("???????", reverseWarped);
+		//waitKey(0);
+
+		cv::Rect rect(Point(1, 1), Point(img.cols - 1, img.rows - 1));
 		cv::imwrite(input_name + ".mask"+ext, reverseWarped(rect));
 		makeBoxToJsonFile(subImageRectList, roiBox, pureInput_name);
 		//subImageRectList 저장해야함
@@ -315,7 +349,7 @@ int main(int argc, char** argv)
 		//img = cv::imread(input_name + "_masking.jpg");
 		//vector<Mat> imageProcessing;
 
-		cv::copyMakeBorder(img, img, 5, 5, 5, 5, cv::BORDER_CONSTANT, Scalar(0, 0, 0));
+		cv::copyMakeBorder(img, img, 1, 1, 1, 1, cv::BORDER_CONSTANT, Scalar(0, 0, 0));
 
 		Mat roiBox;
 
@@ -431,7 +465,7 @@ int main(int argc, char** argv)
 
 		Mat reverseWarped = four_point_transform_reverse(img, warped, roiBox);
 
-		cv::Rect rect(Point(5, 5), Point(img.cols - 5, img.rows - 5));
+		cv::Rect rect(Point(1, 1), Point(img.cols - 1, img.rows - 1));
 		input_name = input_name.erase(input_name.find_last_of("."), 5);
 		cv::imwrite(input_name + ext, reverseWarped(rect));
 		

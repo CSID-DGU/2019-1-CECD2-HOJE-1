@@ -68,7 +68,7 @@ std::vector<cv::Rect> detectLetters(cv::Mat img)
 	std::vector<cv::Rect> boundRect;
 	cv::Mat img_clone = img.clone();
 	cv::Mat img_sobel, img_threshold, element;
-	const int standard_width = 500;
+	const int standard_width = 675;
 	const int standard_height = 250;
 
 	// 기준 width, cols : 400 ,  height,rows : 250
@@ -80,28 +80,32 @@ std::vector<cv::Rect> detectLetters(cv::Mat img)
 	float width_scale_size = (float)inputImage_width / (float)standard_width;
 	float height_scale_size = (float)inputImage_height / (float)standard_height;
 
+	int extraScale = inputImage_width / 675;
+
 	height_scale_size = height_scale_size < 1 ? 1 : height_scale_size;
 
 	cv::Mat rect_kernel = cv::getStructuringElement(cv::MORPH_CROSS, cv::Size(2 + (inputImage_height / 500), 1));
 	cv::dilate(img_clone, img_clone, rect_kernel);
-	cv::imshow("test1", img_clone);
-	cv::waitKey(0);
+	//cv::imshow("test1", img_clone);
+	//cv::waitKey(0);
 
 	img_clone = p_tool.removeDotNoise(~img_clone, 5);
-	cv::imshow("test2", img_clone);
-	cv::waitKey(0);
+	//cv::imshow("test2", img_clone);
+	//cv::waitKey(0);
 
 	cv::threshold(img_clone, img_threshold, 0, 255, cv::THRESH_OTSU | cv::THRESH_BINARY_INV);
 	rect_kernel = cv::getStructuringElement(cv::MORPH_CROSS, cv::Size(2, 2));
 	cv::dilate(img_threshold, img_threshold, rect_kernel);
 
-	cv::imshow("test3", img_threshold);
-	cv::waitKey(0);
+	//cv::imshow("test3", img_threshold);
+	//cv::waitKey(0);
+	//
 
-	element = getStructuringElement(cv::MORPH_RECT, cv::Size_<float>(17 * width_scale_size, 1.0)); //이미지에서 최대한 한 라인만 읽을 수 있게 처리함.													
+	element = getStructuringElement(cv::MORPH_RECT, cv::Size_<float>((14.5 + extraScale)* width_scale_size, 1.0 * height_scale_size)); //1
+	//element = getStructuringElement(cv::MORPH_RECT, cv::Size_<float>((14.5 + extraScale)* width_scale_size, 1.0 * height_scale_size)); // 이미지에서 최대한 한 라인만 읽을 수 있게 처리함.													
 	cv::morphologyEx(img_threshold, img_threshold, cv::MORPH_CLOSE, element); //Does the trick
-	cv::imshow("test4", img_threshold);
-	cv::waitKey(0);
+	//cv::imshow("test4", img_threshold);
+	//cv::waitKey(0);
 
 
 	std::vector< std::vector< cv::Point> > contours;
@@ -131,7 +135,6 @@ std::vector<cv::Rect> mergeLettersBox(std::vector<cv::Rect> &letterBBoxes1) {
 
 			for (int mergeBoxIndex = 0; mergeBoxIndex < mergeBoxList.size(); mergeBoxIndex++) {
 				if (isRectangleOverlap(letterBBoxes1[i], mergeBoxList[mergeBoxIndex])) {
-					std::cout << "overlap : " << letterBBoxes1[i] << ", " << mergeBoxList[mergeBoxIndex] << std::endl;
 					loopOut = true;
 					break;
 				}
@@ -155,7 +158,6 @@ std::vector<cv::Rect> mergeLettersBox(std::vector<cv::Rect> &letterBBoxes1) {
 
 			for (int j = i - 1; j >= 0; j--) {
 				if (isSameYposition(baseRect, letterBBoxes1[j]) && isSameHeight(baseRect, letterBBoxes1[j]) && !isInXposition(baseRect, letterBBoxes1[j])) {
-					std::cout << "merge : " << baseRect << ", " << letterBBoxes1[j] << std::endl;
 					
 					if (mergeinfo.minXpos > letterBBoxes1[j].x) {
 						mergeinfo.minXpos = letterBBoxes1[j].x;
@@ -184,15 +186,6 @@ std::vector<cv::Rect> mergeLettersBox(std::vector<cv::Rect> &letterBBoxes1) {
 		}
 	}
 
-	for (int i = 0; i < letterBBoxes1.size(); i++) {
-		std::cout << letterBBoxes1[i] << "," << letterBBoxes1[i].y << "," << letterBBoxes1[i].height << std::endl;
-	}
-	std::cout << "----" << std::endl;
-	for (int i = mergeBoxList.size() - 1; i >= 0; i--)
-		std::cout << mergeBoxList[i] << std::endl;
-
-	std::system("pause");
-
 	return mergeBoxList;
 }
 
@@ -212,22 +205,31 @@ void scaleBoundingBoxSize(std::vector<cv::Rect> &letterBBoxes1, int cols, int ro
 			if ((letterBBoxes1[i].x <= letterBBoxes1[j].x) && (letterBBoxes1[j].x <= (letterBBoxes1[i].x + letterBBoxes1[i].width))
 				&& !isRectangleOverlap(letterBBoxes1[i], letterBBoxes1[j])
 				&& ((letterBBoxes1[i].y - (letterBBoxes1[j].y + letterBBoxes1[j].height)) < min_distance_between_rectangle)) {
-				
+
 				if (letterBBoxes1[i].y - (letterBBoxes1[j].y + letterBBoxes1[j].height) < 0)
 					min_distance_between_rectangle = 0;
 				else
 					min_distance_between_rectangle = letterBBoxes1[i].y - (letterBBoxes1[j].y + letterBBoxes1[j].height);
-				
-				//std::cout << i<<":" << letterBBoxes1[i] << " " << j << ":" << letterBBoxes1[j] << ":" << min_distance_between_rectangle << std::endl;
+
 				break;//이미 bbox는 정렬되어 있는 형태이므로 이때가 가장 letterBBoxes1[i]와 가까운 사각형
 			}
 		}
 	}
 
 	int x_margin = 10; //; * (inputImage_width / standard_width);
-	int y_margin = min_distance_between_rectangle + 4;
+
+	int y_margin = 0;
+	//std::cout << min_distance_between_rectangle << std::endl;
+	if (min_distance_between_rectangle >= 4) {
+		y_margin = 7; 
+	}
+	else if (4 > min_distance_between_rectangle && min_distance_between_rectangle > 0){
+		y_margin = min_distance_between_rectangle + 6;//6
+	}else {
+		y_margin = 5;
+	}
 	
-	std::cout << y_margin << ", " << min_distance_between_rectangle << std::endl;
+	//std::cout << y_margin << ", " << min_distance_between_rectangle << std::endl;
 
 	for (int i = 0; i < letterBBoxes1.size(); i++) {
 		if (letterBBoxes1[i].x - x_margin < 0 && letterBBoxes1[i].y - y_margin < 0) {

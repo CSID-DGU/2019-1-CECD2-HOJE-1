@@ -96,7 +96,7 @@ def image_rotation(inputMat, angle = 1.0):
     dst_img = None;
     height, width, channels = tmp_img.shape;
 
-    angle = random.uniform(0, 2) - 1.0
+    angle = random.uniform(0, 6) - 3.0
 
     M = cv2.getRotationMatrix2D((width/2, height/2), angle, 1.0);
 

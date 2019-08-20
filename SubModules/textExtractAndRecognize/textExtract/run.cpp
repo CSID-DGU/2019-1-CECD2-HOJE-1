@@ -29,23 +29,27 @@ int main(int argc, char** argv)
 	imageProcessing.push_back(img);
 	Mat edged;
 	cv::cvtColor(img, edged, COLOR_BGR2GRAY);
-	imageProcessing.push_back(edged);
+	//imageProcessing.push_back(edged);
 	cv::GaussianBlur(edged, edged, cv::Size(7, 7), 0);
+	cv::GaussianBlur(edged, edged, cv::Size(7, 7), 0); // 2번함으로서 오브젝트 뒤 배경의 효과를 제거해주는 효과를 갖음
 	imageProcessing.push_back(edged);
-	cv::copyMakeBorder(img, img, 5, 5, 5, 5, cv::BORDER_CONSTANT, Scalar(0, 0, 0));
-	cv::copyMakeBorder(edged, edged, 5, 5, 5, 5, cv::BORDER_CONSTANT, Scalar(0, 0, 0));
-	//imageProcessing.push_back(edged);
-	cv::Canny(edged, edged, 30, 50);
-	//imageProcessing.push_back(edged);
-	//cv::Canny(edged, edged, 50, 100); //original
-	
+	// cv::copyMakeBorder(img, img, 5, 5, 5, 5, cv::BORDER_CONSTANT, Scalar(0, 0, 0));
+	// cv::copyMakeBorder(edged, edged, 5, 5, 5, 5, cv::BORDER_CONSTANT, Scalar(0, 0, 0));
+	// imageProcessing.push_back(edged);
+	/* cv::Canny(edged, edged, 30, 100); */
+	// cv::Canny(edged, edged, 50, 100); //original
+	// cv::Canny(edged, edged, 30, 150);
+	cv::Canny(edged, edged, 30, 80);
+
 	cv::Mat rect_kernel = cv::getStructuringElement(cv::MORPH_CROSS, cv::Size(3, 3));
-	cv::dilate(edged, edged, rect_kernel, Point(-1,-1), 1);
-	cv::dilate(edged, edged, rect_kernel, Point(-1, -1), 1);
+
+	cv::dilate(edged, edged, rect_kernel, Point(-1, -1), 5);
 	
 	rect_kernel = cv::getStructuringElement(cv::MORPH_CROSS, cv::Size(3, 3));
-	cv::erode(edged, edged, rect_kernel, Point(-1, -1), 1);
-	cv::erode(edged, edged, rect_kernel, Point(-1, -1), 1);
+	cv::erode(edged, edged, rect_kernel, Point(-1, -1), 5);
+
+	cv::copyMakeBorder(img, img, 1, 1, 1, 1, cv::BORDER_CONSTANT, Scalar(0, 0, 0));
+	cv::copyMakeBorder(edged, edged, 1, 1, 1, 1, cv::BORDER_CONSTANT, Scalar(1, 1, 1));
 	
 	imageProcessing.push_back(edged);
 
@@ -55,18 +59,22 @@ int main(int argc, char** argv)
 	int height = edged.rows;
 	int width = edged.cols;
 
-	const long MAX_COUNTOUR_AREA = (width - 10) * (height - 10);
-	long maxAreaFound = MAX_COUNTOUR_AREA * 0.3;//0.3; orignial
+	const long MAX_COUNTOUR_AREA = (width - 2) * (height - 2);
+	long maxAreaFound = MAX_COUNTOUR_AREA * 0.35;//0.3; orignial
 
 	vector<Mat> rectList;
 
 	for (size_t i = 0; i < contours.size(); i++) {
-		if (cv::contourArea(contours[i]) <= maxAreaFound)
-			continue;
-
 		RotatedRect box = cv::minAreaRect(contours[i]);
 		Mat boxPts; // bottom left, top left, top right, bottom right;
 		boxPoints(box, boxPts);
+
+		if (cv::contourArea(boxPts) <= maxAreaFound)
+			continue;
+
+		//RotatedRect box = cv::minAreaRect(contours[i]);
+		//Mat boxPts; // bottom left, top left, top right, bottom right;
+		//boxPoints(box, boxPts);
 
 		if (rectList.size() == 0) {
 			rectList.push_back(boxPts);
@@ -93,13 +101,6 @@ int main(int argc, char** argv)
 	
 	Mat roiBox;
 	
-	cout << rectList.size() << endl;
-	
-	for (int i = 0; i < rectList.size(); i++) {
-		cout << rectList[i] << ",";
-	}
-	cout << endl;
-
 	if (rectList.size() == 1)
 		roiBox = rectList[0];
 	else
@@ -107,55 +108,59 @@ int main(int argc, char** argv)
 	
 	Mat warped = four_point_transform(img, roiBox);
 	
-	imshow("warped result", warped);
-	waitKey(0);
+	//imshow("warped result", warped);
+	//waitKey(0);
 
 	Mat roiImg;
-	roiImg = p_tool.GS_rgb2gray(warped); // 변환 등을 적용하기 위해서 grayscale로 변환
+	roiImg = p_tool.GS_rgb2gray(warped); //변환 등을 적용하기 위해서 grayscale로 변환
 	imageProcessing.push_back(roiImg);
 	roiImg = p_tool.GS_topHat(~roiImg, MorphShapes::MORPH_CROSS, 5, 3);
 	imageProcessing.push_back(roiImg);
-
 	roiImg = ~p_tool.GS_threshold(roiImg, 150, THRESH_OTSU);
 	imageProcessing.push_back(roiImg);
-
 	roiImg = p_tool.removeDotNoise(~roiImg, 5);
 	imageProcessing.push_back(roiImg);
 
-	roiImg = p_tool.GS_add_image(roiImg, p_tool.findTable(roiImg, 9));// Erosion, Dilation - 표 선분 제거
+	roiImg = p_tool.GS_add_image(roiImg, p_tool.findTable(roiImg, 9)); //9 // Erosion, Dilation - 표 선분 제거
 	imageProcessing.push_back(roiImg);
-
-
-	for (int i = 0; i < imageProcessing.size(); i++) {
-		imshow(to_string(i), imageProcessing[i]);
-	}
-	waitKey(0);
+	
+	//for (int i = 0; i < imageProcessing.size(); i++) {
+	//	imshow(to_string(i), imageProcessing[i]);
+	//}
+	//waitKey(0);
 
 	//Detect
 	std::vector<cv::Rect> letterBBoxes1 = detectLetters(roiImg);
 	letterBBoxes1 = mergeLettersBox(letterBBoxes1);
 	std::reverse(letterBBoxes1.begin(), letterBBoxes1.end());
-	scaleBoundingBoxSize(letterBBoxes1, roiImg.cols, roiImg.rows, img.cols, img.rows);
+	scaleBoundingBoxSize(letterBBoxes1, roiImg.cols, roiImg.rows, warped.cols, warped.rows);
+
+	//텍스트 추출 이후 추가 노이즈 제거
+	roiImg = p_tool.removeDotNoise(~roiImg, 4 + 2 *(roiImg.cols / 400));
+	
+	imageProcessing.push_back(roiImg);
+	//cv::Mat kernel = cv::getStructuringElement(cv::MORPH_CROSS, cv::Size(1, 1 + (roiImg.cols / 600)));
+	//cv::dilate(roiImg, roiImg, kernel);
+	//cv::erode(roiImg, roiImg, kernel);
+	//imageProcessing.push_back(roiImg);
 
 	vector<Mat> subImage;
 	for (int i = 0; i < letterBBoxes1.size(); i++) {
 		subImage.push_back(roiImg(letterBBoxes1[i]));
 	}
 
-	for (int i = 0; i < subImage.size(); i++) {
-		imshow("sub" + to_string(i), subImage[i]);
-	}
-	waitKey(0);
-
-
+	//for (int i = 0; i < subImage.size(); i++) {
+	//	imshow("sub" + to_string(i), subImage[i]);
+	//}
+	//waitKey(0);
+	
 	// tesseract OCR Start
 	char lang[] = "kor";
 	tesseract::TessBaseAPI tess;
-	tess.Init(NULL, lang);
-
-	//tess.SetPageSegMode(tesseract::PSM_SINGLE_COLUMN);
-	tess.SetPageSegMode(tesseract::PSM_SINGLE_LINE);
-	system("chcp 65001");
+	//tess.Init(NULL, lang);
+	tess.Init(NULL, lang, tesseract::OEM_DEFAULT);
+	tess.SetPageSegMode(tesseract::PSM_SINGLE_BLOCK);
+	//system("chcp 65001");
 	
 	for (int i = 0; i < subImage.size(); i++) {
 		tess.SetImage((uchar*)subImage[i].data, subImage[i].size().width, subImage[i].size().height, subImage[i].channels(), subImage[i].step1());
@@ -165,6 +170,6 @@ int main(int argc, char** argv)
 		std::cout << outtext << std::endl;
 	}
 
-	system("pause");
+	//system("pause");
 	return 0;
 }

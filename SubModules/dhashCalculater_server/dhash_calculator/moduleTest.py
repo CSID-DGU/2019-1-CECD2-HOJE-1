@@ -80,7 +80,7 @@ def main(index, image):
 
 if __name__ == "__main__":
     #filePath = sys.argv[1]
-    filePath = "registCard(rot).jpg"
+    filePath = "sample(4).jpg"
     img = cv2.imread(filePath)
     for index in range(3):
         main(index, img)
