@@ -27,7 +27,7 @@ var _CalendarToday = _interopRequireDefault(require("@material-ui/icons/Calendar
 
 var _Update = _interopRequireDefault(require("@material-ui/icons/Update"));
 
-var _DownloadFile = _interopRequireDefault(require("../../main/FrameTest/DownloadFile"));
+var _downloadFile = _interopRequireDefault(require("../../main/FrameTest/downloadFile"));
 
 var fs = require('fs');
 
@@ -121,7 +121,7 @@ var classifyOptions = {
     padding: 20,
     fontSize: 15,
     position: 'top',
-    text: '최근 검사 분류 결과                                                                                                         '
+    text: '최근 검사 분류 결과                                                                                          '
   },
   legend: {
     position: 'bottom',
@@ -321,24 +321,30 @@ function Home() {
       birth = _useState4[0],
       setBirth = _useState4[1];
 
-  var _useState5 = (0, _react.useState)(),
+  var _useState5 = (0, _react.useState)(''),
       _useState6 = (0, _slicedToArray2["default"])(_useState5, 2),
-      jpg = _useState6[0],
-      setJPG = _useState6[1];
+      birth1 = _useState6[0],
+      setBirth1 = _useState6[1];
 
   var _useState7 = (0, _react.useState)(),
       _useState8 = (0, _slicedToArray2["default"])(_useState7, 2),
-      png = _useState8[0],
-      setPNG = _useState8[1];
+      jpg = _useState8[0],
+      setJPG = _useState8[1];
 
   var _useState9 = (0, _react.useState)(),
       _useState10 = (0, _slicedToArray2["default"])(_useState9, 2),
-      gif = _useState10[0],
-      setGIF = _useState10[1];
+      png = _useState10[0],
+      setPNG = _useState10[1];
+
+  var _useState11 = (0, _react.useState)(),
+      _useState12 = (0, _slicedToArray2["default"])(_useState11, 2),
+      bmp = _useState12[0],
+      setBMP = _useState12[1];
 
   var maxSteps = testImageList.length;
   (0, _react.useEffect)(function () {
     fs.exists('resultfile.json', function (exists) {
+      //최근 검사일
       if (exists) {
         test = fs.readFileSync('resultfile.json', 'utf8');
         test = JSON.parse(test);
@@ -356,15 +362,25 @@ function Home() {
           return value.fileName.indexOf('png') !== -1;
         });
         var no3 = temp.filter(function (value) {
-          return value.fileName.indexOf('gif') !== -1;
+          return value.fileName.indexOf('bmp') !== -1;
         });
         setJPG(no1.length);
         setPNG(no2.length);
-        setGIF(no3.length);
+        setBMP(no3.length);
       } else setBirth('이전 검사일을 알 수 없음');
 
       setUpdate();
     });
+    fs.exists("./reg/reg.json", function (exists) {
+      //최근 업데이트
+      if (exists) {
+        fs.stat("./reg/reg.json", function (err, stat) {
+          var data = moment(stat.atime).format('YYYY년 MM월 DD일');
+          setBirth1(data);
+        });
+      } else setBirth1('이전 검사일을 알 수 없음');
+    });
+    return function () {};
   }, []); // Forced ReRendering
 
   var _React$useState5 = _react["default"].useState(),
@@ -441,12 +457,12 @@ function Home() {
     },
     onClick: function onClick() {
       console.log('Download...');
-      (0, _DownloadFile["default"])();
+      (0, _downloadFile["default"])();
       forceUpdate();
     }
   })))), _react["default"].createElement(_core.ListItemText, {
     primary: "\uCD5C\uADFC \uC5C5\uB370\uC774\uD2B8",
-    secondary: "Jan 9, 2014"
+    secondary: birth1
   })))), _react["default"].createElement(_core.Grid, {
     item: true,
     xs: 3
@@ -509,7 +525,7 @@ function Home() {
       padding: 8
     }
   }, _react["default"].createElement(_core.Badge, {
-    badgeContent: gif,
+    badgeContent: bmp,
     showZero: "true",
     color: "secondary"
   }, _react["default"].createElement(_core.Button, {
@@ -520,7 +536,7 @@ function Home() {
       height: 44,
       width: 80
     }
-  }, "GIF"))))))), _react["default"].createElement(_core.Grid, {
+  }, "BMP"))))))), _react["default"].createElement(_core.Grid, {
     item: true,
     xs: 12
   }, _react["default"].createElement(_core.Box, {

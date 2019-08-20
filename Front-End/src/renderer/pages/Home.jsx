@@ -14,7 +14,7 @@ const nativeImage = require('electron').nativeImage;
 const FasooImage = nativeImage.createFromPath(`assets/fasoo.png`);
 const hojeImage = nativeImage.createFromPath('assets/hoje.png');
 const moment = require('moment');
-import DownloadFile from '../../main/FrameTest/DownloadFile';
+import DownloadFile from '../../main/FrameTest/downloadFile';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -109,7 +109,7 @@ const classifyOptions = {
         padding: 20,
         fontSize: 15,
         position: 'top',
-        text: '최근 검사 분류 결과                                                                                                         '
+        text: '최근 검사 분류 결과                                                                                          '
     },
     legend: {
         position: 'bottom',
@@ -235,12 +235,13 @@ export default function Home() {
     const [activeStep, setActiveStep] = React.useState(0);
     const [,setUpdate] = useState([]);
     const [birth, setBirth] = useState('');
+    const [birth1,setBirth1] = useState('');
     const [jpg , setJPG] = useState();
     const [png,setPNG] = useState();
-    const [gif, setGIF] = useState();
+    const [bmp, setBMP] = useState();
     const maxSteps = testImageList.length;
     useEffect(()=>{
-        fs.exists('resultfile.json', (exists => {
+        fs.exists('resultfile.json', (exists => { //최근 검사일
             if (exists) {
                 test = fs.readFileSync('resultfile.json', 'utf8');
                 test = JSON.parse(test);
@@ -258,18 +259,30 @@ export default function Home() {
                     return value.fileName.indexOf('png') !== -1;
                 })
                 let no3 = temp.filter(function (value) {
-                    return value.fileName.indexOf('gif') !== -1;
+                    return value.fileName.indexOf('bmp') !== -1;
                 })
                 setJPG(no1.length);
                 setPNG(no2.length);
-                setGIF(no3.length);
+                setBMP(no3.length);
 
             }else
                 setBirth('이전 검사일을 알 수 없음');
             setUpdate();
         }));
-    },[]);
 
+        fs.exists(`./reg/reg.json`,(exists)=>{ //최근 업데이트
+            if(exists){
+                fs.stat(`./reg/reg.json`,(err,stat)=>{
+                    let data = moment(stat.atime).format('YYYY년 MM월 DD일');
+                    setBirth1(data);
+                })
+            }else
+                setBirth1('이전 검사일을 알 수 없음');
+        })
+        return ()=>{
+
+        }
+    },[]);
     // Forced ReRendering
     const [, updateState] = React.useState();
     const forceUpdate = React.useCallback(() => updateState({}), []);
@@ -320,7 +333,7 @@ export default function Home() {
                                                             </IconButton>
                                                         </Avatar>
                                                     </ListItemAvatar>
-                                                    <ListItemText primary="최근 업데이트" secondary={"Jan 9, 2014"} />
+                                                    <ListItemText primary="최근 업데이트" secondary={birth1} />
                                                 </ListItem>
                                             </Box>
                                         </Grid>
@@ -348,9 +361,9 @@ export default function Home() {
                                                     </Badge>
                                                 </Box>
                                                 <Box style={{padding: 8}}>
-                                                    <Badge badgeContent={gif} showZero='true' color="secondary">
+                                                    <Badge badgeContent={bmp} showZero='true' color="secondary">
                                                         <Button style={{backgroundColor: '#e65100', color: '#ffffff', borderRadius: '10px', height: 44, width: 80}}>
-                                                            GIF
+                                                            BMP
                                                         </Button>
                                                     </Badge>
                                                 </Box>

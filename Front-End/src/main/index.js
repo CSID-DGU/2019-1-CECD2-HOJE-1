@@ -39,7 +39,7 @@ app.on('ready', () => {
         setTimeout(()=>{
             splash.close();
             win.window.show();
-            win.window.webContents.openDevTools();
+           win.window.webContents.openDevTools();
         },2000);
     });
     ipcMain.on('RESULT1', (event, result) => { //QnA 페이지에 결과 이미지 전송 및 반환
@@ -57,7 +57,7 @@ app.on('ready', () => {
         ipcMain.once('PATH',async (event,result)=>{
             console.log('result : ' ,result);
             for(const tmpPath of result) {
-                let tmp = await Exec(tmpPath, ['.jpg', '.png', '.tif']); //함수 실행
+                let tmp = await Exec(tmpPath, ['.jpg', '.png', '.bmp']); //함수 실행
             }
             notifier.notify({
                 title : "Search Completed",

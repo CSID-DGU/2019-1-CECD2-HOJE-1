@@ -11,7 +11,7 @@
       "id": 1,
       "key": "카드번호",
       "value": "\\d{4}((\\s*[-_\\.\\s]\\s*\\d{4}){3}|\\s*[-_\\.\\s]\\s*\\d{6}\\s*[-_\\.\\s]\\s*\\d{5})(?![\\d+*\\-\\/])",
-      "checked": false,
+      "checked": true,
       "disable": false
     },
     {
@@ -25,7 +25,7 @@
       "id": 3,
       "key": "여권번호",
       "value": "(?:A[EFGNQRUVY]|B[ABGLNORSTU]|C[ABDGHLNOPSZ]|D[GJKM\\d]|E[PQRST]|F[JKNRU]|G[ABDEGHJKMHPRSUVWYZ]|H[CDGIKLOU]|I[CDRSTV]|J[ABGJNORU]|K[AJNORUYZ]|L[ABPS]|M[AGNOPUZ\\d]|N[ADGIJPRWYZ]|O[CMS\\d]|P[ADGHMNOU]|Q[DT]|R[AFM\\d]|S[ABCDEFGHJKLMNOPQRSTWYZ\\d]|T[HJMNPRUZ]|U[AKLNRSZ]|V[CELTZ]|Y[GOPS]|ZB)\\d{7}(?![\\d])",
-      "checked": false,
+      "checked": true,
       "disable": false
     }
   ]

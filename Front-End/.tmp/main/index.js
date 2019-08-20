@@ -127,7 +127,7 @@ _electron.app.on('ready', function () {
 
                           tmpPath = _step.value;
                           _context.next = 10;
-                          return Exec(tmpPath, ['.jpg', '.png', '.tif']);
+                          return Exec(tmpPath, ['.jpg', '.png', '.bmp']);
 
                         case 10:
                           tmp = _context.sent;
