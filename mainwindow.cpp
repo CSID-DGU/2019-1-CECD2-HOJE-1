@@ -11,7 +11,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    trainworker = new TrainWorker(this);
     // background setting
     QPixmap bkgnd(":/images/jason-blackeye-lGPYNHy891E-unsplash.jpg");
     bkgnd = bkgnd.scaled(this->size(), Qt::IgnoreAspectRatio);
@@ -48,10 +47,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     // Connect button
-    connect(ui->images_train, &QPushButton::clicked, [=] { what_train(trainworker, "train_images"); });
-    connect(ui->singleImage_train, &QPushButton::clicked, [=] { what_train(trainworker, "train_singleImage"); });
-    connect(ui->fonts_train, &QPushButton::clicked, [=] { what_train(trainworker, "train_fonts"); });
-    connect(ui->multi_lang, &QPushButton::clicked, [=] { what_train(trainworker, "kor_eng"); });
+    connect(ui->images_train, &QPushButton::clicked, [=] { what_train("train_images"); });
+    connect(ui->singleImage_train, &QPushButton::clicked, [=] { what_train("train_singleImage"); });
+    connect(ui->fonts_train, &QPushButton::clicked, [=] { what_train("train_fonts"); });
+    connect(ui->multi_lang, &QPushButton::clicked, [=] { what_train("kor_eng"); });
 
     connect(ui->quit_button, &QPushButton::clicked, QApplication::instance(), &QApplication::quit);
 }
@@ -65,12 +64,13 @@ MainWindow::~MainWindow()
     delete finishMessage;
 }
 
-void MainWindow::what_train(TrainWorker* trainworker,QString str)
+void MainWindow::what_train(QString str)
 {
+    trainworker = new TrainWorker(this);
     edit->clear();
     connect(trainworker, &TrainWorker::process_start, this, &MainWindow::start_message);
     connect(trainworker, &TrainWorker::process_finish, this, &MainWindow::finish_message);
-    connect(trainworker, &TrainWorker::process_print, this, &MainWindow::print_message);
+    connect(trainworker, &TrainWorker::process_print, [=] { print_message(trainworker); });
     trainworker->manager_func(str);
 }
 void MainWindow::start_message()
@@ -85,8 +85,9 @@ void MainWindow::finish_message()
     finishMessage->setText("finish");
     finishMessage->setWindowFlags(Qt::FramelessWindowHint);
     finishMessage->exec();
+    delete trainworker;
 }
-void MainWindow::print_message()
+void MainWindow::print_message(TrainWorker* trainworker)
 {
     QString output = trainworker->print;
     qDebug() << output;

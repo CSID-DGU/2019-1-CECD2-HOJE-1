@@ -23,7 +23,7 @@ combine_tessdata -u ${old_traineddata} ./images_train/${language}/${language}
 # all-boxes파일에서 unicharset 추출
 unicharset_extractor --output_unicharset "GT/my.unicharset" --norm_mode 2 "all-boxes"
 # 추출한 unicharset과 이전 traineddata의 unicharset 병합
-merge_unicharsets ./images_train/${language}/${language}.lstm-unicharset ./GT/my.unicharset  ./images_train/${new_language}.unicharset
+merge_unicharsets ./images_train/${language}/${language}.lstm-unicharset ./GT/my.unicharset ./images_train/${new_language}.unicharset
 
 # create lstmf file
 for image_file in `find ./GT/ -type f -name '*.png' -o -name '*.jpg' -o -name '*.tif'` 
@@ -47,6 +47,13 @@ combine_lang_model \
 # kor은 필수
 combine_tessdata -o ./images_train/${new_language}/${new_language}.traineddata \
 	./images_train/${language}/${language}.config
+
+mv -v all-lstmf all-lstmf_old
+
+cat ./kor_train/kor.training_files.txt all-lstmf_old > all-lstmf
+
+rm -v all-lstmf_old
+
 
 # training
 lstmtraining \

@@ -31,11 +31,11 @@ private:
 
 private slots:
 
-    void what_train(TrainWorker*, QString);
+    void what_train(QString);
 
     void start_message();
     void finish_message();
-    void print_message();
+    void print_message(TrainWorker*);
 
     void trasmit_traineddata();
     void check_version();
