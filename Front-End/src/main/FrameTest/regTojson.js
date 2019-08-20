@@ -8,9 +8,9 @@ data = JSON.parse(data);
 //파일 경로와 설정에서 선택한 리스트들이 인자값
 async function TessNreg(filePath){
     let textOriginal = await callExec('C:\\Users\\FASOO_499\\source\\repos\\textExtract\\x64\\Release\\textExtract.exe',filePath);
-    let text = textOriginal.replace(/ /gi,""); //문자열내에 모든 공백을 제거하기 위해서 사용
-    text = text.replace(/:|\.|\,/gi," ");
-    let result = await regExe(text);
+    //let text = textOriginal.replace(/ /gi,""); //문자열내에 모든 공백을 제거하기 위해서 사용
+    //text = text.replace(/:|\.|\,/gi," ");
+    let result = await regExe(textOriginal);
     result.sentence = textOriginal;
     return result;
 };
@@ -54,8 +54,14 @@ async function regExe(text) {
         count: 0,
         sentence: ''
     };
-    let textArray = text.split(/ |\r|\n|\r\n/); //정규식으로 표현
-    for (const t of textArray) {
+    let textArray = text.split(/\r|\n|\r\n/); //정규식으로 표현
+    let tmpArray = textArray.filter((element)=>{ //정규식으로 나뉘어진 배열에 '' 요소 제거
+        if(element !== ''){
+            return element;
+        }
+    });
+
+    for (const t of tmpArray) {
         promise = pattern.map((element, index) => {
             check(t.trim(), element, index, result);
         });
@@ -76,4 +82,4 @@ module.exports ={
     regRead : regRead,
     regReset : regReset,
     TessNreg : TessNreg
-}
+};
