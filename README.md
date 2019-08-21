@@ -8,17 +8,25 @@
 	플랫폼 : Window 10
 	개발환경 : Intellj
 	프레임워크 : Spring 4.2
-	사용언어: Java
+	사용언어: Java, jsp, javaScript
 	역할 :  1. 학습 앱에서 받은 문자 학습 결과물 및 새롭게 추가된 정규표현식을 클라이언트 앱에 배포
 	        2. 이미지 분류
+		3. 클라이언트에서 검출된 개인정보 및 이미지 보유 적합도 모니터링
 
 Client Application 플랫폼
 ----------------------
 	플랫폼 : Window 10
 	개발환경 : VS, Node.js 10.16.0, IntellJ
-	프레임워크 : 일렉트론
-	사용언어 : JavaScript 
+	프레임워크 : 일렉트론, 리엑트
+	사용언어 : JavaScript(node.js) 
 	역할 : 사용자에게 서비스를 제공하는 애플리케이션 형태
+
+Client Application Back-end 모듈
+----------------------
+	개발환경 : Visual studio 2017
+	프레임워크 : Tessearct OCR, OpenCV, jsoncpp 
+	사용언어 : C/C++
+	역할 : 사용자가 프론트 ui를 통해 입력을 수행하면, 이미지 전처리 및 이미지 내 텍스트 추출/마스킹/서브텍스트 추출 등의 기능 수행
 	
 학습 Application 플랫폼
 -------------------
