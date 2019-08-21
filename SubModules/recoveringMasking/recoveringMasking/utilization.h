@@ -397,7 +397,7 @@ cv::Mat four_point_transform(cv::Mat& img, cv::Mat& roiBox)
 	cv::Mat M = cv::getPerspectiveTransform(src_vertices, dst_vertices);
 
 	cv::Mat warped;
-	cv::warpPerspective(img, warped, M, cv::Size(maxWidth, maxHeight), cv::INTER_LINEAR);
+	cv::warpPerspective(img, warped, M, cv::Size(maxWidth, maxHeight), cv::INTER_CUBIC); //cv::INTER_LINEAR
 
 	return warped;
 
@@ -437,7 +437,8 @@ cv::Mat four_point_transform_reverse(cv::Mat& img, cv::Mat& warped, cv::Mat& roi
 	int originHeight = img.rows;
 
 	//invert(M, M);
-	cv::warpPerspective(warped, img, M, cv::Size(originWidth, originHeight), 1, cv::BORDER_TRANSPARENT);//, cv::WARP_INVERSE_MAP, 
+	//cv::warpPerspective(warped, img, M, cv::Size(originWidth, originHeight), 1, cv::BORDER_TRANSPARENT);//, cv::WARP_INVERSE_MAP, 
+	cv::warpPerspective(warped, img, M, cv::Size(originWidth, originHeight), cv::INTER_CUBIC, cv::BORDER_TRANSPARENT);
 
 	return img;
 }
