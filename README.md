@@ -44,12 +44,3 @@ Client Application
 ---------
 * [클라이언트 앱](https://github.com/CSID-DGU/2019-1-CECD2-HOJE-1/wiki/ExecuteClientApp)
 * [학습 앱](https://github.com/CSID-DGU/2019-1-CECD2-HOJE-1/wiki/ExecuteQt)
-
-
-애플리케이션(프로토 타입) 조건
-------------------------
-	1. 항상 서버는 실행되고 있는 상황으로 간주한다. 
-	2. 이미지(jpg,png,bmp)의 파일을 입력값으로 받는다. 단, 이미지 같은 경우, 정상적으로 찍혀진 사진을 대상으로 한다.
-
-
-
