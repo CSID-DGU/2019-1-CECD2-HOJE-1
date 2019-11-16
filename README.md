@@ -1,20 +1,11 @@
 # 2019-1-CECD2-HOJE-1
-컴퓨터공학종합설계1_02_HOJE
-----
-프로젝트 주제 : OCR를 이용한 개인정보 검출
+### 컴퓨터공학종합설계1_02_HOJE
+##### 프로젝트 주제 : OCR를 이용한 개인정보 검출
 
-서버 플랫폼 
---------------
-	플랫폼 : Window 10
-	개발환경 : Intellj
-	프레임워크 : Spring 4.2
-	사용언어: Java, jsp, javaScript
-	역할 :  1. 학습 앱에서 받은 문자 학습 결과물 및 새롭게 추가된 정규표현식을 클라이언트 앱에 배포
-	        2. 이미지 분류
-		3. 클라이언트에서 검출된 개인정보 및 이미지 보유 적합도 모니터링
-
-Client Application 플랫폼
+Client Application
 ----------------------
+![클라이언트Application](https://user-images.githubusercontent.com/26684848/68988738-58171d00-087f-11ea-819a-1aa345e1f1ef.JPG)
+	
 	플랫폼 : Window 10
 	개발환경 : VS, Node.js 10.16.0, IntellJ
 	프레임워크 : 일렉트론, 리엑트
@@ -28,13 +19,14 @@ Client Application 플랫폼
 	개발환경 : Visual studio 2017
 	프레임워크 : Tessearct OCR, OpenCV, jsoncpp 
 	사용언어 : C/C++
-	역할 :  1)사용자가 클라이언트 Application을 통해 검사를 수행하면 이미지 전처리
-		2)이미지 내 텍스트 추출/마스킹/서브텍스트 추출 등의 기능 수행
-	
-
+	역할 :  1. 학습 앱에서 받은 문자 학습 결과물 및 새롭게 추가된 정규표현식을 클라이언트 앱에 배포
+	        2. 이미지 분류
+		3. 클라이언트에서 검출된 개인정보 및 이미지 보유 적합도 모니터링
 	
 학습 Application 플랫폼
 -------------------
+![학습application](https://user-images.githubusercontent.com/26684848/68988745-741abe80-087f-11ea-8887-cb2b530589e9.JPG)
+
 	플랫폼 : 리눅스, 우분투
 	개발환경 : Qt Creator, Vs Code
 	프레임워크 : Qt	
