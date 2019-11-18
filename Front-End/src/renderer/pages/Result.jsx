@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
-import { Link } from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
-import { lighten, makeStyles, createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
-import { red, yellow, green, blue } from '@material-ui/core/colors';
+import {lighten, makeStyles, createMuiTheme, MuiThemeProvider} from '@material-ui/core/styles';
+import {red, yellow, green, blue} from '@material-ui/core/colors';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -17,6 +17,8 @@ import Box from '@material-ui/core/Box';
 import Checkbox from '@material-ui/core/Checkbox';
 import Fab from '@material-ui/core/Fab';
 import Tooltip from '@material-ui/core/Tooltip';
+import Modal from '@material-ui/core/Modal';
+import Fade from '@material-ui/core/Fade';
 
 import NormalIcon from '@material-ui/icons/FiberManualRecord'
 import WarningIcon from '@material-ui/icons/Error';
@@ -24,12 +26,13 @@ import DangerIcon from '@material-ui/icons/Warning';
 
 import {ipcRenderer, shell} from 'electron';
 import masking from '../../main/FrameTest/masking';
+import quasi from '../../main/FrameTest/quasiShow';
 
 const path = require('path');
 const notifier = require('node-notifier');
 
-function createData(fileName, filePath, detectList, detectCount, formLevel, fitness) {
-    return {fileName, filePath, detectList, detectCount, formLevel, fitness};
+function createData(fileName, filePath, detectList, detectCount, formLevel, fitness, classification) {
+    return {fileName, filePath, detectList, detectCount, formLevel, fitness, classification};
 }
 
 // FormLevel : 1, 2, 3 -> 낮은 숫자일 수록 높은 등급
@@ -95,7 +98,7 @@ function EnhancedTableHead(props) {
                             active={orderBy === row.id}
                             direction={order}
                             onClick={createSortHandler(row.id)}
-                            style={{fontSize:16, fontWeight: 'bold', color: '#212121'}}
+                            style={{fontSize: 16, fontWeight: 'bold', color: '#212121'}}
                         >
                             {row.label}
                         </TableSortLabel>
@@ -133,14 +136,14 @@ const parsingPath = function (ppath, mode) {
         notifier.notify({ //수행이 다 된 후 알람
             title: 'Masking Success!',
             message: '파일이 마스킹 됐습니다.',
-            wait : true,
-            timeout : false
-        },function (err, response) {
+            wait: true,
+            timeout: false
+        }, function (err, response) {
             shell.openItem(r.filePath);
         });
 
-    }else if(mode === 2){
-        basename = basename.substring(0,basename.length-5) + ext; //새로운 파일 이름
+    } else if (mode === 2) {
+        basename = basename.substring(0, basename.length - 5) + ext; //새로운 파일 이름
         let renew = path.join(dir, basename); //새로운 경로
         r.fileName = basename;
         r.filePath = renew;
@@ -149,9 +152,9 @@ const parsingPath = function (ppath, mode) {
         notifier.notify({ //수행이 다 된 후 알람
             title: 'Unmasking Success!',
             message: '파일이 재식별화 됐습니다.',
-            wait : true,
-            timeout : false
-        },function (err, response) {
+            wait: true,
+            timeout: false
+        }, function (err, response) {
             shell.openItem(r.filePath);
         });
     }
@@ -274,37 +277,81 @@ const useStyles = makeStyles(theme => ({
 
 const theme = createMuiTheme({
     palette: {
-        primary: { main: green[500] },
-        secondary: { main: yellow[500] },
-        error: { main: red[500] },
-        default: { main: blue[500] },
+        primary: {main: green[500]},
+        secondary: {main: yellow[500]},
+        error: {main: red[500]},
+        default: {main: blue[500]},
     },
 });
 
 
+const modalStyles = makeStyles(theme => ({
+    modal: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    paper: {
+        backgroundColor: theme.palette.background.paper,
+        border: '2px solid #000',
+        boxShadow: theme.shadows[5],
+        padding: theme.spacing(2, 4, 3),
+    },
+}));
+
+let quasiTmp = [];
 export default function Result() {
     const classes = useStyles();
     const [, setUpdate] = useState([]); //강제 렌더링
     const [order, setOrder] = React.useState('desc');
     const [orderBy, setOrderBy] = React.useState('formLevel');
     const [selected, setSelected] = React.useState([]);
+    const [selectedClassification, setSelectedClassification] = React.useState([]);
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(7);
+
+    const cellDisplay = (input, selectedClassification) => {
+        let tmp = [];
+        //console.log('classification', selectedClassification);
+        if(selectedClassification.indexOf('국민카드') == -1) return '추론이 불가능한 이미지입니다.';
+        for(var i = 0; i < input.length; i++) {
+            tmp.push(input[i]);
+            if (i < input.length - 1) tmp.push('/');
+        }
+        tmp.push('가 추론 될 수 있습니다.');
+        return tmp;
+    };
+
     const EnhancedTableToolbar = props => {
         const classes = useToolbarStyles();
-        const {numSelected, selected} = props;
+        const {numSelected, selected, selectedClassification} = props;
         const masked = [];
         const noneMasked = [];
         selected.forEach(element => {
             if (element.indexOf('.mask') !== -1) masked.push(element);
             else noneMasked.push(element);
         });
+        const modalclasses = modalStyles();
+        const [open, setOpen] = React.useState(false);
+
+        const handleOpen = () => {
+            setOpen(true);
+        };
+
+        const handleClose = () => {
+            setOpen(false);
+        };
         return (
             <Toolbar
                 className={clsx(classes.root, {
                     [classes.highlight]: numSelected > 0,
                 })}
-                style={{height: 74, background: 'linear-gradient( #f1f8e9, #fafafa )', borderTopRightRadius: '10px', borderTopLeftRadius: '10px'}}
+                style={{
+                    height: 74,
+                    background: 'linear-gradient( #f1f8e9, #fafafa )',
+                    borderTopRightRadius: '10px',
+                    borderTopLeftRadius: '10px'
+                }}
             >
                 <div className={classes.title}>
                     {numSelected > 0 ? (
@@ -328,7 +375,8 @@ export default function Result() {
                                                      for (const path of selected) {
                                                          await masking(path, 'unmasking'); //재 식별화
                                                          await parsingPath(path, 2);
-                                                     };
+                                                     }
+                                                     ;
                                                      setSelected([]);
                                                  }}>재식별화</Fab>
                                         </Tooltip>
@@ -340,7 +388,8 @@ export default function Result() {
                                                          for (const path of selected) {
                                                              await masking(path, 'masking'); //마스킹
                                                              await parsingPath(path, 1);
-                                                         };
+                                                         }
+                                                         ;
                                                          setSelected([]);
                                                      }}>비식별화</Fab>
                                             </Tooltip>) :
@@ -349,8 +398,38 @@ export default function Result() {
                         ('')
                     }
                     {numSelected > 0 && numSelected === 1 && masked.length === 0 ? (
+                        <Tooltip title="준식별자 탐지">
+                            <Fab className={classes.actions} style={{marginLeft: 10}} variant="extended" label='준식별자 탐지'
+                                 onClick={
+                                     async () => {
+                                         quasiTmp = await quasi();
+                                         console.log('quasi: ', quasiTmp);
+                                         handleOpen();
+                                     }
+                                 }>
+                                준식별자 탐지
+                            </Fab>
+                        </Tooltip>
+                    ) : ('')
+                    }
+                    <Modal
+                        className={modalclasses.modal}
+                        open={open}
+                        onClose={handleClose}
+                    >
+                        <Fade in={open}>
+                            <div className={modalclasses.paper}>
+                                <h2 id="transition-modal-title">추론 속성 정보</h2>
+                                <p id="transition-modal-description">{
+                                    cellDisplay(quasiTmp, selectedClassification)
+                                }</p>
+                            </div>
+                        </Fade>
+                    </Modal>
+                    {numSelected > 0 && numSelected === 1 && masked.length === 0 ? (
                         <Tooltip title="문의">
-                            <Fab className={classes.actions}  style={{marginLeft:10}} variant="extended" label='문의' component={Link}
+                            <Fab className={classes.actions} style={{marginLeft: 10}} variant="extended" label='문의'
+                                 component={Link}
                                  to='/qna' onClick={() => {
                                 ipcRenderer.send('RESULT1', selected.pop());
                             }}>문의</Fab>
@@ -394,7 +473,7 @@ export default function Result() {
             if (result.length > 0) {
                 rows = [];
                 for (const t of result) {
-                    rows.push(createData(t.fileName, t.filePath, t.detectList, t.detectCount, t.formLevel, t.fitness));
+                    rows.push(createData(t.fileName, t.filePath, t.detectList, t.detectCount, t.formLevel, t.fitness, t.classification));
                 }
                 setUpdate();
             }
@@ -419,7 +498,7 @@ export default function Result() {
         setSelected([]);
     }
 
-    function handleClick(event, name) {
+    function handleClick(event, name, classification) {
         const selectedIndex = selected.indexOf(name);
         let newSelected = [];
 
@@ -435,6 +514,24 @@ export default function Result() {
                 selected.slice(selectedIndex + 1),
             );
         }
+
+        const selectedIndexIndex = selectedClassification.indexOf(classification);
+        let newSelectedClassification = [];
+
+        if (selectedIndexIndex === -1) {
+            newSelectedClassification = newSelectedClassification.concat(selectedClassification, classification);
+        } else if (selectedIndexIndex === 0) {
+            newSelectedClassification = newSelectedClassification.concat(selectedClassification.slice(1));
+        } else if (selectedIndexIndex === selected.length - 1) {
+            newSelectedClassification = newSelectedClassification.concat(selectedClassification.slice(0, -1));
+        } else if (selectedIndexIndex > 0) {
+            newSelectedClassification = newSelectedClassification.concat(
+                selectedClassification.slice(0, selectedIndexIndex),
+                selectedClassification.slice(selectedIndexIndex + 1),
+            );
+        }
+
+        setSelectedClassification(newSelectedClassification);
 
         setSelected(newSelected);
     }
@@ -468,10 +565,12 @@ export default function Result() {
             </MuiThemeProvider>)
         return <Tooltip title="미등록" placement="top"><NormalIcon color='disabled'/></Tooltip>
     }
+
+
     return (
         <div className={classes.root}>
             <Box className={classes.paper}>
-                <EnhancedTableToolbar numSelected={selected.length} selected={selected} />
+                <EnhancedTableToolbar numSelected={selected.length} selected={selected} selectedClassification={selectedClassification}/>
                 <div className={classes.tableWrapper}>
                     <Table
                         className={classes.table}
@@ -496,7 +595,7 @@ export default function Result() {
                                     return (
                                         <TableRow
                                             hover
-                                            onClick={event => handleClick(event, row.filePath)}
+                                            onClick={event => handleClick(event, row.filePath, row.classification)}
                                             role="checkbox"
                                             aria-checked={isItemSelected}
                                             tabIndex={-1}
@@ -506,31 +605,40 @@ export default function Result() {
                                             <TableCell padding="checkbox">
                                                 <Checkbox
                                                     checked={isItemSelected}
-                                                    inputProps={{ 'aria-labelledby': labelId }}
+                                                    inputProps={{'aria-labelledby': labelId}}
                                                 />
                                             </TableCell>
-                                            <TableCell style={{width: 200+84}} component="th" id={labelId} scope="row" padding="none">
-                                                <Tooltip title={row.filePath} placement="top"><Typography  noWrap>{row.fileName}</Typography></Tooltip>
+                                            <TableCell style={{width: 200 + 84}} component="th" id={labelId} scope="row"
+                                                       padding="none">
+                                                <Tooltip title={row.filePath} placement="top"><Typography
+                                                    noWrap>{row.fileName}</Typography></Tooltip>
                                             </TableCell>
-                                            <TableCell style={{width: 120+84}} wrap='nowrap' align="right">{row.detectList}</TableCell>
-                                            <TableCell style={{width: 120+84}} align="right">{row.detectCount}</TableCell>
-                                            <TableCell style={{width: 110+84}} align="right">{row.formLevel}</TableCell>
-                                            <TableCell style={{width: 110+84}} align="right">
+                                            <TableCell style={{width: 120 + 84}} wrap='nowrap'
+                                                       align="right">{row.detectList}</TableCell>
+                                            <TableCell style={{width: 120 + 84}}
+                                                       align="right">{row.detectCount}</TableCell>
+                                            <TableCell style={{width: 110 + 84}}
+                                                       align="right">{row.formLevel}</TableCell>
+                                            <TableCell style={{width: 110 + 84}} align="right">
                                                 {iconDisplay(row.fitness)}
                                             </TableCell>
                                         </TableRow>
                                     );
                                 })}
                             {emptyRows > 0 && (
-                                <TableRow style={{ height: 42 * emptyRows }}>
-                                    <TableCell colSpan={6} />
+                                <TableRow style={{height: 42 * emptyRows}}>
+                                    <TableCell colSpan={6}/>
                                 </TableRow>
                             )}
                         </TableBody>
                     </Table>
                 </div>
                 <TablePagination
-                    style={{backgroundColor: '#f1f8e9', borderBottomRightRadius: '10px', borderBottomLeftRadius: '10px'}}
+                    style={{
+                        backgroundColor: '#f1f8e9',
+                        borderBottomRightRadius: '10px',
+                        borderBottomLeftRadius: '10px'
+                    }}
                     rowsPerPageOptions={[7]}
                     component="div"
                     count={rows.length}

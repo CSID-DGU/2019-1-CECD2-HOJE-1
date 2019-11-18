@@ -1,7 +1,7 @@
 var request = require('request');
 var fs = require('fs');
 const path = require('path');
-const PATH = 'C:\\Users\\FASOO_499\\Desktop\\image'; //Todo 경로 설정
+const PATH = 'C:\\Users\\GIGABYTE\\Desktop\\project\\2019-1-CECD2-HOJE-1\\Front-End\\subImage'; //Todo 경로 설정
 const notifier = require('node-notifier');
 
 export default function UploadSubImage(textList,fileName,depart){
@@ -16,7 +16,7 @@ export default function UploadSubImage(textList,fileName,depart){
 
     const options = {
         method: "POST",
-        url : "http://192.168.40.206:8080/multipleFileUpload",
+        url : "http://localhost:8080/multipleFileUpload",
         headers:{
             "Authorization" : "test",
             "Content-Type" : "multipart/form-data"

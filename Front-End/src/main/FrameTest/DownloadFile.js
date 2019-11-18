@@ -5,7 +5,7 @@ const path = require('path');
 let check1 = false, check2 = false;
 
 function DownloadTrainedFile() {
-    var req = request("http://192.168.40.206:8080/downloadTrainedFile", {timeout: 4000}, (err) => {
+    var req = request("http://localhost:8080/downloadTrainedFile", {timeout: 4000}, (err) => {
         if (err) {
             notifier.notify({
                     title: "Time out",
@@ -17,7 +17,7 @@ function DownloadTrainedFile() {
     });
     req.on('response', function (res) {
         let file_name = res.headers['content-disposition'].replace("attachment;filename=", "");
-        var fws = fs.createWriteStream('./' + file_name);
+        var fws = fs.createWriteStream('C:\\Program Files\\Tesseract-OCR\\tessdata\\' + "kor.traineddata");
         res.pipe(fws);
         res.on('end', () => {
             check1 = true;
@@ -26,7 +26,7 @@ function DownloadTrainedFile() {
 }
 
 function DownloadRex() { //C:\vcpkg\installed\x64-windows\tools\tesseract\tessdata
-    var req = request("http://192.168.40.206:8080/downloadRexFile", {timeout: 4000}, (err) => {
+    var req = request("http://localhost:8080/downloadRexFile", {timeout: 4000}, (err) => {
         if (err) {
             notifier.notify({
                     title: "Time out",

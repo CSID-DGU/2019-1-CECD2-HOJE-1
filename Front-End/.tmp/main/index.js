@@ -459,7 +459,7 @@ function () {
           case 0:
             xhr = new XMLHttpRequest(); //서버 통신
 
-            xhr.open('GET', "http://192.168.40.206:8080/classification?dhashValue=".concat(hash, "&depart=").concat(depart)); //console.log('name : ' , name , ' hash : ' , hash , ' filePath : ' , ppath , ' formlevel : ', tmp.formLevel);
+            xhr.open('GET', "http://localhost:8080/classification?dhashValue=".concat(hash, "&depart=").concat(depart)); //console.log('name : ' , name , ' hash : ' , hash , ' filePath : ' , ppath , ' formlevel : ', tmp.formLevel);
 
             /*xhr.onload = async function () {
                 console.log('connection success............');

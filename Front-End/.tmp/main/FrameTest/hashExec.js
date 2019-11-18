@@ -21,7 +21,7 @@ function () {
         switch (_context.prev = _context.next) {
           case 0:
             _context.next = 2;
-            return callexec("C:\\Users\\FASOO_499\\source\\repos\\DhashModule\\DhashModule.exe", filePath);
+            return callexec("C:\\Users\\GIGABYTE\\Desktop\\project\\2019-1-CECD2-HOJE-1\\Front-End\\DhashModule\\DhashModule.exe", filePath);
 
           case 2:
             hash = _context.sent;

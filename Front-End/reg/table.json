@@ -1,0 +1,60 @@
+{
+    "table": [
+      {
+        "row": 0,
+        "race": "황인",
+        "birth": "09/74",
+        "sexual": "여성",
+        "address": "94139",
+        "marry" : "이혼"
+      },
+      {
+        "row": 1,
+        "race": "황인",
+        "birth": "09/74",
+        "sexual": "여성",
+        "address": "94138",
+        "marry" : "이혼"
+      },
+      {
+        "row": 2,
+        "race": "황인",
+        "birth": "04/74",
+        "sexual": "남성",
+        "address": "94138",
+        "marry" : "이혼"
+      },
+      {
+        "row": 3,
+        "race": "황인",
+        "birth": "04/74",
+        "sexual": "남성",
+        "address": "94139",
+        "marry" : "결혼"
+      },
+      {
+        "row": 4,
+        "race": "흑인",
+        "birth": "03/73",
+        "sexual": "남성",
+        "address": "94138",
+        "marry" : "결혼"
+      },
+      {
+        "row": 5,
+        "race": "흑인",
+        "birth": "09/74",
+        "sexual": "여성",
+        "address": "94141",
+        "marry" : "결혼"
+      },
+      {
+        "row": 6,
+        "race": "백인",
+        "birth": "05/71",
+        "sexual": "남성",
+        "address": "94138",
+        "marry" : "미혼"
+      }
+    ]
+  }

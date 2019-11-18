@@ -7,7 +7,7 @@ let key = [], pattern = [];
 data = JSON.parse(data);
 //파일 경로와 설정에서 선택한 리스트들이 인자값
 async function TessNreg(filePath){
-    let textOriginal = await callExec('C:\\Users\\FASOO_499\\source\\repos\\textExtract\\x64\\Release\\textExtract.exe',filePath);
+    let textOriginal = await callExec('C:\\Users\\GIGABYTE\\source\\repos\\textExtract\\x64\\Release\\textExtract.exe',filePath);
     //let text = textOriginal.replace(/ /gi,""); //문자열내에 모든 공백을 제거하기 위해서 사용
     //text = text.replace(/:|\.|\,/gi," ");
     let result = await regExe(textOriginal);

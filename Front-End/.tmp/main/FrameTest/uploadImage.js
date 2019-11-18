@@ -12,7 +12,7 @@ var fs = require('fs');
 function usingRequestModule(send, fileName, depart) {
   var options = {
     method: "POST",
-    url: "http://192.168.40.206:8080/singleFileUpload",
+    url: "http://localhost:8080/singleFileUpload",
     headers: {
       "Authorization": "test",
       "Content-Type": "multipart/form-data"

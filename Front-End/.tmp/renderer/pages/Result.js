@@ -55,6 +55,10 @@ var _Fab = _interopRequireDefault(require("@material-ui/core/Fab"));
 
 var _Tooltip = _interopRequireDefault(require("@material-ui/core/Tooltip"));
 
+var _Modal = _interopRequireDefault(require("@material-ui/core/Modal"));
+
+var _Fade = _interopRequireDefault(require("@material-ui/core/Fade"));
+
 var _FiberManualRecord = _interopRequireDefault(require("@material-ui/icons/FiberManualRecord"));
 
 var _Error = _interopRequireDefault(require("@material-ui/icons/Error"));
@@ -65,18 +69,21 @@ var _electron = require("electron");
 
 var _masking = _interopRequireDefault(require("../../main/FrameTest/masking"));
 
+var _quasiShow = _interopRequireDefault(require("../../main/FrameTest/quasiShow"));
+
 var path = require('path');
 
 var notifier = require('node-notifier');
 
-function createData(fileName, filePath, detectList, detectCount, formLevel, fitness) {
+function createData(fileName, filePath, detectList, detectCount, formLevel, fitness, classification) {
   return {
     fileName: fileName,
     filePath: filePath,
     detectList: detectList,
     detectCount: detectCount,
     formLevel: formLevel,
-    fitness: fitness
+    fitness: fitness,
+    classification: classification
   };
 } // FormLevel : 1, 2, 3 -> 낮은 숫자일 수록 높은 등급
 
@@ -374,6 +381,22 @@ var theme = (0, _styles.createMuiTheme)({
     }
   }
 });
+var modalStyles = (0, _styles.makeStyles)(function (theme) {
+  return {
+    modal: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center'
+    },
+    paper: {
+      backgroundColor: theme.palette.background.paper,
+      border: '2px solid #000',
+      boxShadow: theme.shadows[5],
+      padding: theme.spacing(2, 4, 3)
+    }
+  };
+});
+var quasiTmp = [];
 
 function Result() {
   var classes = useStyles();
@@ -398,25 +421,60 @@ function Result() {
       selected = _React$useState6[0],
       setSelected = _React$useState6[1];
 
-  var _React$useState7 = _react["default"].useState(0),
+  var _React$useState7 = _react["default"].useState([]),
       _React$useState8 = (0, _slicedToArray2["default"])(_React$useState7, 2),
-      page = _React$useState8[0],
-      setPage = _React$useState8[1];
+      selectedClassification = _React$useState8[0],
+      setSelectedClassification = _React$useState8[1];
 
-  var _React$useState9 = _react["default"].useState(7),
+  var _React$useState9 = _react["default"].useState(0),
       _React$useState10 = (0, _slicedToArray2["default"])(_React$useState9, 2),
-      rowsPerPage = _React$useState10[0],
-      setRowsPerPage = _React$useState10[1];
+      page = _React$useState10[0],
+      setPage = _React$useState10[1];
+
+  var _React$useState11 = _react["default"].useState(7),
+      _React$useState12 = (0, _slicedToArray2["default"])(_React$useState11, 2),
+      rowsPerPage = _React$useState12[0],
+      setRowsPerPage = _React$useState12[1];
+
+  var cellDisplay = function cellDisplay(input, selectedClassification) {
+    var tmp = []; //console.log('classification', selectedClassification);
+
+    if (selectedClassification.indexOf('국민카드') == -1) return '추론이 불가능한 이미지입니다.';
+
+    for (var i = 0; i < input.length; i++) {
+      tmp.push(input[i]);
+      if (i < input.length - 1) tmp.push('/');
+    }
+
+    tmp.push('가 추론 될 수 있습니다.');
+    return tmp;
+  };
 
   var EnhancedTableToolbar = function EnhancedTableToolbar(props) {
     var classes = useToolbarStyles();
     var numSelected = props.numSelected,
-        selected = props.selected;
+        selected = props.selected,
+        selectedClassification = props.selectedClassification;
     var masked = [];
     var noneMasked = [];
     selected.forEach(function (element) {
       if (element.indexOf('.mask') !== -1) masked.push(element);else noneMasked.push(element);
     });
+    var modalclasses = modalStyles();
+
+    var _React$useState13 = _react["default"].useState(false),
+        _React$useState14 = (0, _slicedToArray2["default"])(_React$useState13, 2),
+        open = _React$useState14[0],
+        setOpen = _React$useState14[1];
+
+    var handleOpen = function handleOpen() {
+      setOpen(true);
+    };
+
+    var handleClose = function handleClose() {
+      setOpen(false);
+    };
+
     return _react["default"].createElement(_Toolbar["default"], {
       className: (0, _clsx2["default"])(classes.root, (0, _defineProperty2["default"])({}, classes.highlight, numSelected > 0)),
       style: {
@@ -610,6 +668,51 @@ function Result() {
         }, _callee2, null, [[3, 16, 20, 28], [21,, 23, 27]]);
       }))
     }, "\uBE44\uC2DD\uBCC4\uD654")) : '' : '', numSelected > 0 && numSelected === 1 && masked.length === 0 ? _react["default"].createElement(_Tooltip["default"], {
+      title: "\uC900\uC2DD\uBCC4\uC790 \uD0D0\uC9C0"
+    }, _react["default"].createElement(_Fab["default"], {
+      className: classes.actions,
+      style: {
+        marginLeft: 10
+      },
+      variant: "extended",
+      label: "\uC900\uC2DD\uBCC4\uC790 \uD0D0\uC9C0",
+      onClick:
+      /*#__PURE__*/
+      (0, _asyncToGenerator2["default"])(
+      /*#__PURE__*/
+      _regenerator["default"].mark(function _callee3() {
+        return _regenerator["default"].wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                _context3.next = 2;
+                return (0, _quasiShow["default"])();
+
+              case 2:
+                quasiTmp = _context3.sent;
+                console.log('quasi: ', quasiTmp);
+                handleOpen();
+
+              case 5:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3);
+      }))
+    }, "\uC900\uC2DD\uBCC4\uC790 \uD0D0\uC9C0")) : '', _react["default"].createElement(_Modal["default"], {
+      className: modalclasses.modal,
+      open: open,
+      onClose: handleClose
+    }, _react["default"].createElement(_Fade["default"], {
+      "in": open
+    }, _react["default"].createElement("div", {
+      className: modalclasses.paper
+    }, _react["default"].createElement("h2", {
+      id: "transition-modal-title"
+    }, "\uCD94\uB860 \uC18D\uC131 \uC815\uBCF4"), _react["default"].createElement("p", {
+      id: "transition-modal-description"
+    }, cellDisplay(quasiTmp, selectedClassification))))), numSelected > 0 && numSelected === 1 && masked.length === 0 ? _react["default"].createElement(_Tooltip["default"], {
       title: "\uBB38\uC758"
     }, _react["default"].createElement(_Fab["default"], {
       className: classes.actions,
@@ -667,7 +770,7 @@ function Result() {
         try {
           for (var _iterator3 = result[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
             var t = _step3.value;
-            rows.push(createData(t.fileName, t.filePath, t.detectList, t.detectCount, t.formLevel, t.fitness));
+            rows.push(createData(t.fileName, t.filePath, t.detectList, t.detectCount, t.formLevel, t.fitness, t.classification));
           }
         } catch (err) {
           _didIteratorError3 = true;
@@ -714,7 +817,7 @@ function Result() {
     setSelected([]);
   }
 
-  function handleClick(event, name) {
+  function handleClick(event, name, classification) {
     var selectedIndex = selected.indexOf(name);
     var newSelected = [];
 
@@ -728,6 +831,20 @@ function Result() {
       newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
     }
 
+    var selectedIndexIndex = selectedClassification.indexOf(classification);
+    var newSelectedClassification = [];
+
+    if (selectedIndexIndex === -1) {
+      newSelectedClassification = newSelectedClassification.concat(selectedClassification, classification);
+    } else if (selectedIndexIndex === 0) {
+      newSelectedClassification = newSelectedClassification.concat(selectedClassification.slice(1));
+    } else if (selectedIndexIndex === selected.length - 1) {
+      newSelectedClassification = newSelectedClassification.concat(selectedClassification.slice(0, -1));
+    } else if (selectedIndexIndex > 0) {
+      newSelectedClassification = newSelectedClassification.concat(selectedClassification.slice(0, selectedIndexIndex), selectedClassification.slice(selectedIndexIndex + 1));
+    }
+
+    setSelectedClassification(newSelectedClassification);
     setSelected(newSelected);
   }
 
@@ -783,7 +900,8 @@ function Result() {
     className: classes.paper
   }, _react["default"].createElement(EnhancedTableToolbar, {
     numSelected: selected.length,
-    selected: selected
+    selected: selected,
+    selectedClassification: selectedClassification
   }), _react["default"].createElement("div", {
     className: classes.tableWrapper
   }, _react["default"].createElement(_Table["default"], {
@@ -803,7 +921,7 @@ function Result() {
     return _react["default"].createElement(_TableRow["default"], {
       hover: true,
       onClick: function onClick(event) {
-        return handleClick(event, row.filePath);
+        return handleClick(event, row.filePath, row.classification);
       },
       role: "checkbox",
       "aria-checked": isItemSelected,

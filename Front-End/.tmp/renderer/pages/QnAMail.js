@@ -39,7 +39,7 @@ var _uploadSubImage = _interopRequireDefault(require("../../main/FrameTest/uploa
 
 var _uploadImage = _interopRequireDefault(require("../../main/FrameTest/uploadImage"));
 
-var PATH = "C:\\Users\\FASOO_499\\Desktop\\image";
+var PATH = "C:\\Users\\GIGABYTE\\Desktop\\project\\2019-1-CECD2-HOJE-1\\Front-End\\subImage";
 
 var path = require('path');
 

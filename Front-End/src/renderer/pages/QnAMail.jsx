@@ -11,7 +11,7 @@ import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 
 import {ipcRenderer, shell} from 'electron';
 import cropImage from '../../main/FrameTest/cropImage';
-const PATH = 'C:\\Users\\FASOO_499\\Desktop\\image';
+const PATH = 'C:\\Users\\GIGABYTE\\Desktop\\project\\2019-1-CECD2-HOJE-1\\Front-End\\subImage';
 const path = require('path');
 const fs = require('fs');
 import UploadSubImage from '../../main/FrameTest/uploadSubImage';

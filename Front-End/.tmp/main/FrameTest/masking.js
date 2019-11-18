@@ -26,7 +26,7 @@ function _main() {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            modulePath = "C:\\Users\\FASOO_499\\source\\repos\\recoveringMasking\\x64\\Release\\recoveringMasking.exe"; //"C:\\Users\\FASOO_499\\Desktop\\sample6.mask.jpg"; //making file name is sample2.mask.jpg
+            modulePath = "C:\\Users\\GIGABYTE\\source\\repos\\recoveringMasking\\x64\\Release\\recoveringMasking.exe"; //"C:\\Users\\FASOO_499\\Desktop\\sample6.mask.jpg"; //making file name is sample2.mask.jpg
 
             m = mode; // or unmasking
 

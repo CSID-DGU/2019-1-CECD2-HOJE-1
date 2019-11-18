@@ -149,7 +149,7 @@ const Exec = async function (startPath, extension) {
 
 const imageClassification = async (result1, hash, depart, ppath, name) => {
     let xhr = new XMLHttpRequest(); //서버 통신
-    xhr.open('GET', `http://192.168.40.206:8080/classification?dhashValue=${hash}&depart=${depart}`);
+    xhr.open('GET', `http://localhost:8080/classification?dhashValue=${hash}&depart=${depart}`);
     //console.log('name : ' , name , ' hash : ' , hash , ' filePath : ' , ppath , ' formlevel : ', tmp.formLevel);
     /*xhr.onload = async function () {
         console.log('connection success............');

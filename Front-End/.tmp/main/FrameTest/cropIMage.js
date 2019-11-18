@@ -26,7 +26,7 @@ function _main() {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            modulePath = "C:\\Users\\FASOO_499\\source\\repos\\subTextCreater\\x64\\Release\\subTextCreater.exe"; //"C:\\Users\\FASOO_499\\Desktop\\sample6.mask.jpg"; //making file name is sample2.mask.jpg
+            modulePath = "C:\\Users\\GIGABYTE\\source\\repos\\SubtTextCreator\\x64\\Release\\SubtTextCreator.exe"; //"C:\\Users\\FASOO_499\\Desktop\\sample6.mask.jpg"; //making file name is sample2.mask.jpg
 
             _context.next = 3;
             return cropImageCallExec(modulePath, filePath);

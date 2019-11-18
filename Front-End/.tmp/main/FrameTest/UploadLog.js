@@ -63,7 +63,7 @@ function UploadLog(data) {
 
   var options = {
     method: "POST",
-    url: "http://192.168.40.206:8080/logResultUpload",
+    url: "http://localhost:8080/logResultUpload",
     json: true,
     headers: {
       "Authorization": "test",
