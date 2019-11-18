@@ -1,35 +1,32 @@
 # 2019-1-CECD2-HOJE-1
-컴퓨터공학종합설계1_02_HOJE
-----
-프로젝트 주제 : OCR를 이용한 개인정보 검출
+### 컴퓨터공학종합설계1_02_HOJE
+##### 프로젝트 주제 : OCR를 이용한 개인정보 검출
 
-서버 플랫폼 
---------------
-	플랫폼 : Window 10
-	개발환경 : Intellj
-	프레임워크 : Spring 4.2
-	사용언어: Java, jsp, javaScript
-	역할 :  1. 학습 앱에서 받은 문자 학습 결과물 및 새롭게 추가된 정규표현식을 클라이언트 앱에 배포
-	        2. 이미지 분류
-		3. 클라이언트에서 검출된 개인정보 및 이미지 보유 적합도 모니터링
-
-Client Application 플랫폼
+Client Application
 ----------------------
+![클라이언트Application](https://user-images.githubusercontent.com/26684848/68988738-58171d00-087f-11ea-819a-1aa345e1f1ef.JPG)
+	
 	플랫폼 : Window 10
 	개발환경 : VS, Node.js 10.16.0, IntellJ
 	프레임워크 : 일렉트론, 리엑트
 	사용언어 : JavaScript(node.js) 
 	역할 : 사용자에게 서비스를 제공하는 애플리케이션 형태
 
-Client Application Back-end 모듈
+분류 Application
 ----------------------
+![분류Application](https://user-images.githubusercontent.com/26684848/68988701-cdceb900-087e-11ea-948e-aebdb14921db.JPG)
+
 	개발환경 : Visual studio 2017
 	프레임워크 : Tessearct OCR, OpenCV, jsoncpp 
 	사용언어 : C/C++
-	역할 : 사용자가 프론트 ui를 통해 입력을 수행하면, 이미지 전처리 및 이미지 내 텍스트 추출/마스킹/서브텍스트 추출 등의 기능 수행
+	역할 :  1. 학습 앱에서 받은 문자 학습 결과물 및 새롭게 추가된 정규표현식을 클라이언트 앱에 배포
+	        2. 이미지 분류
+		3. 클라이언트에서 검출된 개인정보 및 이미지 보유 적합도 모니터링
 	
 학습 Application 플랫폼
 -------------------
+![학습application](https://user-images.githubusercontent.com/26684848/68988745-741abe80-087f-11ea-8887-cb2b530589e9.JPG)
+
 	플랫폼 : 리눅스, 우분투
 	개발환경 : Qt Creator, Vs Code
 	프레임워크 : Qt	
@@ -40,38 +37,10 @@ Client Application Back-end 모듈
 ---------
 	은종혁 : Tesseract OCR 학습 서버
 	장민석 : Back-end 와 front-end 연결 및 UI
-	오택완 : back-end 및 이미지 전처리
+	오택완 : Back-end 및 서버 구현
 	황영식 : 이미지 전처리 및 UI
 	
 실행 방법
 ---------
-[1. 클라이언트 앱](https://github.com/CSID-DGU/2019-1-CECD2-HOJE-1/wiki/ExecuteClientApp)
-
-
-[2. 학습 앱](https://github.com/CSID-DGU/2019-1-CECD2-HOJE-1/wiki/ExecuteQt)
-
-애플리케이션 (프로토타입) 구상도.
-----
-![프로토타입](https://user-images.githubusercontent.com/26684848/60570792-396f2880-9dad-11e9-8dbc-1324b17c4948.PNG)
-
-애플리케이션(프로토 타입) 조건
-------------------------
-	1. 항상 서버는 실행되고 있는 상황으로 간주한다. 
-	2. 이미지(jpg,png,bmp)의 파일을 입력값으로 받는다. 단, 이미지 같은 경우, 정상적으로 찍혀진 사진을 대상으로 한다.
- 
-  
-시나리오(프로토 타입)
------------
-	1. 이미지(jpg,png,bmp)의 파일을 입력값으로 받는다.
-	2. 클라이언트 앱은 입력 받은 이미지들의 Dhash값을 계산한 후, 서버로 Dhash값을 전송한다.
-	3. 서버에서는 앱으로 부터 얻은 Dhash 값을 이용하여 문서 분류를 수행한 후, 클라이언트 앱에게 json형태로 결과값을 전달
-	4. 클라이언트 앱에서는 서버에서 얻은 json 파일을 이용하여 결과를 보여주게 된다.
-		4-1 사용자의 기호에 맞게 masking / unmasking 조취를 취할 수 있다. 
-		(이 때, 마스킹 모듈은 클라이언트 앱에 존재)
-	5. 사용자는 학습을 원하는 이미지 혹은 분류를 원하는 이미지를 선택해 서버로 전송 할 수 있다.
-
-향후 계획
--------------------
-	1. 서버와 통신 없이 클라이언트 앱에서 이미지내에 존재하는 개인정보를 추출하도록 변경.
-	2. 추출된 개인 정보를 기반으로 준식별자 공격을 방지할 수 있는 모듈 구현
-
+* [클라이언트 앱](https://github.com/CSID-DGU/2019-1-CECD2-HOJE-1/wiki/ExecuteClientApp)
+* [학습 앱](https://github.com/CSID-DGU/2019-1-CECD2-HOJE-1/wiki/ExecuteQt)
