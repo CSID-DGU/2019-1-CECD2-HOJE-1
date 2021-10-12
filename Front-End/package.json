@@ -20,7 +20,7 @@
     "chart.js": "^2.8.0",
     "clsx": "^1.0.4",
     "delay": "^4.3.0",
-    "electron": "^5.0.8",
+    "electron": "^11.5.0",
     "electron-progressbar": "^1.2.0",
     "electron-tree-view": "^1.1.0",
     "fs": "0.0.1-security",
