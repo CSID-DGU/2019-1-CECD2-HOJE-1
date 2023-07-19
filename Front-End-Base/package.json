@@ -1,0 +1,69 @@
+{
+  "name": "electrontest",
+  "version": "1.0.0",
+  "description": "Test",
+  "main": "src/electron-start.js",
+  "build": {
+    "extends": null,
+    "directories": {
+      "buildResources": "build",
+      "rewrites": [
+        {
+          "source": "**"
+        }
+      ]
+    },
+    "target": "zip"
+  },
+  "scripts": {
+    "electron": "electron .",
+    "react-start": "rescripts start",
+    "react-build": "rescripts build",
+    "react-eject": "rescripts eject",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nf start",
+    "dist": " yarn react-build && build -w"
+  },
+  "author": "Man",
+  "license": "ISC",
+  "dependencies": {
+    "@material-ui/core": "^4.2.1",
+    "@material-ui/icons": "^4.2.1",
+    "@material-ui/styles": "^4.3.0",
+    "chart.js": "^2.8.0",
+    "react-chartjs-2": "^2.7.6",
+    "react-swipeable-views": "^0.13.3",
+    "react-swipeable-views-utils": "^0.13.3",
+    "react-virtualized": "^9.21.1"
+  },
+  "devDependencies": {
+    "@rescripts/cli": "^0.0.11",
+    "@rescripts/rescript-env": "^0.0.10",
+    "concurrently": "^4.1.1",
+    "cross-env": "^5.2.0",
+    "electron-packager": "^14.0.1",
+    "electron-prebuilt": "^1.4.13",
+    "electron-winstaller": "^3.0.4",
+    "eslint-plugin-react-hooks": "^1.6.1",
+    "foreman": "^3.0.1",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-icons": "^3.7.0",
+    "react-router": "^5.0.1",
+    "react-router-dom": "^5.0.1",
+    "react-scripts": "^3.0.1",
+    "styled-components": "^4.3.2"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
